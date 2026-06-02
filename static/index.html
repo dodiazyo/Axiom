@@ -156,25 +156,48 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 8px;border-radius:3px;border:1px solid var(--border2);background:transparent;color:var(--muted2);cursor:pointer;font-size:11px;font-weight:700;}
 .mini-btn:hover{border-color:var(--green);color:var(--green);}
 .mini-btn.trade{border-color:rgba(34,197,94,.3);color:var(--green);}
+.mini-btn:disabled{opacity:.45;cursor:not-allowed;}
+.mini-btn:disabled:hover{border-color:var(--border2);color:var(--muted2);}
 
 /* ── Pairs / markets ───────────────────────────────────────────────── */
-.market-tools{display:grid;gap:10px;padding:14px;}
-.market-results{max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:4px;background:var(--bg);}
-.market-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--border);}
+.market-tools{display:grid;gap:12px;padding:14px;}
+.market-search-card{display:grid;gap:8px;padding:12px;border:1px solid var(--border);border-radius:6px;background:#030303;}
+.search-field{position:relative;}
+.search-field .icon-sm{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted2);pointer-events:none;}
+.search-field input{padding-left:34px;}
+.market-summary{display:flex;flex-wrap:wrap;gap:6px;}
+.summary-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid var(--border2);border-radius:999px;color:var(--muted2);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.summary-pill strong{color:var(--text);}
+.summary-pill.trade strong{color:var(--green);}
+.market-results{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
+.market-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--border);}
 .market-row:last-child{border-bottom:none;}
-.market-symbol{font-weight:700;font-size:12px;}
-.market-empty{padding:12px;color:var(--muted);font-size:11px;}
-.token-group{display:grid;gap:6px;}
-.tokens{display:flex;flex-wrap:wrap;gap:6px;min-height:36px;padding:8px;border-radius:4px;border:1px solid var(--border);background:var(--bg);}
-.token{display:inline-flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border2);padding:4px 8px;border-radius:3px;font-size:11px;}
-.token.trade{border-color:rgba(34,197,94,.3);}
-.token button{border:none;background:none;color:var(--muted);cursor:pointer;font-weight:700;font-size:12px;line-height:1;}
-.token button.mode-action{font-size:10px;font-weight:700;color:var(--blue);border-left:1px solid var(--border2);padding-left:6px;}
+.market-row:hover{background:var(--s2);}
+.market-asset{display:flex;align-items:center;gap:9px;min-width:0;}
+.market-symbol{font-weight:800;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.market-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.market-empty{padding:14px;color:var(--muted);font-size:11px;}
+.selection-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.token-group{display:grid;gap:7px;min-width:0;}
+.group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.group-count{font-size:10px;color:var(--muted2);font-weight:800;border:1px solid var(--border2);border-radius:999px;padding:2px 7px;}
+.tokens{display:flex;flex-wrap:wrap;gap:7px;min-height:48px;max-height:172px;overflow:auto;padding:9px;border-radius:6px;border:1px solid var(--border);background:var(--bg);}
+.token{display:inline-grid;grid-template-columns:auto 1fr auto;align-items:center;gap:7px;max-width:100%;background:var(--s2);border:1px solid var(--border2);padding:5px 6px;border-radius:999px;font-size:11px;}
+.token.trade{border-color:rgba(0,255,133,.38);background:var(--green-d);}
+.token-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.token-actions{display:flex;align-items:center;gap:4px;}
+.token button{border:none;background:none;color:var(--muted2);cursor:pointer;font-weight:800;font-size:11px;line-height:1;padding:3px 5px;border-radius:999px;}
+.token button:hover{background:rgba(255,255,255,.08);color:var(--text);}
+.token button.mode-action{color:var(--blue);}
 .token button.mode-action.trade{color:var(--green);}
-.lev-list{display:grid;gap:6px;}
-.lev-row{display:grid;grid-template-columns:1fr 64px 64px 1fr;gap:6px;align-items:center;padding:8px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg);}
-.lev-row strong{font-size:11px;}
-.lev-feedback{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .3s;}
+.token-avatar{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;flex:0 0 auto;background:linear-gradient(135deg,var(--asset-color),#111);color:#000;font-size:10px;font-weight:900;border:1px solid rgba(255,255,255,.18);}
+.token-avatar.dark-text{color:#000;}
+.token-avatar.light-text{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55);}
+.lev-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:7px;}
+.lev-row{display:grid;grid-template-columns:auto minmax(0,1fr) 58px auto;gap:8px;align-items:center;padding:9px;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
+.lev-row strong{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lev-row input{padding:7px 6px;}
+.lev-feedback{grid-column:2 / -1;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .3s;}
 .apply-banner{background:var(--green-d);border:1px solid rgba(34,197,94,.3);border-radius:4px;padding:8px 12px;display:none;align-items:center;justify-content:space-between;gap:10px;}
 .apply-banner span{font-size:11px;color:var(--green);}
 
@@ -246,6 +269,9 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
   .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
   th,td{padding:8px 10px;}
   .rec-grid{grid-template-columns:1fr;padding:10px;}
+  .selection-grid{grid-template-columns:1fr;}
+  .market-row{grid-template-columns:1fr 1fr;gap:8px;}
+  .market-asset{grid-column:1 / -1;}
   .lev-row{grid-template-columns:1fr 60px 62px;}.lev-feedback{grid-column:1 / -1;}
   #toast-container{left:10px;right:10px;bottom:12px;}
   .toast{min-width:0;max-width:none;width:100%;}
@@ -491,25 +517,46 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
         <span class="section-meta">Buscar · Observar · Operar</span>
       </div>
       <div class="market-tools">
-        <div>
-          <label>Buscar par</label>
-          <input type="text" id="marketSearch" placeholder="BTC, SOL, DOGE…" oninput="renderMarketResults()" onkeyup="renderMarketResults()"/>
-        </div>
-        <div class="token-group">
-          <label>Pares para operar</label>
-          <div class="tokens" id="tradeTokens"></div>
-        </div>
-        <div class="token-group">
-          <label>Apalancamiento por moneda</label>
-          <div class="lev-list" id="levList"></div>
-          <div class="hint">Cada par puede tener su propio apalancamiento. Si no lo cambias, se usa el valor por defecto.</div>
-        </div>
-        <div class="token-group">
-          <label>Solo observar</label>
-          <div class="tokens" id="watchTokens"></div>
+        <div class="market-search-card">
+          <div>
+            <label>Buscar par</label>
+            <div class="search-field">
+              <i data-lucide="search" class="icon-sm"></i>
+              <input type="text" id="marketSearch" placeholder="Busca BTC, ETH, SOL, PEPE..." oninput="renderMarketResults()" onkeyup="renderMarketResults()"/>
+            </div>
+          </div>
+          <div class="market-summary">
+            <span class="summary-pill trade">Operar <strong id="tradeCount">0</strong></span>
+            <span class="summary-pill">Observar <strong id="watchCount">0</strong></span>
+            <span class="summary-pill">Resultados <strong id="marketCount">0</strong></span>
+          </div>
         </div>
         <div class="market-results" id="marketResults">
           <div class="market-empty">Cargando pares del exchange…</div>
+        </div>
+        <div class="selection-grid">
+          <div class="token-group">
+            <div class="group-head">
+              <label>Pares para operar</label>
+              <span class="group-count" id="tradeCountInline">0</span>
+            </div>
+            <div class="tokens" id="tradeTokens"></div>
+          </div>
+          <div class="token-group">
+            <div class="group-head">
+              <label>Solo observar</label>
+              <span class="group-count" id="watchCountInline">0</span>
+            </div>
+            <div class="tokens" id="watchTokens"></div>
+          </div>
+        </div>
+        <div class="token-group">
+          <div class="group-head">
+            <label>Apalancamiento por moneda</label>
+            <span class="group-count">Operables</span>
+          </div>
+          <div class="lev-list" id="levList"></div>
+          <div class="hint">Cada par operable puede tener su propio apalancamiento. Si no lo cambias, se usa el valor por defecto.</div>
         </div>
         <div id="applyParesBanner" class="apply-banner">
           <span>Hay pares sin aplicar</span>
@@ -587,6 +634,54 @@ function refreshIcons() {
 function setButtonContent(button, icon, text) {
   button.innerHTML = `<i data-lucide="${icon}" class="icon-sm"></i> ${text}`;
   refreshIcons();
+}
+
+function assetFromSymbol(sym) {
+  return String(sym || "").split("/")[0].replace(/^1000+/, "") || String(sym || "");
+}
+
+function assetGlyph(asset) {
+  const map = {
+    BTC: "BTC", ETH: "ETH", SOL: "SOL", BNB: "BNB", XRP: "XRP",
+    DOGE: "DOGE", ADA: "ADA", AVAX: "AVAX", LINK: "LINK", LTC: "LTC",
+    BCH: "BCH", TRX: "TRX", XMR: "XMR", OP: "OP", ARB: "ARB",
+    PEPE: "PEPE", BONK: "BONK", MOG: "MOG", BOB: "BOB",
+  };
+  const clean = String(asset || "").toUpperCase();
+  return (map[clean] || clean).slice(0, 4);
+}
+
+function assetColor(asset) {
+  const colors = {
+    BTC: "#f7931a", ETH: "#8ab4ff", SOL: "#00ffbd", BNB: "#f3ba2f",
+    XRP: "#d6d6d6", DOGE: "#c2a633", ADA: "#4f8cff", AVAX: "#e84142",
+    LINK: "#2a5ada", LTC: "#b8b8b8", BCH: "#8dc351", TRX: "#ff304f",
+    XMR: "#ff6600", OP: "#ff0420", ARB: "#28a0f0", PEPE: "#7bdc63",
+    BONK: "#ff8a00", MOG: "#c084fc", BOB: "#00ff85",
+  };
+  const clean = String(asset || "").toUpperCase();
+  if (colors[clean]) return colors[clean];
+  let hash = 0;
+  for (const ch of clean) hash = (hash * 31 + ch.charCodeAt(0)) % 360;
+  return `hsl(${hash}, 80%, 58%)`;
+}
+
+function tokenAvatar(sym) {
+  const asset = assetFromSymbol(sym);
+  return `<span class="token-avatar light-text" style="--asset-color:${assetColor(asset)}">${assetGlyph(asset)}</span>`;
+}
+
+function renderPairIdentity(sym) {
+  const asset = assetFromSymbol(sym);
+  return `
+    <div class="market-asset">
+      ${tokenAvatar(sym)}
+      <div>
+        <div class="market-symbol">${sym}</div>
+        <div class="market-sub">${asset} perpetual · USDT</div>
+      </div>
+    </div>
+  `;
 }
 
 function switchTab(name) {
@@ -770,13 +865,26 @@ function renderSelectedSymbols() {
   const tradeWrap = document.getElementById("tradeTokens");
   const watchWrap = document.getElementById("watchTokens");
   const levWrap = document.getElementById("levList");
+  const counts = [
+    ["tradeCount", tradeSymbols.length],
+    ["tradeCountInline", tradeSymbols.length],
+    ["watchCount", watchSymbols.length],
+    ["watchCountInline", watchSymbols.length],
+  ];
+  counts.forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  });
 
   tradeWrap.innerHTML = tradeSymbols.length
     ? tradeSymbols.map(sym => `
       <span class="token trade">
-        ${sym}
-        <button class="mode-action" title="Mover a observación" onclick="moveToWatch('${sym}')">Observar</button>
-        <button title="Quitar" onclick="removeTrade('${sym}')">×</button>
+        ${tokenAvatar(sym)}
+        <span class="token-name">${sym}</span>
+        <span class="token-actions">
+          <button class="mode-action" title="Mover a observación" onclick="moveToWatch('${sym}')">Observar</button>
+          <button title="Quitar" onclick="removeTrade('${sym}')">×</button>
+        </span>
       </span>
     `).join("")
     : `<span class="hint">No hay pares operables.</span>`;
@@ -784,9 +892,12 @@ function renderSelectedSymbols() {
   watchWrap.innerHTML = watchSymbols.length
     ? watchSymbols.map(sym => `
       <span class="token">
-        ${sym}
-        <button class="mode-action trade" title="Mover a operar" onclick="moveToTrade('${sym}')">Operar</button>
-        <button title="Quitar" onclick="removeWatch('${sym}')">×</button>
+        ${tokenAvatar(sym)}
+        <span class="token-name">${sym}</span>
+        <span class="token-actions">
+          <button class="mode-action trade" title="Mover a operar" onclick="moveToTrade('${sym}')">Operar</button>
+          <button title="Quitar" onclick="removeWatch('${sym}')">×</button>
+        </span>
       </span>
     `).join("")
     : `<span class="hint">No hay pares solo en observación.</span>`;
@@ -804,6 +915,7 @@ function renderSelectedSymbols() {
           const fbId    = `lev-fb-${safeKey}`;
           return `
             <div class="lev-row">
+              ${tokenAvatar(sym)}
               <strong>${sym}</strong>
               <input type="number" min="1" max="20" value="${value}" id="${inputId}" style="text-align:center"/>
               <button type="button" class="mini-btn trade" id="${btnId}" onclick="setSymbolLeverage('${sym}', '${inputId}', '${btnId}', '${fbId}')">Aplicar</button>
@@ -865,7 +977,7 @@ function showApplyBanner(show) {
 async function applyPares() {
   const payload = collectConfigPayload();
   const btn = document.querySelector("#applyParesBanner button");
-  if (btn) { btn.textContent = "Aplicando…"; btn.disabled = true; }
+  if (btn) { setButtonContent(btn, "loader-2", "Aplicando..."); btn.disabled = true; }
   try {
     await fetch(`${API}/api/config`, {
       method: "POST",
@@ -874,9 +986,9 @@ async function applyPares() {
     });
     selectionDirty = false;
     showApplyBanner(false);
-    if (btn) { btn.textContent = "Aplicar ahora"; btn.disabled = false; }
+    if (btn) { setButtonContent(btn, "check", "Aplicar ahora"); btn.disabled = false; }
   } catch(e) {
-    if (btn) { btn.textContent = "Error — reintentar"; btn.disabled = false; }
+    if (btn) { setButtonContent(btn, "rotate-ccw", "Reintentar"); btn.disabled = false; }
   }
 }
 
@@ -954,9 +1066,11 @@ function renderMarketResults() {
   const q = document.getElementById("marketSearch").value.trim().toUpperCase();
   let markets = allMarkets;
   if (q) {
-    markets = markets.filter(sym => sym.includes(q));
+    markets = markets.filter(sym => sym.includes(q) || assetFromSymbol(sym).includes(q));
   }
   markets = markets.slice(0, 60);
+  const marketCount = document.getElementById("marketCount");
+  if (marketCount) marketCount.textContent = markets.length;
 
   if (!markets.length) {
     wrap.innerHTML = `<div class="market-empty">No encontré pares con ese filtro.</div>`;
@@ -970,12 +1084,13 @@ function renderMarketResults() {
     const tradeLabel = inTrade ? "Operando" : inWatch ? "Mover a operar" : "Operar";
     return `
       <div class="market-row">
-        <div class="market-symbol">${sym}</div>
-        <button class="mini-btn" ${inWatch && !inTrade ? "disabled" : ""} onclick="moveToWatch('${sym}')">${watchLabel}</button>
-        <button class="mini-btn trade" ${inTrade ? "disabled" : ""} onclick="moveToTrade('${sym}')">${tradeLabel}</button>
+        ${renderPairIdentity(sym)}
+        <button class="mini-btn" ${inWatch && !inTrade ? "disabled" : ""} onclick="moveToWatch('${sym}')"><i data-lucide="eye" class="icon-sm"></i> ${watchLabel}</button>
+        <button class="mini-btn trade" ${inTrade ? "disabled" : ""} onclick="moveToTrade('${sym}')"><i data-lucide="plus" class="icon-sm"></i> ${tradeLabel}</button>
       </div>
     `;
   }).join("");
+  refreshIcons();
 }
 
 function renderConnection(data) {
