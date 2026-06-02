@@ -1,0 +1,4733 @@
+{
+  "patterns": {
+    "Shooting Star": {
+      "total": 7,
+      "correct": 2,
+      "bullish": 0,
+      "bearish": 7,
+      "neutral": 0
+    },
+    "Pin Bar Bajista": {
+      "total": 41,
+      "correct": 12,
+      "bullish": 0,
+      "bearish": 41,
+      "neutral": 0
+    },
+    "Three White Soldiers": {
+      "total": 37,
+      "correct": 2,
+      "bullish": 37,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Doji": {
+      "total": 40,
+      "correct": 19,
+      "bullish": 0,
+      "bearish": 0,
+      "neutral": 40
+    },
+    "Three Black Crows": {
+      "total": 59,
+      "correct": 17,
+      "bullish": 0,
+      "bearish": 59,
+      "neutral": 0
+    },
+    "Bullish Engulfing": {
+      "total": 44,
+      "correct": 12,
+      "bullish": 44,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Bearish Engulfing": {
+      "total": 60,
+      "correct": 25,
+      "bullish": 0,
+      "bearish": 60,
+      "neutral": 0
+    },
+    "Hammer": {
+      "total": 9,
+      "correct": 4,
+      "bullish": 9,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Pin Bar Alcista": {
+      "total": 47,
+      "correct": 12,
+      "bullish": 47,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Bullish Marubozu": {
+      "total": 9,
+      "correct": 2,
+      "bullish": 9,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Tweezer Bottom": {
+      "total": 23,
+      "correct": 3,
+      "bullish": 23,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Piercing Pattern": {
+      "total": 11,
+      "correct": 2,
+      "bullish": 11,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Tweezer Top": {
+      "total": 23,
+      "correct": 8,
+      "bullish": 0,
+      "bearish": 23,
+      "neutral": 0
+    },
+    "Evening Star": {
+      "total": 9,
+      "correct": 4,
+      "bullish": 0,
+      "bearish": 9,
+      "neutral": 0
+    },
+    "Bearish Marubozu": {
+      "total": 11,
+      "correct": 4,
+      "bullish": 0,
+      "bearish": 11,
+      "neutral": 0
+    },
+    "Inverted Hammer": {
+      "total": 6,
+      "correct": 1,
+      "bullish": 6,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Morning Star": {
+      "total": 6,
+      "correct": 2,
+      "bullish": 6,
+      "bearish": 0,
+      "neutral": 0
+    },
+    "Hanging Man": {
+      "total": 4,
+      "correct": 2,
+      "bullish": 0,
+      "bearish": 4,
+      "neutral": 0
+    },
+    "Dark Cloud Cover": {
+      "total": 2,
+      "correct": 2,
+      "bullish": 0,
+      "bearish": 2,
+      "neutral": 0
+    }
+  },
+  "symbols": {
+    "BTC/USDT": {
+      "Shooting Star": {
+        "total": 7,
+        "correct": 2
+      },
+      "Pin Bar Bajista": {
+        "total": 41,
+        "correct": 12
+      },
+      "Three White Soldiers": {
+        "total": 37,
+        "correct": 2
+      },
+      "Doji": {
+        "total": 40,
+        "correct": 19
+      },
+      "Three Black Crows": {
+        "total": 59,
+        "correct": 17
+      },
+      "Bullish Engulfing": {
+        "total": 44,
+        "correct": 12
+      },
+      "Bearish Engulfing": {
+        "total": 60,
+        "correct": 25
+      },
+      "Hammer": {
+        "total": 9,
+        "correct": 4
+      },
+      "Pin Bar Alcista": {
+        "total": 47,
+        "correct": 12
+      },
+      "Bullish Marubozu": {
+        "total": 9,
+        "correct": 2
+      },
+      "Tweezer Bottom": {
+        "total": 23,
+        "correct": 3
+      },
+      "Piercing Pattern": {
+        "total": 11,
+        "correct": 2
+      },
+      "Tweezer Top": {
+        "total": 23,
+        "correct": 8
+      },
+      "Evening Star": {
+        "total": 9,
+        "correct": 4
+      },
+      "Bearish Marubozu": {
+        "total": 11,
+        "correct": 4
+      },
+      "Inverted Hammer": {
+        "total": 6,
+        "correct": 1
+      },
+      "Morning Star": {
+        "total": 6,
+        "correct": 2
+      },
+      "Hanging Man": {
+        "total": 4,
+        "correct": 2
+      },
+      "Dark Cloud Cover": {
+        "total": 2,
+        "correct": 2
+      }
+    }
+  },
+  "pending": [
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 67500.8,
+      "candle_ts": 1780419600.0,
+      "resolve_ts": 1780437600.0
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 66982.8,
+      "candle_ts": 1780426800.0,
+      "resolve_ts": 1780444800.0
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 66982.8,
+      "candle_ts": 1780426800.0,
+      "resolve_ts": 1780444800.0
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 67624.2,
+      "candle_ts": 1780430400.0,
+      "resolve_ts": 1780448400.0
+    }
+  ],
+  "observations": [
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 80951.3,
+      "exit_price": 80885.2,
+      "change_pct": -0.082,
+      "correct": false,
+      "ts": "2026-05-11 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 80951.3,
+      "exit_price": 80885.2,
+      "change_pct": -0.082,
+      "correct": false,
+      "ts": "2026-05-11 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 80951.3,
+      "exit_price": 80885.2,
+      "change_pct": -0.082,
+      "correct": false,
+      "ts": "2026-05-11 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 81149.7,
+      "exit_price": 81344.4,
+      "change_pct": 0.24,
+      "correct": false,
+      "ts": "2026-05-11 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 81069.2,
+      "exit_price": 81556.0,
+      "change_pct": 0.6,
+      "correct": false,
+      "ts": "2026-05-11 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 81054.2,
+      "exit_price": 81886.0,
+      "change_pct": 1.026,
+      "correct": false,
+      "ts": "2026-05-11 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80885.2,
+      "exit_price": 81856.6,
+      "change_pct": 1.201,
+      "correct": false,
+      "ts": "2026-05-11 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 81344.4,
+      "exit_price": 81925.8,
+      "change_pct": 0.715,
+      "correct": true,
+      "ts": "2026-05-11 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 81886.0,
+      "exit_price": 81784.6,
+      "change_pct": -0.124,
+      "correct": false,
+      "ts": "2026-05-11 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 81856.6,
+      "exit_price": 81800.7,
+      "change_pct": -0.068,
+      "correct": false,
+      "ts": "2026-05-11 23:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 81856.6,
+      "exit_price": 81800.7,
+      "change_pct": -0.068,
+      "correct": false,
+      "ts": "2026-05-11 23:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 81925.8,
+      "exit_price": 81699.0,
+      "change_pct": -0.277,
+      "correct": false,
+      "ts": "2026-05-12 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 81804.6,
+      "exit_price": 81514.6,
+      "change_pct": -0.355,
+      "correct": true,
+      "ts": "2026-05-12 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 81784.6,
+      "exit_price": 81159.1,
+      "change_pct": -0.765,
+      "correct": false,
+      "ts": "2026-05-12 02:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 81784.6,
+      "exit_price": 81159.1,
+      "change_pct": -0.765,
+      "correct": false,
+      "ts": "2026-05-12 02:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 81784.6,
+      "exit_price": 81159.1,
+      "change_pct": -0.765,
+      "correct": false,
+      "ts": "2026-05-12 02:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 81699.0,
+      "exit_price": 81011.0,
+      "change_pct": -0.842,
+      "correct": true,
+      "ts": "2026-05-12 04:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 81159.1,
+      "exit_price": 81146.3,
+      "change_pct": -0.016,
+      "correct": false,
+      "ts": "2026-05-12 06:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 81220.8,
+      "exit_price": 80811.0,
+      "change_pct": -0.505,
+      "correct": false,
+      "ts": "2026-05-12 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 81220.8,
+      "exit_price": 80811.0,
+      "change_pct": -0.505,
+      "correct": false,
+      "ts": "2026-05-12 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 81220.8,
+      "exit_price": 80811.0,
+      "change_pct": -0.505,
+      "correct": false,
+      "ts": "2026-05-12 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 81220.8,
+      "exit_price": 80811.0,
+      "change_pct": -0.505,
+      "correct": false,
+      "ts": "2026-05-12 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 81146.3,
+      "exit_price": 80798.4,
+      "change_pct": -0.429,
+      "correct": false,
+      "ts": "2026-05-12 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 81016.2,
+      "exit_price": 80636.9,
+      "change_pct": -0.468,
+      "correct": true,
+      "ts": "2026-05-12 11:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 81016.2,
+      "exit_price": 80636.9,
+      "change_pct": -0.468,
+      "correct": true,
+      "ts": "2026-05-12 11:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 81016.2,
+      "exit_price": 80636.9,
+      "change_pct": -0.468,
+      "correct": true,
+      "ts": "2026-05-12 11:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80811.0,
+      "exit_price": 80882.0,
+      "change_pct": 0.088,
+      "correct": false,
+      "ts": "2026-05-12 13:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 80798.4,
+      "exit_price": 80532.2,
+      "change_pct": -0.329,
+      "correct": false,
+      "ts": "2026-05-12 14:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80798.4,
+      "exit_price": 80532.2,
+      "change_pct": -0.329,
+      "correct": true,
+      "ts": "2026-05-12 14:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 80636.9,
+      "exit_price": 80487.9,
+      "change_pct": -0.185,
+      "correct": false,
+      "ts": "2026-05-12 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80636.9,
+      "exit_price": 80487.9,
+      "change_pct": -0.185,
+      "correct": false,
+      "ts": "2026-05-12 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 80532.2,
+      "exit_price": 80478.1,
+      "change_pct": -0.067,
+      "correct": false,
+      "ts": "2026-05-12 18:08"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 80532.2,
+      "exit_price": 80478.1,
+      "change_pct": -0.067,
+      "correct": false,
+      "ts": "2026-05-12 18:08"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80330.8,
+      "exit_price": 80795.2,
+      "change_pct": 0.578,
+      "correct": false,
+      "ts": "2026-05-12 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80040.0,
+      "exit_price": 80670.9,
+      "change_pct": 0.788,
+      "correct": false,
+      "ts": "2026-05-12 21:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 80478.1,
+      "exit_price": 80558.1,
+      "change_pct": 0.099,
+      "correct": false,
+      "ts": "2026-05-12 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 80478.1,
+      "exit_price": 80558.1,
+      "change_pct": 0.099,
+      "correct": false,
+      "ts": "2026-05-12 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 80795.2,
+      "exit_price": 80461.0,
+      "change_pct": -0.414,
+      "correct": false,
+      "ts": "2026-05-13 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 80795.2,
+      "exit_price": 80461.0,
+      "change_pct": -0.414,
+      "correct": false,
+      "ts": "2026-05-13 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 80670.9,
+      "exit_price": 80911.4,
+      "change_pct": 0.298,
+      "correct": false,
+      "ts": "2026-05-13 01:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 80685.6,
+      "exit_price": 80995.3,
+      "change_pct": 0.384,
+      "correct": true,
+      "ts": "2026-05-13 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 80461.0,
+      "exit_price": 81172.9,
+      "change_pct": 0.885,
+      "correct": false,
+      "ts": "2026-05-13 04:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 80911.4,
+      "exit_price": 81197.2,
+      "change_pct": 0.353,
+      "correct": true,
+      "ts": "2026-05-13 05:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 80995.3,
+      "exit_price": 80976.7,
+      "change_pct": -0.023,
+      "correct": false,
+      "ts": "2026-05-13 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 81172.9,
+      "exit_price": 80990.0,
+      "change_pct": -0.225,
+      "correct": false,
+      "ts": "2026-05-13 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 81197.2,
+      "exit_price": 81134.0,
+      "change_pct": -0.078,
+      "correct": false,
+      "ts": "2026-05-13 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 81032.2,
+      "exit_price": 81239.9,
+      "change_pct": 0.256,
+      "correct": false,
+      "ts": "2026-05-13 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 81032.2,
+      "exit_price": 81239.9,
+      "change_pct": 0.256,
+      "correct": false,
+      "ts": "2026-05-13 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Inverted Hammer",
+      "direction": "BULLISH",
+      "entry_price": 80976.7,
+      "exit_price": 80782.7,
+      "change_pct": -0.24,
+      "correct": false,
+      "ts": "2026-05-13 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80976.7,
+      "exit_price": 80782.7,
+      "change_pct": -0.24,
+      "correct": false,
+      "ts": "2026-05-13 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 80990.0,
+      "exit_price": 80513.0,
+      "change_pct": -0.589,
+      "correct": false,
+      "ts": "2026-05-13 12:07"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 81239.9,
+      "exit_price": 79655.4,
+      "change_pct": -1.95,
+      "correct": false,
+      "ts": "2026-05-13 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 80782.7,
+      "exit_price": 79727.4,
+      "change_pct": -1.306,
+      "correct": true,
+      "ts": "2026-05-13 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 80782.7,
+      "exit_price": 79727.4,
+      "change_pct": -1.306,
+      "correct": true,
+      "ts": "2026-05-13 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 80782.7,
+      "exit_price": 79727.4,
+      "change_pct": -1.306,
+      "correct": true,
+      "ts": "2026-05-13 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 80513.0,
+      "exit_price": 79020.0,
+      "change_pct": -1.854,
+      "correct": true,
+      "ts": "2026-05-13 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80262.5,
+      "exit_price": 79096.8,
+      "change_pct": -1.452,
+      "correct": true,
+      "ts": "2026-05-13 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 79655.4,
+      "exit_price": 79496.2,
+      "change_pct": -0.2,
+      "correct": false,
+      "ts": "2026-05-13 18:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 79727.4,
+      "exit_price": 79598.0,
+      "change_pct": -0.162,
+      "correct": false,
+      "ts": "2026-05-13 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 79020.0,
+      "exit_price": 79621.3,
+      "change_pct": 0.761,
+      "correct": false,
+      "ts": "2026-05-13 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79020.0,
+      "exit_price": 79621.3,
+      "change_pct": 0.761,
+      "correct": false,
+      "ts": "2026-05-13 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 79020.0,
+      "exit_price": 79621.3,
+      "change_pct": 0.761,
+      "correct": false,
+      "ts": "2026-05-13 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 79096.8,
+      "exit_price": 79654.2,
+      "change_pct": 0.705,
+      "correct": true,
+      "ts": "2026-05-13 21:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 79496.2,
+      "exit_price": 79380.1,
+      "change_pct": -0.146,
+      "correct": false,
+      "ts": "2026-05-13 22:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Morning Star",
+      "direction": "BULLISH",
+      "entry_price": 79496.2,
+      "exit_price": 79380.1,
+      "change_pct": -0.146,
+      "correct": false,
+      "ts": "2026-05-13 22:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 79598.0,
+      "exit_price": 79354.6,
+      "change_pct": -0.306,
+      "correct": false,
+      "ts": "2026-05-13 23:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hanging Man",
+      "direction": "BEARISH",
+      "entry_price": 79621.3,
+      "exit_price": 79288.2,
+      "change_pct": -0.418,
+      "correct": true,
+      "ts": "2026-05-14 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 79621.3,
+      "exit_price": 79288.2,
+      "change_pct": -0.418,
+      "correct": false,
+      "ts": "2026-05-14 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 79654.2,
+      "exit_price": 79569.8,
+      "change_pct": -0.106,
+      "correct": false,
+      "ts": "2026-05-14 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 79380.1,
+      "exit_price": 79585.8,
+      "change_pct": 0.259,
+      "correct": false,
+      "ts": "2026-05-14 02:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79380.1,
+      "exit_price": 79585.8,
+      "change_pct": 0.259,
+      "correct": false,
+      "ts": "2026-05-14 02:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 79354.6,
+      "exit_price": 79210.2,
+      "change_pct": -0.182,
+      "correct": false,
+      "ts": "2026-05-14 03:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 79354.6,
+      "exit_price": 79210.2,
+      "change_pct": -0.182,
+      "correct": false,
+      "ts": "2026-05-14 03:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79288.2,
+      "exit_price": 79002.9,
+      "change_pct": -0.36,
+      "correct": true,
+      "ts": "2026-05-14 04:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 79288.2,
+      "exit_price": 79002.9,
+      "change_pct": -0.36,
+      "correct": true,
+      "ts": "2026-05-14 04:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 79585.8,
+      "exit_price": 79801.7,
+      "change_pct": 0.271,
+      "correct": true,
+      "ts": "2026-05-14 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 79585.8,
+      "exit_price": 79801.7,
+      "change_pct": 0.271,
+      "correct": false,
+      "ts": "2026-05-14 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79210.2,
+      "exit_price": 79796.1,
+      "change_pct": 0.74,
+      "correct": false,
+      "ts": "2026-05-14 07:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 79210.2,
+      "exit_price": 79796.1,
+      "change_pct": 0.74,
+      "correct": false,
+      "ts": "2026-05-14 07:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 79210.2,
+      "exit_price": 79796.1,
+      "change_pct": 0.74,
+      "correct": false,
+      "ts": "2026-05-14 07:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 79380.0,
+      "exit_price": 79797.8,
+      "change_pct": 0.526,
+      "correct": true,
+      "ts": "2026-05-14 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 79796.1,
+      "exit_price": 79542.0,
+      "change_pct": -0.318,
+      "correct": true,
+      "ts": "2026-05-14 11:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 79759.2,
+      "exit_price": 79260.0,
+      "change_pct": -0.626,
+      "correct": true,
+      "ts": "2026-05-14 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79615.2,
+      "exit_price": 79638.5,
+      "change_pct": 0.029,
+      "correct": false,
+      "ts": "2026-05-14 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 79260.0,
+      "exit_price": 81455.3,
+      "change_pct": 2.77,
+      "correct": false,
+      "ts": "2026-05-14 16:11"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 79716.7,
+      "exit_price": 81427.6,
+      "change_pct": 2.146,
+      "correct": true,
+      "ts": "2026-05-14 17:35"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 79716.7,
+      "exit_price": 81427.6,
+      "change_pct": 2.146,
+      "correct": true,
+      "ts": "2026-05-14 17:35"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 81427.6,
+      "exit_price": 81325.1,
+      "change_pct": -0.126,
+      "correct": false,
+      "ts": "2026-05-14 21:27"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 81427.6,
+      "exit_price": 81325.1,
+      "change_pct": -0.126,
+      "correct": false,
+      "ts": "2026-05-14 21:27"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 81460.1,
+      "exit_price": 81397.5,
+      "change_pct": -0.077,
+      "correct": false,
+      "ts": "2026-05-14 22:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 81460.1,
+      "exit_price": 81397.5,
+      "change_pct": -0.077,
+      "correct": false,
+      "ts": "2026-05-14 22:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 81544.3,
+      "exit_price": 81025.8,
+      "change_pct": -0.636,
+      "correct": true,
+      "ts": "2026-05-14 23:58"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 81325.1,
+      "exit_price": 81495.2,
+      "change_pct": 0.209,
+      "correct": true,
+      "ts": "2026-05-15 01:12"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 81325.1,
+      "exit_price": 81495.2,
+      "change_pct": 0.209,
+      "correct": false,
+      "ts": "2026-05-15 01:12"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 81325.1,
+      "exit_price": 81495.2,
+      "change_pct": 0.209,
+      "correct": false,
+      "ts": "2026-05-15 01:12"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 81397.5,
+      "exit_price": 80991.8,
+      "change_pct": -0.498,
+      "correct": false,
+      "ts": "2026-05-15 02:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 81397.5,
+      "exit_price": 80991.8,
+      "change_pct": -0.498,
+      "correct": false,
+      "ts": "2026-05-15 02:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 81397.5,
+      "exit_price": 80991.8,
+      "change_pct": -0.498,
+      "correct": false,
+      "ts": "2026-05-15 02:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 81025.8,
+      "exit_price": 80955.9,
+      "change_pct": -0.086,
+      "correct": false,
+      "ts": "2026-05-15 04:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 81495.2,
+      "exit_price": 80751.7,
+      "change_pct": -0.912,
+      "correct": false,
+      "ts": "2026-05-15 05:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 81495.2,
+      "exit_price": 80751.7,
+      "change_pct": -0.912,
+      "correct": false,
+      "ts": "2026-05-15 05:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 80955.9,
+      "exit_price": 80780.4,
+      "change_pct": -0.217,
+      "correct": false,
+      "ts": "2026-05-15 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 80955.9,
+      "exit_price": 80780.4,
+      "change_pct": -0.217,
+      "correct": false,
+      "ts": "2026-05-15 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 80368.5,
+      "exit_price": 80605.7,
+      "change_pct": 0.295,
+      "correct": false,
+      "ts": "2026-05-15 11:08"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 80605.7,
+      "exit_price": 79150.4,
+      "change_pct": -1.805,
+      "correct": false,
+      "ts": "2026-05-15 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 80605.7,
+      "exit_price": 79150.4,
+      "change_pct": -1.805,
+      "correct": false,
+      "ts": "2026-05-15 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 80582.0,
+      "exit_price": 79144.8,
+      "change_pct": -1.784,
+      "correct": true,
+      "ts": "2026-05-15 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 78982.3,
+      "exit_price": 79448.0,
+      "change_pct": 0.59,
+      "correct": false,
+      "ts": "2026-05-15 18:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 79144.8,
+      "exit_price": 79100.0,
+      "change_pct": -0.057,
+      "correct": true,
+      "ts": "2026-05-15 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 79144.8,
+      "exit_price": 79100.0,
+      "change_pct": -0.057,
+      "correct": false,
+      "ts": "2026-05-15 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 79144.8,
+      "exit_price": 79100.0,
+      "change_pct": -0.057,
+      "correct": false,
+      "ts": "2026-05-15 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 79073.9,
+      "exit_price": 79064.0,
+      "change_pct": -0.013,
+      "correct": false,
+      "ts": "2026-05-16 01:26"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 79017.1,
+      "exit_price": 79139.9,
+      "change_pct": 0.155,
+      "correct": false,
+      "ts": "2026-05-16 02:28"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 79077.0,
+      "exit_price": 79115.8,
+      "change_pct": 0.049,
+      "correct": false,
+      "ts": "2026-05-16 03:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 79077.0,
+      "exit_price": 79115.8,
+      "change_pct": 0.049,
+      "correct": false,
+      "ts": "2026-05-16 03:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 79064.0,
+      "exit_price": 78981.1,
+      "change_pct": -0.105,
+      "correct": false,
+      "ts": "2026-05-16 05:48"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 79064.0,
+      "exit_price": 78981.1,
+      "change_pct": -0.105,
+      "correct": false,
+      "ts": "2026-05-16 05:48"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79064.0,
+      "exit_price": 78981.1,
+      "change_pct": -0.105,
+      "correct": false,
+      "ts": "2026-05-16 05:48"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 79115.8,
+      "exit_price": 78338.2,
+      "change_pct": -0.983,
+      "correct": true,
+      "ts": "2026-05-16 08:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Inverted Hammer",
+      "direction": "BULLISH",
+      "entry_price": 79048.4,
+      "exit_price": 78338.2,
+      "change_pct": -0.898,
+      "correct": false,
+      "ts": "2026-05-16 08:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 79048.4,
+      "exit_price": 78338.2,
+      "change_pct": -0.898,
+      "correct": true,
+      "ts": "2026-05-16 08:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 79048.4,
+      "exit_price": 78338.2,
+      "change_pct": -0.898,
+      "correct": false,
+      "ts": "2026-05-16 08:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 78981.1,
+      "exit_price": 78050.0,
+      "change_pct": -1.179,
+      "correct": true,
+      "ts": "2026-05-16 09:25"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 78338.2,
+      "exit_price": 77924.2,
+      "change_pct": -0.528,
+      "correct": true,
+      "ts": "2026-05-16 12:28"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77924.2,
+      "exit_price": 78199.3,
+      "change_pct": 0.353,
+      "correct": true,
+      "ts": "2026-05-16 16:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 77924.7,
+      "exit_price": 78166.0,
+      "change_pct": 0.31,
+      "correct": true,
+      "ts": "2026-05-16 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77924.7,
+      "exit_price": 78166.0,
+      "change_pct": 0.31,
+      "correct": true,
+      "ts": "2026-05-16 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 78093.7,
+      "exit_price": 78260.0,
+      "change_pct": 0.213,
+      "correct": false,
+      "ts": "2026-05-16 20:18"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 78166.0,
+      "exit_price": 78165.8,
+      "change_pct": -0.0,
+      "correct": false,
+      "ts": "2026-05-16 22:11"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 78260.0,
+      "exit_price": 78300.4,
+      "change_pct": 0.052,
+      "correct": false,
+      "ts": "2026-05-17 11:17"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 78252.4,
+      "exit_price": 78300.4,
+      "change_pct": 0.061,
+      "correct": false,
+      "ts": "2026-05-17 11:17"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 78252.4,
+      "exit_price": 78300.4,
+      "change_pct": 0.061,
+      "correct": false,
+      "ts": "2026-05-17 11:17"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 78165.8,
+      "exit_price": 78300.4,
+      "change_pct": 0.172,
+      "correct": false,
+      "ts": "2026-05-17 11:17"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 78142.9,
+      "exit_price": 78300.4,
+      "change_pct": 0.202,
+      "correct": false,
+      "ts": "2026-05-17 11:17"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 78142.9,
+      "exit_price": 78300.4,
+      "change_pct": 0.202,
+      "correct": false,
+      "ts": "2026-05-17 11:17"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hanging Man",
+      "direction": "BEARISH",
+      "entry_price": 78376.3,
+      "exit_price": 78030.1,
+      "change_pct": -0.442,
+      "correct": true,
+      "ts": "2026-05-17 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 78310.1,
+      "exit_price": 78000.4,
+      "change_pct": -0.395,
+      "correct": true,
+      "ts": "2026-05-17 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 78143.5,
+      "exit_price": 78033.0,
+      "change_pct": -0.141,
+      "correct": false,
+      "ts": "2026-05-17 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77995.0,
+      "exit_price": 78229.0,
+      "change_pct": 0.3,
+      "correct": false,
+      "ts": "2026-05-17 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 78030.1,
+      "exit_price": 78388.5,
+      "change_pct": 0.459,
+      "correct": false,
+      "ts": "2026-05-17 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 78030.1,
+      "exit_price": 78388.5,
+      "change_pct": 0.459,
+      "correct": true,
+      "ts": "2026-05-17 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 78030.1,
+      "exit_price": 78388.5,
+      "change_pct": 0.459,
+      "correct": false,
+      "ts": "2026-05-17 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 78000.4,
+      "exit_price": 78233.3,
+      "change_pct": 0.299,
+      "correct": true,
+      "ts": "2026-05-17 21:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 78000.4,
+      "exit_price": 78233.3,
+      "change_pct": 0.299,
+      "correct": false,
+      "ts": "2026-05-17 21:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 78000.4,
+      "exit_price": 78233.3,
+      "change_pct": 0.299,
+      "correct": false,
+      "ts": "2026-05-17 21:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 78033.0,
+      "exit_price": 78367.7,
+      "change_pct": 0.429,
+      "correct": true,
+      "ts": "2026-05-17 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 78033.0,
+      "exit_price": 78367.7,
+      "change_pct": 0.429,
+      "correct": true,
+      "ts": "2026-05-17 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 78388.5,
+      "exit_price": 77381.2,
+      "change_pct": -1.285,
+      "correct": false,
+      "ts": "2026-05-18 00:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77906.9,
+      "exit_price": 76871.0,
+      "change_pct": -1.33,
+      "correct": true,
+      "ts": "2026-05-18 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77160.0,
+      "exit_price": 77013.0,
+      "change_pct": -0.191,
+      "correct": false,
+      "ts": "2026-05-18 05:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77067.9,
+      "exit_price": 76910.0,
+      "change_pct": -0.205,
+      "correct": false,
+      "ts": "2026-05-18 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77067.9,
+      "exit_price": 76910.0,
+      "change_pct": -0.205,
+      "correct": false,
+      "ts": "2026-05-18 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 76871.0,
+      "exit_price": 76911.3,
+      "change_pct": 0.052,
+      "correct": false,
+      "ts": "2026-05-18 07:13"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76910.0,
+      "exit_price": 76909.5,
+      "change_pct": -0.001,
+      "correct": false,
+      "ts": "2026-05-18 10:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 76910.0,
+      "exit_price": 76909.5,
+      "change_pct": -0.001,
+      "correct": false,
+      "ts": "2026-05-18 10:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76911.3,
+      "exit_price": 76729.4,
+      "change_pct": -0.237,
+      "correct": true,
+      "ts": "2026-05-18 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76911.3,
+      "exit_price": 76729.4,
+      "change_pct": -0.237,
+      "correct": false,
+      "ts": "2026-05-18 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Morning Star",
+      "direction": "BULLISH",
+      "entry_price": 77060.8,
+      "exit_price": 77293.0,
+      "change_pct": 0.301,
+      "correct": true,
+      "ts": "2026-05-18 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 76729.4,
+      "exit_price": 76344.4,
+      "change_pct": -0.502,
+      "correct": true,
+      "ts": "2026-05-18 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76895.3,
+      "exit_price": 76662.1,
+      "change_pct": -0.303,
+      "correct": true,
+      "ts": "2026-05-18 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76523.3,
+      "exit_price": 77105.5,
+      "change_pct": 0.761,
+      "correct": false,
+      "ts": "2026-05-18 20:30"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76523.3,
+      "exit_price": 77105.5,
+      "change_pct": 0.761,
+      "correct": true,
+      "ts": "2026-05-18 20:30"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76393.7,
+      "exit_price": 76792.0,
+      "change_pct": 0.521,
+      "correct": false,
+      "ts": "2026-05-18 21:02"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76393.7,
+      "exit_price": 76792.0,
+      "change_pct": 0.521,
+      "correct": false,
+      "ts": "2026-05-18 21:02"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 76662.1,
+      "exit_price": 77060.2,
+      "change_pct": 0.519,
+      "correct": true,
+      "ts": "2026-05-18 22:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 77105.5,
+      "exit_price": 77173.0,
+      "change_pct": 0.088,
+      "correct": false,
+      "ts": "2026-05-19 00:35"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77105.5,
+      "exit_price": 77173.0,
+      "change_pct": 0.088,
+      "correct": false,
+      "ts": "2026-05-19 00:35"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76792.0,
+      "exit_price": 77042.1,
+      "change_pct": 0.326,
+      "correct": false,
+      "ts": "2026-05-19 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77060.2,
+      "exit_price": 76622.8,
+      "change_pct": -0.568,
+      "correct": false,
+      "ts": "2026-05-19 02:11"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77024.2,
+      "exit_price": 76577.4,
+      "change_pct": -0.58,
+      "correct": false,
+      "ts": "2026-05-19 03:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77024.2,
+      "exit_price": 76577.4,
+      "change_pct": -0.58,
+      "correct": false,
+      "ts": "2026-05-19 03:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Inverted Hammer",
+      "direction": "BULLISH",
+      "entry_price": 77042.1,
+      "exit_price": 76878.0,
+      "change_pct": -0.213,
+      "correct": false,
+      "ts": "2026-05-19 05:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77042.1,
+      "exit_price": 76878.0,
+      "change_pct": -0.213,
+      "correct": false,
+      "ts": "2026-05-19 05:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 77042.1,
+      "exit_price": 76878.0,
+      "change_pct": -0.213,
+      "correct": false,
+      "ts": "2026-05-19 05:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 76622.8,
+      "exit_price": 76929.6,
+      "change_pct": 0.4,
+      "correct": false,
+      "ts": "2026-05-19 06:07"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76622.8,
+      "exit_price": 76929.6,
+      "change_pct": 0.4,
+      "correct": false,
+      "ts": "2026-05-19 06:07"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76577.4,
+      "exit_price": 76950.0,
+      "change_pct": 0.487,
+      "correct": false,
+      "ts": "2026-05-19 07:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 76771.2,
+      "exit_price": 77043.1,
+      "change_pct": 0.354,
+      "correct": true,
+      "ts": "2026-05-19 08:13"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76929.6,
+      "exit_price": 76775.6,
+      "change_pct": -0.2,
+      "correct": true,
+      "ts": "2026-05-19 10:10"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76929.6,
+      "exit_price": 76775.6,
+      "change_pct": -0.2,
+      "correct": false,
+      "ts": "2026-05-19 10:10"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 76950.0,
+      "exit_price": 77014.3,
+      "change_pct": 0.084,
+      "correct": false,
+      "ts": "2026-05-19 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 77014.3,
+      "exit_price": 76349.9,
+      "change_pct": -0.863,
+      "correct": false,
+      "ts": "2026-05-19 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 77014.3,
+      "exit_price": 76349.9,
+      "change_pct": -0.863,
+      "correct": false,
+      "ts": "2026-05-19 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76671.5,
+      "exit_price": 76496.0,
+      "change_pct": -0.229,
+      "correct": false,
+      "ts": "2026-05-19 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 76711.2,
+      "exit_price": 76846.9,
+      "change_pct": 0.177,
+      "correct": false,
+      "ts": "2026-05-19 17:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76802.0,
+      "exit_price": 76786.5,
+      "change_pct": -0.02,
+      "correct": false,
+      "ts": "2026-05-19 18:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 76349.9,
+      "exit_price": 76777.9,
+      "change_pct": 0.561,
+      "correct": false,
+      "ts": "2026-05-19 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76805.7,
+      "exit_price": 77523.1,
+      "change_pct": 0.934,
+      "correct": false,
+      "ts": "2026-05-20 10:49"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76805.7,
+      "exit_price": 77523.1,
+      "change_pct": 0.934,
+      "correct": false,
+      "ts": "2026-05-20 10:49"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 76791.1,
+      "exit_price": 77523.1,
+      "change_pct": 0.953,
+      "correct": false,
+      "ts": "2026-05-20 10:49"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77523.1,
+      "exit_price": 77205.4,
+      "change_pct": -0.41,
+      "correct": false,
+      "ts": "2026-05-20 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 77475.1,
+      "exit_price": 77347.2,
+      "change_pct": -0.165,
+      "correct": false,
+      "ts": "2026-05-20 15:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77475.1,
+      "exit_price": 77347.2,
+      "change_pct": -0.165,
+      "correct": false,
+      "ts": "2026-05-20 15:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77475.1,
+      "exit_price": 77347.2,
+      "change_pct": -0.165,
+      "correct": false,
+      "ts": "2026-05-20 15:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77329.7,
+      "exit_price": 77450.0,
+      "change_pct": 0.156,
+      "correct": false,
+      "ts": "2026-05-20 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77574.5,
+      "exit_price": 77280.1,
+      "change_pct": -0.38,
+      "correct": false,
+      "ts": "2026-05-20 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77205.4,
+      "exit_price": 77505.7,
+      "change_pct": 0.389,
+      "correct": false,
+      "ts": "2026-05-20 18:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 77347.2,
+      "exit_price": 77375.6,
+      "change_pct": 0.037,
+      "correct": false,
+      "ts": "2026-05-20 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77450.0,
+      "exit_price": 77630.6,
+      "change_pct": 0.233,
+      "correct": true,
+      "ts": "2026-05-20 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77450.0,
+      "exit_price": 77630.6,
+      "change_pct": 0.233,
+      "correct": false,
+      "ts": "2026-05-20 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77280.1,
+      "exit_price": 77663.9,
+      "change_pct": 0.497,
+      "correct": false,
+      "ts": "2026-05-20 21:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77505.7,
+      "exit_price": 77390.6,
+      "change_pct": -0.149,
+      "correct": false,
+      "ts": "2026-05-20 23:13"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77630.6,
+      "exit_price": 77555.4,
+      "change_pct": -0.097,
+      "correct": false,
+      "ts": "2026-05-21 00:08"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77663.9,
+      "exit_price": 77958.3,
+      "change_pct": 0.379,
+      "correct": true,
+      "ts": "2026-05-21 01:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77390.6,
+      "exit_price": 77920.8,
+      "change_pct": 0.685,
+      "correct": false,
+      "ts": "2026-05-21 03:12"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77390.6,
+      "exit_price": 77920.8,
+      "change_pct": 0.685,
+      "correct": true,
+      "ts": "2026-05-21 03:12"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hanging Man",
+      "direction": "BEARISH",
+      "entry_price": 77555.4,
+      "exit_price": 77860.8,
+      "change_pct": 0.394,
+      "correct": false,
+      "ts": "2026-05-21 05:15"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77555.4,
+      "exit_price": 77860.8,
+      "change_pct": 0.394,
+      "correct": true,
+      "ts": "2026-05-21 05:15"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77958.3,
+      "exit_price": 77860.8,
+      "change_pct": -0.125,
+      "correct": false,
+      "ts": "2026-05-21 05:15"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 77920.8,
+      "exit_price": 77582.1,
+      "change_pct": -0.435,
+      "correct": false,
+      "ts": "2026-05-21 07:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77582.1,
+      "exit_price": 77246.1,
+      "change_pct": -0.433,
+      "correct": true,
+      "ts": "2026-05-21 11:39"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 77904.6,
+      "exit_price": 77071.5,
+      "change_pct": -1.069,
+      "correct": true,
+      "ts": "2026-05-21 13:55"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77904.6,
+      "exit_price": 77071.5,
+      "change_pct": -1.069,
+      "correct": true,
+      "ts": "2026-05-21 13:55"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 77613.1,
+      "exit_price": 77083.5,
+      "change_pct": -0.682,
+      "correct": true,
+      "ts": "2026-05-21 14:10"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77071.5,
+      "exit_price": 77185.2,
+      "change_pct": 0.148,
+      "correct": false,
+      "ts": "2026-05-21 17:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77083.5,
+      "exit_price": 77868.2,
+      "change_pct": 1.018,
+      "correct": false,
+      "ts": "2026-05-21 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 77083.5,
+      "exit_price": 77868.2,
+      "change_pct": 1.018,
+      "correct": false,
+      "ts": "2026-05-21 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77285.2,
+      "exit_price": 77683.6,
+      "change_pct": 0.515,
+      "correct": true,
+      "ts": "2026-05-21 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77185.2,
+      "exit_price": 77600.4,
+      "change_pct": 0.538,
+      "correct": true,
+      "ts": "2026-05-21 22:34"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 77683.6,
+      "exit_price": 77602.4,
+      "change_pct": -0.105,
+      "correct": false,
+      "ts": "2026-05-22 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77600.4,
+      "exit_price": 77596.7,
+      "change_pct": -0.005,
+      "correct": false,
+      "ts": "2026-05-22 02:51"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 77600.4,
+      "exit_price": 77596.7,
+      "change_pct": -0.005,
+      "correct": false,
+      "ts": "2026-05-22 02:51"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77602.4,
+      "exit_price": 77833.0,
+      "change_pct": 0.297,
+      "correct": true,
+      "ts": "2026-05-22 04:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77602.4,
+      "exit_price": 77833.0,
+      "change_pct": 0.297,
+      "correct": false,
+      "ts": "2026-05-22 04:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77602.4,
+      "exit_price": 77833.0,
+      "change_pct": 0.297,
+      "correct": false,
+      "ts": "2026-05-22 04:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 77318.9,
+      "exit_price": 77493.0,
+      "change_pct": 0.225,
+      "correct": false,
+      "ts": "2026-05-22 05:57"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77318.9,
+      "exit_price": 77493.0,
+      "change_pct": 0.225,
+      "correct": false,
+      "ts": "2026-05-22 05:57"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77833.0,
+      "exit_price": 77191.7,
+      "change_pct": -0.824,
+      "correct": false,
+      "ts": "2026-05-22 09:32"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77191.7,
+      "exit_price": 77500.0,
+      "change_pct": 0.399,
+      "correct": false,
+      "ts": "2026-05-22 13:13"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 77288.2,
+      "exit_price": 77195.1,
+      "change_pct": -0.12,
+      "correct": false,
+      "ts": "2026-05-22 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77485.9,
+      "exit_price": 76824.1,
+      "change_pct": -0.854,
+      "correct": false,
+      "ts": "2026-05-22 16:13"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77500.0,
+      "exit_price": 76943.4,
+      "change_pct": -0.718,
+      "correct": false,
+      "ts": "2026-05-22 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77195.1,
+      "exit_price": 76730.2,
+      "change_pct": -0.602,
+      "correct": true,
+      "ts": "2026-05-22 18:07"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 76710.1,
+      "exit_price": 76460.1,
+      "change_pct": -0.326,
+      "correct": true,
+      "ts": "2026-05-22 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76824.1,
+      "exit_price": 75816.1,
+      "change_pct": -1.312,
+      "correct": false,
+      "ts": "2026-05-22 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76824.1,
+      "exit_price": 75816.1,
+      "change_pct": -1.312,
+      "correct": true,
+      "ts": "2026-05-22 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76730.2,
+      "exit_price": 75940.1,
+      "change_pct": -1.03,
+      "correct": true,
+      "ts": "2026-05-22 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 75816.1,
+      "exit_price": 75342.3,
+      "change_pct": -0.625,
+      "correct": true,
+      "ts": "2026-05-23 00:35"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 75940.1,
+      "exit_price": 74768.8,
+      "change_pct": -1.542,
+      "correct": false,
+      "ts": "2026-05-23 11:52"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 75940.1,
+      "exit_price": 74768.8,
+      "change_pct": -1.542,
+      "correct": true,
+      "ts": "2026-05-23 11:52"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 75760.7,
+      "exit_price": 74768.8,
+      "change_pct": -1.309,
+      "correct": true,
+      "ts": "2026-05-23 11:52"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 75432.1,
+      "exit_price": 74768.8,
+      "change_pct": -0.879,
+      "correct": true,
+      "ts": "2026-05-23 11:52"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hanging Man",
+      "direction": "BEARISH",
+      "entry_price": 74940.0,
+      "exit_price": 75456.6,
+      "change_pct": 0.689,
+      "correct": false,
+      "ts": "2026-05-23 17:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 75166.7,
+      "exit_price": 75464.1,
+      "change_pct": 0.396,
+      "correct": true,
+      "ts": "2026-05-23 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 75166.7,
+      "exit_price": 75464.1,
+      "change_pct": 0.396,
+      "correct": true,
+      "ts": "2026-05-23 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 75570.6,
+      "exit_price": 75940.8,
+      "change_pct": 0.49,
+      "correct": false,
+      "ts": "2026-05-23 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 75570.6,
+      "exit_price": 75940.8,
+      "change_pct": 0.49,
+      "correct": false,
+      "ts": "2026-05-23 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 75570.6,
+      "exit_price": 75940.8,
+      "change_pct": 0.49,
+      "correct": false,
+      "ts": "2026-05-23 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 75940.8,
+      "exit_price": 76750.0,
+      "change_pct": 1.066,
+      "correct": true,
+      "ts": "2026-05-24 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 77373.5,
+      "exit_price": 76812.6,
+      "change_pct": -0.725,
+      "correct": false,
+      "ts": "2026-05-24 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77373.5,
+      "exit_price": 76812.6,
+      "change_pct": -0.725,
+      "correct": false,
+      "ts": "2026-05-24 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 76867.4,
+      "exit_price": 76806.1,
+      "change_pct": -0.08,
+      "correct": false,
+      "ts": "2026-05-24 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76945.6,
+      "exit_price": 76968.0,
+      "change_pct": 0.029,
+      "correct": false,
+      "ts": "2026-05-24 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Inverted Hammer",
+      "direction": "BULLISH",
+      "entry_price": 76788.1,
+      "exit_price": 76789.0,
+      "change_pct": 0.001,
+      "correct": false,
+      "ts": "2026-05-24 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 76735.1,
+      "exit_price": 76784.3,
+      "change_pct": 0.064,
+      "correct": false,
+      "ts": "2026-05-24 09:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76806.1,
+      "exit_price": 76940.0,
+      "change_pct": 0.174,
+      "correct": false,
+      "ts": "2026-05-24 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 76968.0,
+      "exit_price": 77297.2,
+      "change_pct": 0.428,
+      "correct": true,
+      "ts": "2026-05-24 11:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Morning Star",
+      "direction": "BULLISH",
+      "entry_price": 76940.0,
+      "exit_price": 76757.2,
+      "change_pct": -0.238,
+      "correct": false,
+      "ts": "2026-05-24 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77297.2,
+      "exit_price": 76407.2,
+      "change_pct": -1.151,
+      "correct": false,
+      "ts": "2026-05-24 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77294.4,
+      "exit_price": 76358.2,
+      "change_pct": -1.211,
+      "correct": false,
+      "ts": "2026-05-24 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77074.3,
+      "exit_price": 76648.0,
+      "change_pct": -0.553,
+      "correct": true,
+      "ts": "2026-05-24 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 76407.2,
+      "exit_price": 76632.5,
+      "change_pct": 0.295,
+      "correct": false,
+      "ts": "2026-05-24 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 76358.2,
+      "exit_price": 76720.1,
+      "change_pct": 0.474,
+      "correct": false,
+      "ts": "2026-05-24 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76668.5,
+      "exit_price": 76586.6,
+      "change_pct": -0.107,
+      "correct": true,
+      "ts": "2026-05-24 22:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76632.5,
+      "exit_price": 76817.1,
+      "change_pct": 0.241,
+      "correct": false,
+      "ts": "2026-05-24 23:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 76817.1,
+      "exit_price": 77115.3,
+      "change_pct": 0.388,
+      "correct": true,
+      "ts": "2026-05-25 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 76817.1,
+      "exit_price": 77115.3,
+      "change_pct": 0.388,
+      "correct": true,
+      "ts": "2026-05-25 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 76817.1,
+      "exit_price": 77115.3,
+      "change_pct": 0.388,
+      "correct": true,
+      "ts": "2026-05-25 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77150.7,
+      "exit_price": 77319.2,
+      "change_pct": 0.218,
+      "correct": false,
+      "ts": "2026-05-25 05:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Inverted Hammer",
+      "direction": "BULLISH",
+      "entry_price": 77115.3,
+      "exit_price": 77382.4,
+      "change_pct": 0.346,
+      "correct": true,
+      "ts": "2026-05-25 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 77115.3,
+      "exit_price": 77382.4,
+      "change_pct": 0.346,
+      "correct": true,
+      "ts": "2026-05-25 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77319.2,
+      "exit_price": 77426.2,
+      "change_pct": 0.138,
+      "correct": false,
+      "ts": "2026-05-25 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 77319.2,
+      "exit_price": 77426.2,
+      "change_pct": 0.138,
+      "correct": false,
+      "ts": "2026-05-25 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77382.0,
+      "exit_price": 77576.1,
+      "change_pct": 0.251,
+      "correct": true,
+      "ts": "2026-05-25 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77382.0,
+      "exit_price": 77576.1,
+      "change_pct": 0.251,
+      "correct": false,
+      "ts": "2026-05-25 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77382.4,
+      "exit_price": 77400.0,
+      "change_pct": 0.023,
+      "correct": true,
+      "ts": "2026-05-25 11:20"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77382.4,
+      "exit_price": 77400.0,
+      "change_pct": 0.023,
+      "correct": false,
+      "ts": "2026-05-25 11:20"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 77382.4,
+      "exit_price": 77400.0,
+      "change_pct": 0.023,
+      "correct": false,
+      "ts": "2026-05-25 11:20"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77326.9,
+      "exit_price": 77319.5,
+      "change_pct": -0.01,
+      "correct": true,
+      "ts": "2026-05-25 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77326.9,
+      "exit_price": 77319.5,
+      "change_pct": -0.01,
+      "correct": false,
+      "ts": "2026-05-25 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 77426.2,
+      "exit_price": 77315.6,
+      "change_pct": -0.143,
+      "correct": false,
+      "ts": "2026-05-25 13:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77426.2,
+      "exit_price": 77315.6,
+      "change_pct": -0.143,
+      "correct": false,
+      "ts": "2026-05-25 13:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 77315.6,
+      "exit_price": 77759.9,
+      "change_pct": 0.575,
+      "correct": false,
+      "ts": "2026-05-25 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77293.8,
+      "exit_price": 77557.5,
+      "change_pct": 0.341,
+      "correct": false,
+      "ts": "2026-05-25 18:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77293.8,
+      "exit_price": 77557.5,
+      "change_pct": 0.341,
+      "correct": false,
+      "ts": "2026-05-25 18:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77687.1,
+      "exit_price": 77436.8,
+      "change_pct": -0.322,
+      "correct": false,
+      "ts": "2026-05-25 19:18"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77759.9,
+      "exit_price": 77289.1,
+      "change_pct": -0.605,
+      "correct": false,
+      "ts": "2026-05-25 21:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77557.5,
+      "exit_price": 77299.2,
+      "change_pct": -0.333,
+      "correct": true,
+      "ts": "2026-05-25 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 77557.5,
+      "exit_price": 77299.2,
+      "change_pct": -0.333,
+      "correct": true,
+      "ts": "2026-05-25 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 77436.8,
+      "exit_price": 77252.0,
+      "change_pct": -0.239,
+      "correct": false,
+      "ts": "2026-05-25 23:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77405.9,
+      "exit_price": 77288.1,
+      "change_pct": -0.152,
+      "correct": false,
+      "ts": "2026-05-26 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 77289.1,
+      "exit_price": 76778.6,
+      "change_pct": -0.661,
+      "correct": true,
+      "ts": "2026-05-26 01:13"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 77252.0,
+      "exit_price": 76606.2,
+      "change_pct": -0.836,
+      "correct": true,
+      "ts": "2026-05-26 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Dark Cloud Cover",
+      "direction": "BEARISH",
+      "entry_price": 77252.0,
+      "exit_price": 76606.2,
+      "change_pct": -0.836,
+      "correct": true,
+      "ts": "2026-05-26 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76778.6,
+      "exit_price": 76713.8,
+      "change_pct": -0.084,
+      "correct": false,
+      "ts": "2026-05-26 05:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 76778.6,
+      "exit_price": 76713.8,
+      "change_pct": -0.084,
+      "correct": false,
+      "ts": "2026-05-26 05:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76681.4,
+      "exit_price": 76876.4,
+      "change_pct": 0.254,
+      "correct": false,
+      "ts": "2026-05-26 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 76606.2,
+      "exit_price": 76867.0,
+      "change_pct": 0.34,
+      "correct": false,
+      "ts": "2026-05-26 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76600.8,
+      "exit_price": 76685.0,
+      "change_pct": 0.11,
+      "correct": true,
+      "ts": "2026-05-26 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76600.8,
+      "exit_price": 76685.0,
+      "change_pct": 0.11,
+      "correct": false,
+      "ts": "2026-05-26 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 76600.8,
+      "exit_price": 76685.0,
+      "change_pct": 0.11,
+      "correct": false,
+      "ts": "2026-05-26 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 76713.8,
+      "exit_price": 76647.2,
+      "change_pct": -0.087,
+      "correct": false,
+      "ts": "2026-05-26 09:10"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76867.0,
+      "exit_price": 77395.4,
+      "change_pct": 0.687,
+      "correct": false,
+      "ts": "2026-05-26 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76867.0,
+      "exit_price": 77395.4,
+      "change_pct": 0.687,
+      "correct": false,
+      "ts": "2026-05-26 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 76685.0,
+      "exit_price": 77114.1,
+      "change_pct": 0.56,
+      "correct": false,
+      "ts": "2026-05-26 12:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 76647.2,
+      "exit_price": 77110.9,
+      "change_pct": 0.605,
+      "correct": false,
+      "ts": "2026-05-26 13:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 76647.2,
+      "exit_price": 77110.9,
+      "change_pct": 0.605,
+      "correct": false,
+      "ts": "2026-05-26 13:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77395.4,
+      "exit_price": 76906.0,
+      "change_pct": -0.632,
+      "correct": false,
+      "ts": "2026-05-26 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77110.9,
+      "exit_price": 76219.7,
+      "change_pct": -1.156,
+      "correct": false,
+      "ts": "2026-05-26 17:21"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 77272.7,
+      "exit_price": 75856.0,
+      "change_pct": -1.833,
+      "correct": false,
+      "ts": "2026-05-26 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 77272.7,
+      "exit_price": 75856.0,
+      "change_pct": -1.833,
+      "correct": false,
+      "ts": "2026-05-26 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 76906.0,
+      "exit_price": 75817.0,
+      "change_pct": -1.416,
+      "correct": true,
+      "ts": "2026-05-26 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 76219.7,
+      "exit_price": 75961.8,
+      "change_pct": -0.338,
+      "correct": false,
+      "ts": "2026-05-26 21:07"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 75856.0,
+      "exit_price": 75877.2,
+      "change_pct": 0.028,
+      "correct": false,
+      "ts": "2026-05-26 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 75817.0,
+      "exit_price": 75900.0,
+      "change_pct": 0.109,
+      "correct": false,
+      "ts": "2026-05-26 23:53"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 76041.8,
+      "exit_price": 75919.9,
+      "change_pct": -0.16,
+      "correct": false,
+      "ts": "2026-05-27 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 75877.2,
+      "exit_price": 75860.3,
+      "change_pct": -0.022,
+      "correct": false,
+      "ts": "2026-05-27 02:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 75860.3,
+      "exit_price": 75688.0,
+      "change_pct": -0.227,
+      "correct": false,
+      "ts": "2026-05-27 06:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 75831.4,
+      "exit_price": 75802.6,
+      "change_pct": -0.038,
+      "correct": true,
+      "ts": "2026-05-27 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 75831.4,
+      "exit_price": 75802.6,
+      "change_pct": -0.038,
+      "correct": false,
+      "ts": "2026-05-27 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 75668.8,
+      "exit_price": 75892.8,
+      "change_pct": 0.296,
+      "correct": false,
+      "ts": "2026-05-27 08:11"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 75573.1,
+      "exit_price": 75846.4,
+      "change_pct": 0.362,
+      "correct": true,
+      "ts": "2026-05-27 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 75892.8,
+      "exit_price": 75838.7,
+      "change_pct": -0.071,
+      "correct": false,
+      "ts": "2026-05-27 12:35"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 75858.1,
+      "exit_price": 74974.8,
+      "change_pct": -1.164,
+      "correct": false,
+      "ts": "2026-05-27 14:12"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 75248.5,
+      "exit_price": 74944.5,
+      "change_pct": -0.404,
+      "correct": true,
+      "ts": "2026-05-27 17:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 75248.5,
+      "exit_price": 74944.5,
+      "change_pct": -0.404,
+      "correct": true,
+      "ts": "2026-05-27 17:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 74974.8,
+      "exit_price": 74980.1,
+      "change_pct": 0.007,
+      "correct": false,
+      "ts": "2026-05-27 18:59"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 75255.1,
+      "exit_price": 74970.6,
+      "change_pct": -0.378,
+      "correct": false,
+      "ts": "2026-05-27 19:46"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 75255.1,
+      "exit_price": 74970.6,
+      "change_pct": -0.378,
+      "correct": true,
+      "ts": "2026-05-27 19:46"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 75250.3,
+      "exit_price": 75231.1,
+      "change_pct": -0.026,
+      "correct": false,
+      "ts": "2026-05-27 20:46"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 74944.5,
+      "exit_price": 74451.5,
+      "change_pct": -0.658,
+      "correct": false,
+      "ts": "2026-05-27 21:48"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 74944.5,
+      "exit_price": 74451.5,
+      "change_pct": -0.658,
+      "correct": false,
+      "ts": "2026-05-27 21:48"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 74980.1,
+      "exit_price": 74489.4,
+      "change_pct": -0.654,
+      "correct": true,
+      "ts": "2026-05-27 22:31"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 74970.6,
+      "exit_price": 74357.9,
+      "change_pct": -0.817,
+      "correct": false,
+      "ts": "2026-05-27 23:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 74451.5,
+      "exit_price": 74275.5,
+      "change_pct": -0.236,
+      "correct": false,
+      "ts": "2026-05-28 01:22"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 74489.4,
+      "exit_price": 74181.0,
+      "change_pct": -0.414,
+      "correct": true,
+      "ts": "2026-05-28 02:36"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 74357.9,
+      "exit_price": 73157.8,
+      "change_pct": -1.614,
+      "correct": true,
+      "ts": "2026-05-28 04:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 74450.1,
+      "exit_price": 73157.8,
+      "change_pct": -1.736,
+      "correct": false,
+      "ts": "2026-05-28 04:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 74450.1,
+      "exit_price": 73157.8,
+      "change_pct": -1.736,
+      "correct": false,
+      "ts": "2026-05-28 04:09"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 74181.0,
+      "exit_price": 73260.7,
+      "change_pct": -1.241,
+      "correct": true,
+      "ts": "2026-05-28 07:22"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 74181.0,
+      "exit_price": 73260.7,
+      "change_pct": -1.241,
+      "correct": true,
+      "ts": "2026-05-28 07:22"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Dark Cloud Cover",
+      "direction": "BEARISH",
+      "entry_price": 74181.0,
+      "exit_price": 73260.7,
+      "change_pct": -1.241,
+      "correct": true,
+      "ts": "2026-05-28 07:22"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73157.8,
+      "exit_price": 73415.7,
+      "change_pct": 0.353,
+      "correct": false,
+      "ts": "2026-05-28 08:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 72981.0,
+      "exit_price": 73540.7,
+      "change_pct": 0.767,
+      "correct": true,
+      "ts": "2026-05-28 10:15"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 72981.0,
+      "exit_price": 73540.7,
+      "change_pct": 0.767,
+      "correct": true,
+      "ts": "2026-05-28 10:15"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 72981.0,
+      "exit_price": 73540.7,
+      "change_pct": 0.767,
+      "correct": false,
+      "ts": "2026-05-28 10:15"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 73540.7,
+      "exit_price": 72836.5,
+      "change_pct": -0.958,
+      "correct": false,
+      "ts": "2026-05-28 14:42"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 73540.7,
+      "exit_price": 72836.5,
+      "change_pct": -0.958,
+      "correct": false,
+      "ts": "2026-05-28 14:42"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 72827.4,
+      "exit_price": 73435.4,
+      "change_pct": 0.835,
+      "correct": false,
+      "ts": "2026-05-28 17:19"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 72827.4,
+      "exit_price": 73435.4,
+      "change_pct": 0.835,
+      "correct": true,
+      "ts": "2026-05-28 17:19"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 72836.5,
+      "exit_price": 73545.1,
+      "change_pct": 0.973,
+      "correct": false,
+      "ts": "2026-05-28 18:46"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 72936.0,
+      "exit_price": 73474.8,
+      "change_pct": 0.739,
+      "correct": false,
+      "ts": "2026-05-28 19:21"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 72936.0,
+      "exit_price": 73474.8,
+      "change_pct": 0.739,
+      "correct": false,
+      "ts": "2026-05-28 19:21"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 73435.4,
+      "exit_price": 73800.1,
+      "change_pct": 0.497,
+      "correct": true,
+      "ts": "2026-05-28 21:49"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 73474.8,
+      "exit_price": 73652.4,
+      "change_pct": 0.242,
+      "correct": false,
+      "ts": "2026-05-28 23:30"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73636.1,
+      "exit_price": 73746.8,
+      "change_pct": 0.15,
+      "correct": false,
+      "ts": "2026-05-29 00:52"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 73800.1,
+      "exit_price": 73487.9,
+      "change_pct": -0.423,
+      "correct": false,
+      "ts": "2026-05-29 01:53"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73652.4,
+      "exit_price": 73555.2,
+      "change_pct": -0.132,
+      "correct": false,
+      "ts": "2026-05-29 05:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 73746.8,
+      "exit_price": 73555.2,
+      "change_pct": -0.26,
+      "correct": false,
+      "ts": "2026-05-29 05:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73536.4,
+      "exit_price": 73684.0,
+      "change_pct": 0.201,
+      "correct": false,
+      "ts": "2026-05-29 06:46"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 73536.4,
+      "exit_price": 73684.0,
+      "change_pct": 0.201,
+      "correct": false,
+      "ts": "2026-05-29 06:46"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Morning Star",
+      "direction": "BULLISH",
+      "entry_price": 73555.2,
+      "exit_price": 73851.8,
+      "change_pct": 0.403,
+      "correct": true,
+      "ts": "2026-05-29 09:25"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Marubozu",
+      "direction": "BULLISH",
+      "entry_price": 73684.0,
+      "exit_price": 73668.8,
+      "change_pct": -0.021,
+      "correct": false,
+      "ts": "2026-05-29 10:39"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 73684.0,
+      "exit_price": 73668.8,
+      "change_pct": -0.021,
+      "correct": false,
+      "ts": "2026-05-29 10:39"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 73736.9,
+      "exit_price": 73626.8,
+      "change_pct": -0.149,
+      "correct": false,
+      "ts": "2026-05-29 11:16"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73704.6,
+      "exit_price": 73440.1,
+      "change_pct": -0.359,
+      "correct": true,
+      "ts": "2026-05-29 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Evening Star",
+      "direction": "BEARISH",
+      "entry_price": 73704.6,
+      "exit_price": 73440.1,
+      "change_pct": -0.359,
+      "correct": true,
+      "ts": "2026-05-29 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73626.8,
+      "exit_price": 73041.5,
+      "change_pct": -0.795,
+      "correct": true,
+      "ts": "2026-05-29 15:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73251.2,
+      "exit_price": 74035.8,
+      "change_pct": 1.071,
+      "correct": false,
+      "ts": "2026-05-29 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73013.1,
+      "exit_price": 73927.0,
+      "change_pct": 1.252,
+      "correct": false,
+      "ts": "2026-05-29 18:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 73041.5,
+      "exit_price": 73371.9,
+      "change_pct": 0.452,
+      "correct": false,
+      "ts": "2026-05-29 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 73041.5,
+      "exit_price": 73371.9,
+      "change_pct": 0.452,
+      "correct": true,
+      "ts": "2026-05-29 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73041.5,
+      "exit_price": 73371.9,
+      "change_pct": 0.452,
+      "correct": false,
+      "ts": "2026-05-29 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 73776.7,
+      "exit_price": 73519.7,
+      "change_pct": -0.348,
+      "correct": false,
+      "ts": "2026-05-29 20:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 73927.0,
+      "exit_price": 73392.8,
+      "change_pct": -0.723,
+      "correct": true,
+      "ts": "2026-05-29 22:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73392.8,
+      "exit_price": 73666.6,
+      "change_pct": 0.373,
+      "correct": false,
+      "ts": "2026-05-30 02:02"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 73450.7,
+      "exit_price": 73592.5,
+      "change_pct": 0.193,
+      "correct": false,
+      "ts": "2026-05-30 06:31"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 73592.5,
+      "exit_price": 73608.3,
+      "change_pct": 0.021,
+      "correct": false,
+      "ts": "2026-05-30 10:34"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73534.0,
+      "exit_price": 73661.5,
+      "change_pct": 0.173,
+      "correct": false,
+      "ts": "2026-05-30 13:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 73608.3,
+      "exit_price": 73900.0,
+      "change_pct": 0.396,
+      "correct": true,
+      "ts": "2026-05-30 14:08"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73581.7,
+      "exit_price": 73879.8,
+      "change_pct": 0.405,
+      "correct": false,
+      "ts": "2026-05-30 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 73925.5,
+      "exit_price": 74005.0,
+      "change_pct": 0.108,
+      "correct": false,
+      "ts": "2026-05-30 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 73879.8,
+      "exit_price": 73979.9,
+      "change_pct": 0.135,
+      "correct": true,
+      "ts": "2026-05-30 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 73879.8,
+      "exit_price": 73979.9,
+      "change_pct": 0.135,
+      "correct": false,
+      "ts": "2026-05-30 20:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 74005.0,
+      "exit_price": 73950.6,
+      "change_pct": -0.074,
+      "correct": false,
+      "ts": "2026-05-30 23:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73979.9,
+      "exit_price": 73904.9,
+      "change_pct": -0.101,
+      "correct": false,
+      "ts": "2026-05-31 00:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 73899.6,
+      "exit_price": 74043.7,
+      "change_pct": 0.195,
+      "correct": true,
+      "ts": "2026-05-31 02:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 73899.6,
+      "exit_price": 74043.7,
+      "change_pct": 0.195,
+      "correct": false,
+      "ts": "2026-05-31 02:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 73899.6,
+      "exit_price": 74043.7,
+      "change_pct": 0.195,
+      "correct": false,
+      "ts": "2026-05-31 02:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73950.6,
+      "exit_price": 74086.6,
+      "change_pct": 0.184,
+      "correct": false,
+      "ts": "2026-05-31 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 73904.9,
+      "exit_price": 74120.8,
+      "change_pct": 0.292,
+      "correct": true,
+      "ts": "2026-05-31 04:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 73904.9,
+      "exit_price": 74120.8,
+      "change_pct": 0.292,
+      "correct": false,
+      "ts": "2026-05-31 04:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 73904.9,
+      "exit_price": 74120.8,
+      "change_pct": 0.292,
+      "correct": false,
+      "ts": "2026-05-31 04:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Morning Star",
+      "direction": "BULLISH",
+      "entry_price": 74069.3,
+      "exit_price": 74148.0,
+      "change_pct": 0.106,
+      "correct": false,
+      "ts": "2026-05-31 05:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 74043.7,
+      "exit_price": 74021.7,
+      "change_pct": -0.03,
+      "correct": true,
+      "ts": "2026-05-31 06:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 74043.7,
+      "exit_price": 74021.7,
+      "change_pct": -0.03,
+      "correct": false,
+      "ts": "2026-05-31 06:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 74043.7,
+      "exit_price": 74021.7,
+      "change_pct": -0.03,
+      "correct": false,
+      "ts": "2026-05-31 06:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 74086.6,
+      "exit_price": 73997.3,
+      "change_pct": -0.121,
+      "correct": false,
+      "ts": "2026-05-31 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 74120.8,
+      "exit_price": 73845.9,
+      "change_pct": -0.371,
+      "correct": false,
+      "ts": "2026-05-31 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 74148.0,
+      "exit_price": 73886.7,
+      "change_pct": -0.352,
+      "correct": false,
+      "ts": "2026-05-31 09:14"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 74021.7,
+      "exit_price": 73811.5,
+      "change_pct": -0.284,
+      "correct": false,
+      "ts": "2026-05-31 10:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 73997.3,
+      "exit_price": 73838.6,
+      "change_pct": -0.214,
+      "correct": true,
+      "ts": "2026-05-31 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 73997.3,
+      "exit_price": 73838.6,
+      "change_pct": -0.214,
+      "correct": false,
+      "ts": "2026-05-31 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73845.9,
+      "exit_price": 73944.9,
+      "change_pct": 0.134,
+      "correct": false,
+      "ts": "2026-05-31 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73811.5,
+      "exit_price": 73809.7,
+      "change_pct": -0.002,
+      "correct": false,
+      "ts": "2026-05-31 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 73838.6,
+      "exit_price": 73589.9,
+      "change_pct": -0.337,
+      "correct": false,
+      "ts": "2026-05-31 15:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 73838.6,
+      "exit_price": 73589.9,
+      "change_pct": -0.337,
+      "correct": false,
+      "ts": "2026-05-31 15:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Morning Star",
+      "direction": "BULLISH",
+      "entry_price": 73944.9,
+      "exit_price": 73609.3,
+      "change_pct": -0.454,
+      "correct": false,
+      "ts": "2026-05-31 16:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 73896.2,
+      "exit_price": 73498.5,
+      "change_pct": -0.538,
+      "correct": true,
+      "ts": "2026-05-31 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73589.9,
+      "exit_price": 73594.3,
+      "change_pct": 0.006,
+      "correct": false,
+      "ts": "2026-05-31 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Inverted Hammer",
+      "direction": "BULLISH",
+      "entry_price": 73609.3,
+      "exit_price": 73629.0,
+      "change_pct": 0.027,
+      "correct": false,
+      "ts": "2026-05-31 20:08"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73498.5,
+      "exit_price": 73685.1,
+      "change_pct": 0.254,
+      "correct": false,
+      "ts": "2026-05-31 21:02"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 73624.9,
+      "exit_price": 73866.9,
+      "change_pct": 0.329,
+      "correct": true,
+      "ts": "2026-05-31 22:44"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 73685.1,
+      "exit_price": 73877.4,
+      "change_pct": 0.261,
+      "correct": false,
+      "ts": "2026-06-01 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three White Soldiers",
+      "direction": "BULLISH",
+      "entry_price": 73992.3,
+      "exit_price": 73900.1,
+      "change_pct": -0.125,
+      "correct": false,
+      "ts": "2026-06-01 03:30"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73660.5,
+      "exit_price": 73422.0,
+      "change_pct": -0.324,
+      "correct": true,
+      "ts": "2026-06-01 04:40"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 73370.6,
+      "exit_price": 73010.7,
+      "change_pct": -0.491,
+      "correct": true,
+      "ts": "2026-06-01 07:28"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Shooting Star",
+      "direction": "BEARISH",
+      "entry_price": 73422.0,
+      "exit_price": 72684.8,
+      "change_pct": -1.004,
+      "correct": true,
+      "ts": "2026-06-01 08:43"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 73422.0,
+      "exit_price": 72684.8,
+      "change_pct": -1.004,
+      "correct": true,
+      "ts": "2026-06-01 08:43"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 73010.7,
+      "exit_price": 72742.5,
+      "change_pct": -0.367,
+      "correct": true,
+      "ts": "2026-06-01 11:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 72684.8,
+      "exit_price": 72655.3,
+      "change_pct": -0.041,
+      "correct": false,
+      "ts": "2026-06-01 12:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 72850.4,
+      "exit_price": 71645.7,
+      "change_pct": -1.654,
+      "correct": false,
+      "ts": "2026-06-01 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 72850.4,
+      "exit_price": 71645.7,
+      "change_pct": -1.654,
+      "correct": true,
+      "ts": "2026-06-01 14:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 72742.5,
+      "exit_price": 71591.3,
+      "change_pct": -1.583,
+      "correct": true,
+      "ts": "2026-06-01 15:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 72194.9,
+      "exit_price": 71424.9,
+      "change_pct": -1.067,
+      "correct": true,
+      "ts": "2026-06-01 17:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 71645.7,
+      "exit_price": 71618.1,
+      "change_pct": -0.039,
+      "correct": false,
+      "ts": "2026-06-01 18:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 71591.3,
+      "exit_price": 71477.6,
+      "change_pct": -0.159,
+      "correct": false,
+      "ts": "2026-06-01 19:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 71131.7,
+      "exit_price": 71537.3,
+      "change_pct": 0.57,
+      "correct": false,
+      "ts": "2026-06-01 20:05"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 71424.9,
+      "exit_price": 71391.0,
+      "change_pct": -0.047,
+      "correct": false,
+      "ts": "2026-06-01 21:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 71537.3,
+      "exit_price": 71337.4,
+      "change_pct": -0.279,
+      "correct": false,
+      "ts": "2026-06-02 00:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 71391.0,
+      "exit_price": 71264.4,
+      "change_pct": -0.177,
+      "correct": false,
+      "ts": "2026-06-02 01:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Piercing Pattern",
+      "direction": "BULLISH",
+      "entry_price": 71334.8,
+      "exit_price": 70754.0,
+      "change_pct": -0.814,
+      "correct": false,
+      "ts": "2026-06-02 03:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 71337.4,
+      "exit_price": 70924.0,
+      "change_pct": -0.579,
+      "correct": false,
+      "ts": "2026-06-02 04:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 70795.4,
+      "exit_price": 70252.5,
+      "change_pct": -0.767,
+      "correct": true,
+      "ts": "2026-06-02 06:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 70754.0,
+      "exit_price": 70105.9,
+      "change_pct": -0.916,
+      "correct": false,
+      "ts": "2026-06-02 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 70754.0,
+      "exit_price": 70105.9,
+      "change_pct": -0.916,
+      "correct": false,
+      "ts": "2026-06-02 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 70754.0,
+      "exit_price": 70105.9,
+      "change_pct": -0.916,
+      "correct": true,
+      "ts": "2026-06-02 07:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 70924.0,
+      "exit_price": 70087.5,
+      "change_pct": -1.179,
+      "correct": false,
+      "ts": "2026-06-02 08:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Top",
+      "direction": "BEARISH",
+      "entry_price": 70622.5,
+      "exit_price": 69881.1,
+      "change_pct": -1.05,
+      "correct": true,
+      "ts": "2026-06-02 09:01"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Marubozu",
+      "direction": "BEARISH",
+      "entry_price": 70252.5,
+      "exit_price": 69367.0,
+      "change_pct": -1.26,
+      "correct": true,
+      "ts": "2026-06-02 10:02"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 70105.9,
+      "exit_price": 69489.9,
+      "change_pct": -0.879,
+      "correct": true,
+      "ts": "2026-06-02 11:26"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 70087.5,
+      "exit_price": 69368.0,
+      "change_pct": -1.027,
+      "correct": false,
+      "ts": "2026-06-02 12:26"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 70087.5,
+      "exit_price": 69368.0,
+      "change_pct": -1.027,
+      "correct": false,
+      "ts": "2026-06-02 12:26"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 69881.1,
+      "exit_price": 69069.0,
+      "change_pct": -1.162,
+      "correct": true,
+      "ts": "2026-06-02 13:28"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Tweezer Bottom",
+      "direction": "BULLISH",
+      "entry_price": 69489.9,
+      "exit_price": 68000.0,
+      "change_pct": -2.144,
+      "correct": false,
+      "ts": "2026-06-02 15:03"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 68000.0,
+      "exit_price": 67287.1,
+      "change_pct": -1.048,
+      "correct": true,
+      "ts": "2026-06-02 19:06"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Three Black Crows",
+      "direction": "BEARISH",
+      "entry_price": 67805.0,
+      "exit_price": 66982.8,
+      "change_pct": -1.213,
+      "correct": true,
+      "ts": "2026-06-02 20:26"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 67488.3,
+      "exit_price": 67624.2,
+      "change_pct": 0.201,
+      "correct": false,
+      "ts": "2026-06-02 21:04"
+    }
+  ]
+}

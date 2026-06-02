@@ -1,0 +1,29 @@
+{
+  "cfg": {
+    "symbols": ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"],
+    "watch_symbols": ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"],
+    "trade_symbols": ["BTC/USDT", "ETH/USDT", "SOL/USDT"],
+    "capital_usd": 25.0,
+    "apalancamiento": 3,
+    "symbol_leverage": {},
+    "balance_inicial": 1000.0,
+    "rr_minimo": 2.0,
+    "score_minimo": 6.5,
+    "vol_pullback_max": 0.85,
+    "atr_sl_mult": 1.5,
+    "atr_tp_mult": 4.0,
+    "atr_trail_mult": 2.0,
+    "breakeven_rr": 1.0,
+    "parcial_rr": 1.5,
+    "intervalo_segundos": 60,
+    "cooldown_ciclos": 3,
+    "cooldown_loss_ciclos": 8,
+    "max_posiciones": 2,
+    "modo_operador": "AUTOMATICO",
+    "execution_mode": "SIMULADO",
+    "margin_type": "ISOLATED",
+    "api_key": "",
+    "api_secret": "",
+    "binance_testnet": true
+  }
+}
