@@ -221,10 +221,10 @@ class TrendBot:
                     self._estados[sym] = self._estado_vacio()
                 elif not self._estados[sym].get("posicion_abierta"):
                     self._estados[sym]["apalancamiento"] = self._symbol_leverage(sym)
-                    self._estados[sym]["capital"] = float(new_cfg.get("capital_usd", 25.0))
+                    self._estados[sym]["capital"] = self._symbol_capital(sym)
                 if sym in self._estados_mom and not self._estados_mom[sym].get("posicion_abierta"):
                     self._estados_mom[sym]["apalancamiento"] = self._symbol_leverage(sym)
-                    self._estados_mom[sym]["capital"] = float(new_cfg.get("capital_usd", 25.0))
+                    self._estados_mom[sym]["capital"] = self._symbol_capital(sym)
             self._estados = {sym: self._estados[sym] for sym in self.cfg.get("symbols", []) if sym in self._estados}
             self._df_cache = {sym: df for sym, df in self._df_cache.items() if sym in self._estados}
         self._log("Configuración actualizada")
@@ -321,6 +321,17 @@ class TrendBot:
             except Exception:
                 pass
         return int(self.cfg.get("apalancamiento", 3))
+
+    def _symbol_capital(self, sym: str) -> float:
+        mapping = self.cfg.get("symbol_capital", {}) or {}
+        if sym in mapping:
+            try:
+                value = float(mapping[sym])
+                if value > 0:
+                    return value
+            except Exception:
+                pass
+        return float(self.cfg.get("capital_usd", 25.0))
 
     def _base_url(self) -> str:
         if self._execution_mode() == "TESTNET" or bool(self.cfg.get("binance_testnet", False)):
@@ -879,6 +890,7 @@ class TrendBot:
                 "watch_symbols": self.cfg.get("watch_symbols", self.cfg.get("symbols", [])),
                 "trade_symbols": self.cfg.get("trade_symbols", self.cfg.get("symbols", [])),
                 "symbol_leverage": self.cfg.get("symbol_leverage", {}),
+                "symbol_capital": self.cfg.get("symbol_capital", {}),
                 "execution_mode": self._execution_mode(),
                 "connection": {
                     "public_api":  self._public_connected,
@@ -1854,7 +1866,7 @@ class TrendBot:
                             # ── Nueva entrada ──────────────────────────────
                             elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols():
                                 can_open, open_reason = self._can_open_new_position(sym, tendencia)
-                                cap  = float(cfg.get("capital_usd", 25.0))
+                                cap  = self._symbol_capital(sym)
                                 apal = self._symbol_leverage(sym)
                                 dir_nueva = None
 
@@ -2091,7 +2103,7 @@ class TrendBot:
                                     else:
                                         pending_logs_m.append((f"[{sym}][MOM] Sin SHORT: R:R {_lrr_ms:.1f}", "info"))
                                 if _dir_mn:
-                                    _cap_mn  = float(cfg.get("capital_usd", 25.0))
+                                    _cap_mn  = self._symbol_capital(sym)
                                     _apal_mn = self._symbol_leverage(sym)
                                     _qty_mn  = 0.0
                                     _sl_oid_mn = None

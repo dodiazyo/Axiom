@@ -1,11 +1,12 @@
 {
   "cfg": {
-    "symbols": ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"],
-    "watch_symbols": ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"],
-    "trade_symbols": ["BTC/USDT", "ETH/USDT", "SOL/USDT"],
+    "symbols": [],
+    "watch_symbols": [],
+    "trade_symbols": [],
     "capital_usd": 25.0,
     "apalancamiento": 3,
     "symbol_leverage": {},
+    "symbol_capital": {},
     "balance_inicial": 1000.0,
     "rr_minimo": 2.0,
     "score_minimo": 6.5,

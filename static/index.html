@@ -170,7 +170,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .summary-pill strong{color:var(--text);}
 .summary-pill.trade strong{color:var(--green);}
 .market-results{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
-.market-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--border);}
+.market-row{display:grid;grid-template-columns:minmax(0,1fr) 96px 72px auto;gap:8px;align-items:end;padding:10px;border-bottom:1px solid var(--border);}
 .market-row:last-child{border-bottom:none;}
 .market-row:hover{background:var(--s2);}
 .market-asset{display:flex;align-items:center;gap:9px;min-width:0;}
@@ -194,10 +194,14 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .token-avatar.dark-text{color:#000;}
 .token-avatar.light-text{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55);}
 .lev-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:7px;}
-.lev-row{display:grid;grid-template-columns:auto minmax(0,1fr) 58px auto;gap:8px;align-items:center;padding:9px;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
+.lev-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:7px;background:var(--bg);}
 .lev-row strong{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .lev-row input{padding:7px 6px;}
-.lev-feedback{grid-column:2 / -1;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .3s;}
+.coin-controls{grid-column:1 / -1;display:grid;grid-template-columns:1fr 78px auto;gap:7px;align-items:end;}
+.coin-controls label{margin:0;font-size:10px;}
+.coin-controls .mini-btn{height:34px;}
+.lev-feedback{grid-column:1 / -1;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .3s;}
+.primary-config{border-color:rgba(0,255,133,.28);}
 .apply-banner{background:var(--green-d);border:1px solid rgba(34,197,94,.3);border-radius:4px;padding:8px 12px;display:none;align-items:center;justify-content:space-between;gap:10px;}
 .apply-banner span{font-size:11px;color:var(--green);}
 
@@ -272,6 +276,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
   .selection-grid{grid-template-columns:1fr;}
   .market-row{grid-template-columns:1fr 1fr;gap:8px;}
   .market-asset{grid-column:1 / -1;}
+  .market-row .mini-btn{grid-column:1 / -1;}
   .lev-row{grid-template-columns:1fr 60px 62px;}.lev-feedback{grid-column:1 / -1;}
   #toast-container{left:10px;right:10px;bottom:12px;}
   .toast{min-width:0;max-width:none;width:100%;}
@@ -337,97 +342,26 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
     <span class="status-txt" id="statusText">—</span>
     <span class="mode-tag" id="modeBadge">SIMULADO</span>
     <nav class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('dashboard')"><i data-lucide="layout-dashboard" class="icon-sm"></i> Panel</button>
-      <button class="tab-btn" onclick="switchTab('config')"><i data-lucide="settings-2" class="icon-sm"></i> Config</button>
+      <button class="tab-btn active" onclick="switchTab('config')"><i data-lucide="bot" class="icon-sm"></i> Bot</button>
     </nav>
   </div>
 </header>
 
 <div class="shell">
 
-<!-- ══ TAB DASHBOARD ═══════════════════════════════════════════════════ -->
-<div id="tabDashboard" class="tab-page active">
-
-  <!-- Recomendaciones -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-title"><i data-lucide="radar" class="icon-sm"></i> Señales</span>
-      <span class="section-meta" id="recSummary">—</span>
-    </div>
-    <div class="rec-grid" id="recGrid"></div>
-  </div>
-
-  <!-- Mercado -->
-  <div class="section">
-    <div class="section-head">
-      <span class="section-title"><i data-lucide="activity" class="icon-sm"></i> Mercado</span>
-      <span class="section-meta" id="lastUpdate">—</span>
-    </div>
-    <div class="tbl-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Par</th>
-            <th>Modo</th>
-            <th>Apal.</th>
-            <th>Precio</th>
-            <th>24h</th>
-            <th>RSI</th>
-            <th>Estructura</th>
-            <th>Vol</th>
-            <th>Tendencia</th>
-            <th>MNV</th>
-            <th>MOM</th>
-            <th>Pos. MNV</th>
-            <th>Pos. MOM</th>
-            <th>PnL abierto</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="symTable"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Historial + Logs -->
-  <div class="two-col">
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title"><i data-lucide="history" class="icon-sm"></i> Historial</span>
-        <span class="section-meta" id="histSummary">—</span>
-      </div>
-      <div id="histBySymbol" class="hist-sym-row"></div>
-      <div class="tbl-wrap">
-        <table id="histTable">
-          <thead>
-            <tr>
-              <th>#</th><th>Par</th><th>Dir</th><th>Est.</th>
-              <th>Entrada</th><th>Salida</th><th>Motivo</th>
-              <th>R:R</th><th>P&amp;L</th><th>%cap</th>
-              <th>Dur.</th><th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody id="histBody">
-            <tr><td colspan="12" style="text-align:center;color:var(--muted);padding:20px">Sin operaciones aún.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title"><i data-lucide="terminal" class="icon-sm"></i> Registro</span>
-        <span class="section-meta">Últimos eventos</span>
-      </div>
-      <div class="logs-wrap" id="logsWrap"></div>
-    </div>
-  </div>
-
-</div><!-- fin tabDashboard -->
-
+<div style="display:none">
+  <span id="recSummary"></span>
+  <div id="recGrid"></div>
+  <span id="lastUpdate"></span>
+  <table><tbody id="symTable"></tbody></table>
+  <span id="histSummary"></span>
+  <div id="histBySymbol"></div>
+  <table><tbody id="histBody"></tbody></table>
+  <div id="logsWrap"></div>
+</div>
 
 <!-- ══ TAB CONFIG ══════════════════════════════════════════════════════ -->
-<div id="tabConfig" class="tab-page">
+<div id="tabConfig" class="tab-page active">
 
   <div class="config-grid">
 
@@ -435,7 +369,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
     <div class="section">
       <div class="section-head">
         <span class="section-title"><i data-lucide="plug" class="icon-sm"></i> Conexión y trading</span>
-        <span class="section-meta">Preparado para OKX</span>
+        <span class="section-meta">Exchange</span>
       </div>
       <div class="form-grid">
         <div class="form-row">
@@ -511,58 +445,42 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
     </div>
 
     <!-- Pares -->
-    <div class="section">
+    <div class="section primary-config">
       <div class="section-head">
         <span class="section-title"><i data-lucide="list-filter" class="icon-sm"></i> Pares</span>
-        <span class="section-meta">Buscar · Observar · Operar</span>
+        <span class="section-meta">Buscar · Monto · Apalancamiento</span>
       </div>
       <div class="market-tools">
         <div class="market-search-card">
           <div>
-            <label>Buscar par</label>
+            <label>Buscar moneda</label>
             <div class="search-field">
               <i data-lucide="search" class="icon-sm"></i>
-              <input type="text" id="marketSearch" placeholder="Busca BTC, ETH, SOL, PEPE..." oninput="renderMarketResults()" onkeyup="renderMarketResults()"/>
+              <input type="text" id="marketSearch" placeholder="BTC, ETH, SOL, PEPE..." oninput="renderMarketResults()" onkeyup="renderMarketResults()"/>
             </div>
           </div>
           <div class="market-summary">
-            <span class="summary-pill trade">Operar <strong id="tradeCount">0</strong></span>
-            <span class="summary-pill">Observar <strong id="watchCount">0</strong></span>
+            <span class="summary-pill trade">Configuradas <strong id="tradeCount">0</strong></span>
             <span class="summary-pill">Resultados <strong id="marketCount">0</strong></span>
           </div>
         </div>
         <div class="market-results" id="marketResults">
           <div class="market-empty">Cargando pares del exchange…</div>
         </div>
-        <div class="selection-grid">
-          <div class="token-group">
-            <div class="group-head">
-              <label>Pares para operar</label>
-              <span class="group-count" id="tradeCountInline">0</span>
-            </div>
-            <div class="tokens" id="tradeTokens"></div>
-          </div>
-          <div class="token-group">
-            <div class="group-head">
-              <label>Solo observar</label>
-              <span class="group-count" id="watchCountInline">0</span>
-            </div>
-            <div class="tokens" id="watchTokens"></div>
-          </div>
-        </div>
         <div class="token-group">
           <div class="group-head">
-            <label>Apalancamiento por moneda</label>
-            <span class="group-count">Operables</span>
+            <label>Monedas configuradas</label>
+            <span class="group-count" id="tradeCountInline">0</span>
           </div>
           <div class="lev-list" id="levList"></div>
-          <div class="hint">Cada par operable puede tener su propio apalancamiento. Si no lo cambias, se usa el valor por defecto.</div>
+          <div class="tokens" id="tradeTokens" style="display:none"></div>
+          <div class="tokens" id="watchTokens" style="display:none"></div>
+          <div class="hint">Cada moneda queda lista con su monto y apalancamiento. El bot usará esos valores cuando encuentre una entrada.</div>
         </div>
         <div id="applyParesBanner" class="apply-banner">
           <span>Hay pares sin aplicar</span>
           <button type="button" class="mini-btn trade" onclick="applyPares()" style="background:var(--green);color:#000;font-weight:800;border-color:var(--green)"><i data-lucide="check" class="icon-sm"></i> Aplicar ahora</button>
         </div>
-        <div class="hint">Los pares en "operar" pueden abrir posiciones. Los de "observar" solo se monitorean.</div>
       </div>
     </div>
 
@@ -620,10 +538,12 @@ let allMarkets = [];
 let watchSymbols = [];
 let tradeSymbols = [];
 let symbolLeverage = {};
+let symbolCapital = {};
 let selectionDirty = false;
 let leverageDirty = false;
 let credentialState = null;
-const LEVERAGE_STORAGE_KEY = "trendbot_symbol_leverage";
+const LEVERAGE_STORAGE_KEY = "axiom_symbol_leverage";
+const CAPITAL_STORAGE_KEY = "axiom_symbol_capital";
 const API_CREDENTIALS_STORAGE_KEY = "trendbot_api_credentials";
 let lastServerUpdateIso = null;
 
@@ -721,6 +641,23 @@ function persistLeverage() {
   } catch {}
 }
 
+function loadSavedCapital() {
+  try {
+    const raw = localStorage.getItem(CAPITAL_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function persistCapital() {
+  try {
+    localStorage.setItem(CAPITAL_STORAGE_KEY, JSON.stringify(symbolCapital));
+  } catch {}
+}
+
 function loadSavedApiCredentials() {
   try {
     const raw = localStorage.getItem(API_CREDENTIALS_STORAGE_KEY);
@@ -749,13 +686,14 @@ function collectConfigPayload() {
   normalizeSelections();
   persistApiCredentials();
   return {
-    symbols: [...new Set([...tradeSymbols, ...watchSymbols])],
-    watch_symbols: [...new Set([...tradeSymbols, ...watchSymbols])],
+    symbols: [...new Set(tradeSymbols)],
+    watch_symbols: [...new Set(tradeSymbols)],
     trade_symbols: tradeSymbols,
     symbol_leverage: symbolLeverage,
     capital_usd: parseFloat(document.getElementById("cfgCapital").value),
     apalancamiento: parseInt(document.getElementById("cfgLev").value, 10),
     balance_inicial: parseFloat(document.getElementById("cfgBalance").value),
+    symbol_capital: symbolCapital,
     rr_minimo: parseFloat(document.getElementById("cfgRR").value),
     score_minimo: 6.5,
     vol_pullback_max: parseFloat(document.getElementById("cfgVol").value),
@@ -831,6 +769,7 @@ async function loadConfig() {
     document.getElementById("cfgApiSecret").placeholder = "Se envía al backend al iniciar";
   }
   symbolLeverage = {...(cfg.symbol_leverage || {}), ...loadSavedLeverage()};
+  symbolCapital = {...(cfg.symbol_capital || {}), ...loadSavedCapital()};
   watchSymbols = [...(cfg.watch_symbols || cfg.symbols || [])];
   tradeSymbols = [...(cfg.trade_symbols || [])];
   normalizeSelections();
@@ -868,39 +807,14 @@ function renderSelectedSymbols() {
   const counts = [
     ["tradeCount", tradeSymbols.length],
     ["tradeCountInline", tradeSymbols.length],
-    ["watchCount", watchSymbols.length],
-    ["watchCountInline", watchSymbols.length],
   ];
   counts.forEach(([id, value]) => {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
   });
 
-  tradeWrap.innerHTML = tradeSymbols.length
-    ? tradeSymbols.map(sym => `
-      <span class="token trade">
-        ${tokenAvatar(sym)}
-        <span class="token-name">${sym}</span>
-        <span class="token-actions">
-          <button class="mode-action" title="Mover a observación" onclick="moveToWatch('${sym}')">Observar</button>
-          <button title="Quitar" onclick="removeTrade('${sym}')">×</button>
-        </span>
-      </span>
-    `).join("")
-    : `<span class="hint">No hay pares operables.</span>`;
-
-  watchWrap.innerHTML = watchSymbols.length
-    ? watchSymbols.map(sym => `
-      <span class="token">
-        ${tokenAvatar(sym)}
-        <span class="token-name">${sym}</span>
-        <span class="token-actions">
-          <button class="mode-action trade" title="Mover a operar" onclick="moveToTrade('${sym}')">Operar</button>
-          <button title="Quitar" onclick="removeWatch('${sym}')">×</button>
-        </span>
-      </span>
-    `).join("")
-    : `<span class="hint">No hay pares solo en observación.</span>`;
+  tradeWrap.innerHTML = "";
+  watchWrap.innerHTML = "";
 
   const expectedSymKey = tradeSymbols.join(",");
   const renderedSymKey = levWrap.getAttribute("data-syms") || "";
@@ -909,7 +823,9 @@ function renderSelectedSymbols() {
     levWrap.innerHTML = tradeSymbols.length
       ? tradeSymbols.map(sym => {
           const safeKey = sym.replace(/[^A-Z0-9]/g, "_");
-          const value = Number(symbolLeverage[sym] || document.getElementById("cfgLev").value || 3);
+          const levValue = Number(symbolLeverage[sym] || document.getElementById("cfgLev").value || 3);
+          const amountValue = Number(symbolCapital[sym] || document.getElementById("cfgCapital").value || 25);
+          const amountId = `amount-fixed-${safeKey}`;
           const inputId = `lev-fixed-${safeKey}`;
           const btnId   = `lev-btn-${safeKey}`;
           const fbId    = `lev-fb-${safeKey}`;
@@ -917,14 +833,25 @@ function renderSelectedSymbols() {
             <div class="lev-row">
               ${tokenAvatar(sym)}
               <strong>${sym}</strong>
-              <input type="number" min="1" max="20" value="${value}" id="${inputId}" style="text-align:center"/>
-              <button type="button" class="mini-btn trade" id="${btnId}" onclick="setSymbolLeverage('${sym}', '${inputId}', '${btnId}', '${fbId}')">Aplicar</button>
-              <span class="lev-feedback" id="${fbId}" style="color:var(--muted2)">actual: ${value}x</span>
+              <div class="coin-controls">
+                <div>
+                  <label>Monto USDT</label>
+                  <input type="number" min="1" step="0.01" value="${amountValue}" id="${amountId}"/>
+                </div>
+                <div>
+                  <label>Lev.</label>
+                  <input type="number" min="1" max="20" value="${levValue}" id="${inputId}" style="text-align:center"/>
+                </div>
+                <button type="button" class="mini-btn trade" id="${btnId}" onclick="setPairConfig('${sym}', '${amountId}', '${inputId}', '${btnId}', '${fbId}')">Guardar</button>
+              </div>
+              <span class="lev-feedback" id="${fbId}" style="color:var(--muted2)">monto: $${amountValue} · ${levValue}x</span>
+              <button type="button" class="mini-btn" onclick="removeTrade('${sym}')"><i data-lucide="trash-2" class="icon-sm"></i> Quitar</button>
             </div>
           `;
         }).join("")
-      : `<span class="hint">Agrega pares a Operar para configurar su apalancamiento.</span>`;
+      : `<span class="hint">Busca una moneda, define monto y apalancamiento, y agrégala al bot.</span>`;
   }
+  refreshIcons();
 }
 
 function addTrade(sym) {
@@ -990,6 +917,61 @@ async function applyPares() {
   } catch(e) {
     if (btn) { setButtonContent(btn, "rotate-ccw", "Reintentar"); btn.disabled = false; }
   }
+}
+
+async function setPairConfig(sym, amountId, levId, btnId = null, fbId = null) {
+  const amountInput = document.getElementById(amountId);
+  const levInput = document.getElementById(levId);
+  if (!amountInput || !levInput) return;
+
+  const amount = Math.max(1, parseFloat(amountInput.value || "0") || 1);
+  const leverage = Math.max(1, Math.min(20, parseInt(levInput.value || "0", 10) || 1));
+  amountInput.value = amount;
+  levInput.value = leverage;
+  symbolCapital[sym] = amount;
+  symbolLeverage[sym] = leverage;
+  persistCapital();
+  persistLeverage();
+  selectionDirty = true;
+  leverageDirty = true;
+
+  if (!tradeSymbols.includes(sym)) tradeSymbols.push(sym);
+  watchSymbols = watchSymbols.filter(item => item !== sym);
+  normalizeSelections();
+
+  if (symData[sym]) {
+    symData[sym].position = symData[sym].position || {};
+    symData[sym].position.apalancamiento = leverage;
+    symData[sym].position.capital = amount;
+  }
+
+  const fbEl  = fbId  ? document.getElementById(fbId)  : null;
+  const btnEl = btnId ? document.getElementById(btnId) : null;
+  if (fbEl) { fbEl.textContent = "Guardando..."; fbEl.style.color = "var(--amber)"; }
+  if (btnEl) { setButtonContent(btnEl, "loader-2", "Guardando"); btnEl.disabled = true; }
+
+  let savedToBackend = false;
+  try {
+    const response = await fetch(`${API}/api/config`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(collectConfigPayload()),
+    });
+    savedToBackend = response.ok;
+  } catch {}
+
+  if (fbEl) {
+    fbEl.textContent = savedToBackend ? `listo: $${amount} · ${leverage}x` : `local: $${amount} · ${leverage}x`;
+    fbEl.style.color = savedToBackend ? "var(--green)" : "var(--amber)";
+  }
+  if (btnEl) {
+    setButtonContent(btnEl, "check", "Guardado");
+    btnEl.disabled = false;
+    setTimeout(() => setButtonContent(btnEl, "save", "Guardar"), 1600);
+  }
+  renderSelectedSymbols();
+  renderMarketResults();
+  showApplyBanner(false);
 }
 
 async function setSymbolLeverage(sym, inputId = null, btnId = null, fbId = null) {
@@ -1079,14 +1061,22 @@ function renderMarketResults() {
 
   wrap.innerHTML = markets.map(sym => {
     const inTrade = tradeSymbols.includes(sym);
-    const inWatch = watchSymbols.includes(sym);
-    const watchLabel = inTrade ? "Mover a observar" : inWatch ? "Observando" : "Observar";
-    const tradeLabel = inTrade ? "Operando" : inWatch ? "Mover a operar" : "Operar";
+    const safeKey = sym.replace(/[^A-Z0-9]/g, "_");
+    const amountId = `amount-search-${safeKey}`;
+    const levId = `lev-search-${safeKey}`;
+    const btnId = `add-search-${safeKey}`;
+    const fbId = `fb-search-${safeKey}`;
+    const amount = Number(symbolCapital[sym] || document.getElementById("cfgCapital").value || 25);
+    const leverage = Number(symbolLeverage[sym] || document.getElementById("cfgLev").value || 3);
     return `
       <div class="market-row">
         ${renderPairIdentity(sym)}
-        <button class="mini-btn" ${inWatch && !inTrade ? "disabled" : ""} onclick="moveToWatch('${sym}')"><i data-lucide="eye" class="icon-sm"></i> ${watchLabel}</button>
-        <button class="mini-btn trade" ${inTrade ? "disabled" : ""} onclick="moveToTrade('${sym}')"><i data-lucide="plus" class="icon-sm"></i> ${tradeLabel}</button>
+        <input type="number" min="1" step="0.01" value="${amount}" id="${amountId}" title="Monto USDT"/>
+        <input type="number" min="1" max="20" value="${leverage}" id="${levId}" title="Apalancamiento" style="text-align:center"/>
+        <button class="mini-btn trade" id="${btnId}" onclick="setPairConfig('${sym}', '${amountId}', '${levId}', '${btnId}', '${fbId}')">
+          <i data-lucide="${inTrade ? "save" : "plus"}" class="icon-sm"></i> ${inTrade ? "Actualizar" : "Agregar"}
+        </button>
+        <span class="lev-feedback" id="${fbId}" style="color:var(--muted2)">${inTrade ? "configurada" : "lista para agregar"}</span>
       </div>
     `;
   }).join("");
@@ -1124,6 +1114,9 @@ function renderStatus(data) {
   }
   if (!selectionDirty && !leverageDirty && data.symbol_leverage && typeof data.symbol_leverage === "object") {
     symbolLeverage = {...data.symbol_leverage};
+  }
+  if (!selectionDirty && data.symbol_capital && typeof data.symbol_capital === "object") {
+    symbolCapital = {...data.symbol_capital};
   }
   normalizeSelections();
   renderSelectedSymbols();
@@ -1233,13 +1226,6 @@ function renderStatus(data) {
   }
 
   renderOpenPositions();
-  renderRecommendations(data.recommendations || []);
-
-  fetchLogs();
-  if ((data.operations || 0) !== (window.__lastOps || 0)) {
-    window.__lastOps = data.operations || 0;
-    fetchHistorial();
-  }
 }
 
 function renderRecommendations(recs) {
@@ -1671,11 +1657,8 @@ connect();
 loadConfig();
 loadStatusSnapshot();
 loadMarkets();
-fetchLogs();
-fetchHistorial();
 refreshIcons();
 setInterval(refreshLastUpdateLabel, 1000);
-setInterval(fetchHistorial, 10000);
 </script>
 </body>
 </html>

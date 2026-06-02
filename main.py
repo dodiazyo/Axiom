@@ -25,12 +25,13 @@ def index():
 
 # ── Config por defecto ────────────────────────────────────────────────────────
 DEFAULT_CFG = {
-    "symbols":          ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"],
-    "watch_symbols":    ["BTC/USDT", "ETH/USDT", "SOL/USDT", "BNB/USDT"],
-    "trade_symbols":    ["BTC/USDT", "ETH/USDT", "SOL/USDT"],
+    "symbols":          [],
+    "watch_symbols":    [],
+    "trade_symbols":    [],
     "capital_usd":      25.0,
     "apalancamiento":   3,
     "symbol_leverage":  {},
+    "symbol_capital":   {},
     "balance_inicial":  1000.0,
     "rr_minimo":        2.0,
     "score_minimo":     6.5,
@@ -84,6 +85,15 @@ def _normalize_symbols(config: dict) -> dict:
         except Exception:
             continue
     config["symbol_leverage"] = symbol_leverage
+    symbol_capital = {}
+    for sym, amount in (config.get("symbol_capital", {}) or {}).items():
+        try:
+            value = float(amount)
+            if value > 0:
+                symbol_capital[str(sym).strip().upper()] = value
+        except Exception:
+            continue
+    config["symbol_capital"] = symbol_capital
     config["execution_mode"] = str(config.get("execution_mode", "SIMULADO")).upper()
     config["margin_type"] = "ISOLATED"
     config["modo_operador"] = str(config.get("modo_operador", "AUTOMATICO")).upper()
@@ -251,12 +261,13 @@ async def websocket_endpoint(ws: WebSocket):
 # ── Modelos ───────────────────────────────────────────────────────────────────
 
 class ConfigIn(BaseModel):
-    symbols:            list[str] = Field(default_factory=lambda: ["BTC/USDT", "ETH/USDT"])
+    symbols:            list[str] = Field(default_factory=list)
     watch_symbols:      list[str] = Field(default_factory=list)
     trade_symbols:      list[str] = Field(default_factory=list)
     capital_usd:        float = Field(25.0,  ge=1.0)
     apalancamiento:     int   = Field(3,     ge=1, le=10)
     symbol_leverage:    dict[str, int] = Field(default_factory=dict)
+    symbol_capital:     dict[str, float] = Field(default_factory=dict)
     balance_inicial:    float = Field(1000.0,ge=10.0)
     rr_minimo:          float = Field(2.0,   ge=0.5)
     score_minimo:       float = Field(6.5,   ge=1.0)
