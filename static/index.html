@@ -3,53 +3,77 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>TrendBot</title>
+<title>Axiom</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 :root{
-  --bg:#08080b; --s1:#0d0d11; --s2:#111116; --border:#1c1c22; --border2:#26262e;
-  --text:#e8e8ed; --muted:#4a4a55; --muted2:#6e6e7a;
-  --green:#22c55e; --green-d:#0c1f13; --red:#ef4444; --red-d:#1f0c0c;
-  --blue:#3b82f6; --blue-d:#0c1324; --amber:#f59e0b; --amber-d:#201508;
+  --bg:#000;
+  --s1:#070707;
+  --s2:#101010;
+  --s3:#181818;
+  --border:#222;
+  --border2:#333;
+  --text:#f5f5f5;
+  --muted:#6f6f6f;
+  --muted2:#a0a0a0;
+  --green:#00f0a8;
+  --green-d:#071f18;
+  --red:#ff5a67;
+  --red-d:#241014;
+  --blue:#6aa7ff;
+  --blue-d:#0d1727;
+  --amber:#f5c542;
+  --amber-d:#241d0b;
+  --shadow:0 18px 60px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:13px;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;min-height:100vh;}
 button,input,select{font:inherit;color:var(--text);}
 a{color:var(--blue);}
+.icon{width:15px;height:15px;stroke-width:2;}
+.icon-sm{width:13px;height:13px;}
 
 /* ── Topbar ────────────────────────────────────────────────────────── */
 .topbar{
   position:sticky;top:0;z-index:30;
-  background:var(--s1);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:0;height:48px;padding:0 20px;
+  background:rgba(0,0,0,.92);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(18px);
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:18px;min-height:64px;padding:10px 20px;
 }
-.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;letter-spacing:-.2px;white-space:nowrap;margin-right:24px;}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .3s;}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;letter-spacing:.02em;white-space:nowrap;}
+.brand-mark{width:30px;height:30px;border:1px solid var(--border2);background:#fff;color:#000;display:grid;place-items:center;font-size:14px;font-weight:900;border-radius:2px;}
+.brand-copy{display:grid;gap:1px;}
+.brand-sub{font-size:10px;color:var(--muted2);font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .3s;box-shadow:0 0 0 4px rgba(255,90,103,.12);}
 .dot.on{background:var(--green);}
-.tb-stats{display:flex;align-items:center;gap:0;flex:1;overflow:hidden;}
-.tb-stat{display:flex;flex-direction:column;padding:0 16px;border-right:1px solid var(--border);}
+.dot.on{box-shadow:0 0 0 4px rgba(0,240,168,.12);}
+.tb-stats{display:flex;align-items:stretch;gap:8px;min-width:0;overflow-x:auto;scrollbar-width:none;}
+.tb-stats::-webkit-scrollbar{display:none;}
+.tb-stat{display:flex;flex-direction:column;justify-content:center;min-width:118px;padding:8px 12px;border:1px solid var(--border);background:var(--s1);border-radius:6px;}
 .tb-stat:first-child{padding-left:0;}
-.tb-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2;}
+.tb-stat:first-child{padding-left:12px;}
+.tb-val{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2;}
 .tb-lbl{font-size:10px;color:var(--muted2);line-height:1.2;margin-top:1px;}
-.tb-sep{flex:1;}
-.topbar-right{display:flex;align-items:center;gap:10px;margin-left:16px;}
-.mode-tag{font-size:10px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:3px;background:var(--s2);border:1px solid var(--border2);color:var(--muted2);}
+.tb-sep{display:none;}
+.topbar-right{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
+.mode-tag{font-size:10px;font-weight:800;letter-spacing:.08em;padding:5px 8px;border-radius:3px;background:#fff;border:1px solid #fff;color:#000;}
 .status-txt{font-size:11px;color:var(--muted);}
 
 /* ── Tabs ──────────────────────────────────────────────────────────── */
-.tab-nav{display:flex;gap:2px;}
-.tab-btn{padding:6px 14px;background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
-.tab-btn.active{background:var(--s2);border-color:var(--border2);color:var(--text);}
-.tab-btn:hover:not(.active){color:var(--text);}
+.tab-nav{display:flex;gap:4px;padding:3px;border:1px solid var(--border);background:var(--s1);border-radius:6px;}
+.tab-btn{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.tab-btn.active{background:var(--s3);border-color:var(--border2);color:var(--text);}
+.tab-btn:hover:not(.active){color:var(--text);background:var(--s2);}
 .tab-page{display:none;}
 .tab-page.active{display:block;}
 
 /* ── Shell ─────────────────────────────────────────────────────────── */
-.shell{max-width:1600px;margin:0 auto;padding:16px 20px 48px;}
+.shell{max-width:1600px;margin:0 auto;padding:18px 20px 48px;}
 
 /* ── Sections ──────────────────────────────────────────────────────── */
-.section{background:var(--s1);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px;}
-.section-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border);}
-.section-title{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);}
+.section{background:var(--s1);border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--s2),var(--s1));}
+.section-title{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text);}
 .section-meta{font-size:11px;color:var(--muted);}
 
 /* ── Two-col layout ────────────────────────────────────────────────── */
@@ -60,15 +84,15 @@ a{color:var(--blue);}
 /* ── Tables ────────────────────────────────────────────────────────── */
 .tbl-wrap{overflow:auto;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
-th{padding:7px 12px;color:var(--muted2);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.04em;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
-td{padding:7px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
+th{padding:9px 12px;color:var(--muted2);font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.04em;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;background:#050505;}
+td{padding:9px 12px;border-bottom:1px solid var(--border);white-space:nowrap;}
 tr:last-child td{border-bottom:none;}
 tbody tr:hover td{background:var(--s2);}
 tbody tr{cursor:pointer;}
 .sym{font-weight:700;font-size:12px;}
 
 /* ── Badges ────────────────────────────────────────────────────────── */
-.badge{display:inline-flex;align-items:center;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.03em;}
+.badge{display:inline-flex;align-items:center;padding:3px 7px;border-radius:3px;font-size:10px;font-weight:800;letter-spacing:.03em;}
 .badge-green{background:var(--green-d);color:var(--green);}
 .badge-red{background:var(--red-d);color:var(--red);}
 .badge-blue{background:var(--blue-d);color:var(--blue);}
@@ -115,26 +139,28 @@ tbody tr{cursor:pointer;}
 .form-grid{display:grid;gap:10px;padding:14px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 label{font-size:11px;color:var(--muted2);display:block;margin-bottom:4px;}
-input,select{width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--text);border-radius:4px;padding:7px 10px;font-size:12px;}
-input:focus,select:focus{outline:none;border-color:var(--blue);}
-input[type="checkbox"]{width:auto;accent-color:var(--blue);}
+input,select{width:100%;background:#030303;border:1px solid var(--border2);color:var(--text);border-radius:5px;padding:9px 10px;font-size:12px;}
+input:focus,select:focus{outline:none;border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.08);}
+input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .check-inline{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted2);}
-.btn{padding:8px 14px;border-radius:4px;border:1px solid var(--border2);font-weight:600;font-size:12px;cursor:pointer;transition:opacity .15s;}
-.btn:hover{opacity:.8;}
-.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:5px;border:1px solid var(--border2);font-weight:800;font-size:12px;cursor:pointer;transition:background .15s,border-color .15s,transform .15s;}
+.btn:hover{background:var(--s3);border-color:#555;}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:#fff;border-color:#fff;color:#000;}
+.btn-primary:hover{background:#dcdcdc;border-color:#dcdcdc;}
 .btn-secondary{background:var(--s2);color:var(--text);}
 .btn-danger{background:var(--red-d);color:var(--red);border-color:var(--red);}
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .hint{font-size:11px;color:var(--muted);line-height:1.5;}
 .control-note{padding:8px 10px;border:1px solid var(--border2);background:var(--bg);border-radius:4px;font-size:11px;color:var(--muted2);line-height:1.5;}
-.mini-btn{padding:4px 8px;border-radius:3px;border:1px solid var(--border2);background:transparent;color:var(--muted2);cursor:pointer;font-size:11px;}
-.mini-btn:hover{border-color:var(--blue);color:var(--blue);}
+.mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:5px 8px;border-radius:3px;border:1px solid var(--border2);background:transparent;color:var(--muted2);cursor:pointer;font-size:11px;font-weight:700;}
+.mini-btn:hover{border-color:#fff;color:#fff;}
 .mini-btn.trade{border-color:rgba(34,197,94,.3);color:var(--green);}
 
 /* ── Pairs / markets ───────────────────────────────────────────────── */
 .market-tools{display:grid;gap:10px;padding:14px;}
 .market-results{max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:4px;background:var(--bg);}
-.market-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--border);}
+.market-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--border);}
 .market-row:last-child{border-bottom:none;}
 .market-symbol{font-weight:700;font-size:12px;}
 .market-empty{padding:12px;color:var(--muted);font-size:11px;}
@@ -160,8 +186,8 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
 
 /* ── Recommendations ───────────────────────────────────────────────── */
 .rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;padding:12px 14px;}
-.rec-card{border:1px solid var(--border);background:var(--bg);border-radius:4px;padding:10px;display:grid;gap:7px;}
-.rec-card.ready{border-color:rgba(34,197,94,.35);background:linear-gradient(180deg,rgba(34,197,94,.08),var(--bg));}
+.rec-card{border:1px solid var(--border);background:#030303;border-radius:6px;padding:11px;display:grid;gap:7px;}
+.rec-card.ready{border-color:rgba(0,240,168,.45);background:linear-gradient(180deg,rgba(0,240,168,.08),#030303);}
 .rec-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .rec-sym{font-size:13px;font-weight:800;}
 .rec-meta{font-size:11px;color:var(--muted2);line-height:1.4;}
@@ -201,8 +227,29 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
 .cl-detail{font-size:11px;color:var(--muted2);line-height:1.4;}
 
 /* ── Media ─────────────────────────────────────────────────────────── */
-@media(max-width:1100px){.two-col,.config-grid{grid-template-columns:1fr;}.bottom-row{grid-template-columns:1fr;}}
-@media(max-width:700px){.form-row{grid-template-columns:1fr;}.tb-stats{display:none;}.shell{padding:10px 12px 40px;}}
+@media(max-width:1100px){.topbar{grid-template-columns:1fr;align-items:stretch;gap:10px;}.topbar-right{justify-content:space-between;}.tb-stats{order:3;}.two-col,.config-grid{grid-template-columns:1fr;}.bottom-row{grid-template-columns:1fr;}}
+@media(max-width:760px){
+  body{font-size:12px;}
+  .topbar{padding:10px 12px;}
+  .brand{font-size:15px;}
+  .brand-mark{width:28px;height:28px;}
+  .topbar-right{display:grid;grid-template-columns:1fr auto;gap:8px;}
+  .status-txt{display:none;}
+  .tab-nav{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;}
+  .tab-btn{justify-content:center;padding:9px 8px;}
+  .mode-tag{text-align:center;align-self:center;}
+  .tb-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;}
+  .tb-stat{min-width:0;}
+  .form-row{grid-template-columns:1fr;}
+  .shell{padding:10px 10px 40px;}
+  .section{border-radius:6px;}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  th,td{padding:8px 10px;}
+  .rec-grid{grid-template-columns:1fr;padding:10px;}
+  .lev-row{grid-template-columns:1fr 60px 62px;}.lev-feedback{grid-column:1 / -1;}
+  #toast-container{left:10px;right:10px;bottom:12px;}
+  .toast{min-width:0;max-width:none;width:100%;}
+}
 
 /* ── Toasts ──────────────────────────────────────────────────────── */
 #toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column-reverse;gap:10px;pointer-events:none;}
@@ -227,8 +274,12 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
 <!-- ── Topbar ───────────────────────────────────────────────────────── -->
 <header class="topbar">
   <div class="brand">
+    <span class="brand-mark">AX</span>
     <span class="dot" id="dot"></span>
-    TrendBot
+    <span class="brand-copy">
+      <span>Axiom</span>
+      <span class="brand-sub">OKX trading console</span>
+    </span>
   </div>
 
   <div class="tb-stats">
@@ -238,7 +289,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
     </div>
     <div class="tb-stat" id="realBalanceStat" style="display:none">
       <span class="tb-val" style="color:var(--amber)" id="realBalance">—</span>
-      <span class="tb-lbl">Binance real · USDT</span>
+      <span class="tb-lbl">Exchange real · USDT</span>
     </div>
     <div class="tb-stat">
       <span class="tb-val val-neutral" id="pnl">—</span>
@@ -260,8 +311,8 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
     <span class="status-txt" id="statusText">—</span>
     <span class="mode-tag" id="modeBadge">SIMULADO</span>
     <nav class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
-      <button class="tab-btn" onclick="switchTab('config')">Config</button>
+      <button class="tab-btn active" onclick="switchTab('dashboard')"><i data-lucide="layout-dashboard" class="icon-sm"></i> Panel</button>
+      <button class="tab-btn" onclick="switchTab('config')"><i data-lucide="settings-2" class="icon-sm"></i> Config</button>
     </nav>
   </div>
 </header>
@@ -274,7 +325,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
   <!-- Recomendaciones -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">Recomendaciones del bot</span>
+      <span class="section-title"><i data-lucide="radar" class="icon-sm"></i> Señales</span>
       <span class="section-meta" id="recSummary">—</span>
     </div>
     <div class="rec-grid" id="recGrid"></div>
@@ -283,7 +334,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
   <!-- Mercado -->
   <div class="section">
     <div class="section-head">
-      <span class="section-title">Mercado en tiempo real</span>
+      <span class="section-title"><i data-lucide="activity" class="icon-sm"></i> Mercado</span>
       <span class="section-meta" id="lastUpdate">—</span>
     </div>
     <div class="tbl-wrap">
@@ -316,7 +367,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
   <div class="two-col">
     <div class="section">
       <div class="section-head">
-        <span class="section-title">Historial</span>
+        <span class="section-title"><i data-lucide="history" class="icon-sm"></i> Historial</span>
         <span class="section-meta" id="histSummary">—</span>
       </div>
       <div id="histBySymbol" class="hist-sym-row"></div>
@@ -339,7 +390,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
 
     <div class="section">
       <div class="section-head">
-        <span class="section-title">Registro</span>
+        <span class="section-title"><i data-lucide="terminal" class="icon-sm"></i> Registro</span>
         <span class="section-meta">Últimos eventos</span>
       </div>
       <div class="logs-wrap" id="logsWrap"></div>
@@ -357,8 +408,8 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
     <!-- Conexión -->
     <div class="section">
       <div class="section-head">
-        <span class="section-title">Conexión y Trading</span>
-        <span class="section-meta">Binance</span>
+        <span class="section-title"><i data-lucide="plug" class="icon-sm"></i> Conexión y trading</span>
+        <span class="section-meta">Preparado para OKX</span>
       </div>
       <div class="form-grid">
         <div class="form-row">
@@ -366,8 +417,8 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
             <label>Entorno</label>
             <select id="cfgExecMode">
               <option value="SIMULADO">Simulado</option>
-              <option value="TESTNET">Testnet Binance</option>
-              <option value="REAL">Real Binance</option>
+              <option value="TESTNET">Testnet exchange</option>
+              <option value="REAL">Real exchange</option>
             </select>
           </div>
           <div>
@@ -425,18 +476,18 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
           </div>
         </div>
         <div class="btn-row">
-          <button type="button" class="btn btn-primary" id="btnStart" onclick="startBot()">▶ Iniciar</button>
-          <button type="button" class="btn btn-danger" id="btnStop" onclick="stopBot()">■ Detener</button>
+          <button type="button" class="btn btn-primary" id="btnStart" onclick="startBot()"><i data-lucide="play" class="icon-sm"></i> Iniciar</button>
+          <button type="button" class="btn btn-danger" id="btnStop" onclick="stopBot()"><i data-lucide="square" class="icon-sm"></i> Detener</button>
         </div>
-        <button type="button" class="btn btn-secondary" id="btnTestConn" onclick="testCredentials()">Probar conexión</button>
-        <div class="control-note" id="modeSummary">Simulado: analiza y registra operaciones sin enviar órdenes a Binance.</div>
+        <button type="button" class="btn btn-secondary" id="btnTestConn" onclick="testCredentials()"><i data-lucide="shield-check" class="icon-sm"></i> Probar conexión</button>
+        <div class="control-note" id="modeSummary">Simulado: analiza y registra operaciones sin enviar órdenes al exchange.</div>
       </div>
     </div>
 
     <!-- Pares -->
     <div class="section">
       <div class="section-head">
-        <span class="section-title">Pares</span>
+        <span class="section-title"><i data-lucide="list-filter" class="icon-sm"></i> Pares</span>
         <span class="section-meta">Buscar · Observar · Operar</span>
       </div>
       <div class="market-tools">
@@ -458,11 +509,11 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
           <div class="tokens" id="watchTokens"></div>
         </div>
         <div class="market-results" id="marketResults">
-          <div class="market-empty">Cargando pares de Binance…</div>
+          <div class="market-empty">Cargando pares del exchange…</div>
         </div>
         <div id="applyParesBanner" class="apply-banner">
           <span>Hay pares sin aplicar</span>
-          <button type="button" class="mini-btn trade" onclick="applyPares()" style="background:var(--green);color:#000;font-weight:700;border-color:var(--green)">Aplicar ahora</button>
+          <button type="button" class="mini-btn trade" onclick="applyPares()" style="background:var(--green);color:#000;font-weight:800;border-color:var(--green)"><i data-lucide="check" class="icon-sm"></i> Aplicar ahora</button>
         </div>
         <div class="hint">Los pares en "operar" pueden abrir posiciones. Los de "observar" solo se monitorean.</div>
       </div>
@@ -474,7 +525,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
   <div class="bottom-row">
     <div class="section">
       <div class="section-head">
-        <span class="section-title">Posiciones abiertas</span>
+        <span class="section-title"><i data-lucide="briefcase" class="icon-sm"></i> Posiciones abiertas</span>
         <span class="section-meta" id="openCountSide">0</span>
       </div>
       <div class="open-pos-list" id="openPositionsList">
@@ -483,7 +534,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--blue);}
     </div>
     <div class="section">
       <div class="section-head">
-        <span class="section-title">Estado de conexión</span>
+        <span class="section-title"><i data-lucide="wifi" class="icon-sm"></i> Estado de conexión</span>
         <span class="section-meta">Último snapshot</span>
       </div>
       <div class="conn-grid" id="connPanel">
@@ -528,6 +579,15 @@ let credentialState = null;
 const LEVERAGE_STORAGE_KEY = "trendbot_symbol_leverage";
 const API_CREDENTIALS_STORAGE_KEY = "trendbot_api_credentials";
 let lastServerUpdateIso = null;
+
+function refreshIcons() {
+  if (window.lucide) window.lucide.createIcons();
+}
+
+function setButtonContent(button, icon, text) {
+  button.innerHTML = `<i data-lucide="${icon}" class="icon-sm"></i> ${text}`;
+  refreshIcons();
+}
 
 function switchTab(name) {
   document.querySelectorAll(".tab-page").forEach(p => p.classList.remove("active"));
@@ -629,13 +689,13 @@ function updateModeSummary() {
   const execMode = document.getElementById("cfgExecMode").value;
   const testnet = document.getElementById("cfgTestnet").checked;
   const summary = document.getElementById("modeSummary");
-  let text = "Simulado: analiza y registra operaciones sin enviar órdenes a Binance. El bot está configurado para usar margen ISOLATED.";
+  let text = "Simulado: analiza y registra operaciones sin enviar órdenes al exchange. El bot está configurado para usar margen ISOLATED.";
   if (execMode === "TESTNET") {
-    text = "Testnet: enviará órdenes de prueba a Binance Futures Testnet con tus credenciales y margen ISOLATED.";
+    text = "Testnet: enviará órdenes de prueba al entorno testnet con tus credenciales y margen ISOLATED.";
   } else if (execMode === "REAL") {
     text = testnet
       ? "Real + testnet activado: revisa esto. Si quieres dinero real, desmarca testnet."
-      : "Real: enviará órdenes reales a Binance Futures con margen ISOLATED. Verifica capital, claves y pares antes de iniciar.";
+      : "Real: enviará órdenes reales al exchange con margen ISOLATED. Verifica capital, claves y pares antes de iniciar.";
   }
   summary.textContent = text;
 }
@@ -1371,7 +1431,7 @@ async function fetchHistorial() {
 async function startBot() {
   const button = document.getElementById("btnStart");
   button.disabled = true;
-  button.textContent = "Iniciando…";
+  setButtonContent(button, "loader-2", "Iniciando...");
   const payload = collectConfigPayload();
   await fetch(`${API}/api/start`, {
     method: "POST",
@@ -1381,16 +1441,16 @@ async function startBot() {
   selectionDirty = false;
   credentialState = null;
   button.disabled = false;
-  button.textContent = "▶ Iniciar";
+  setButtonContent(button, "play", "Iniciar");
 }
 
 async function stopBot() {
   const button = document.getElementById("btnStop");
   button.disabled = true;
-  button.textContent = "Deteniendo…";
+  setButtonContent(button, "loader-2", "Deteniendo...");
   await fetch(`${API}/api/stop`, {method: "POST"});
   button.disabled = false;
-  button.textContent = "■ Detener";
+  setButtonContent(button, "square", "Detener");
 }
 
 async function testCredentials() {
@@ -1402,7 +1462,7 @@ async function testCredentials() {
     last_account_sync: null, balance: null, error: "Probando conexión…",
   };
   renderConnection({connection: credentialState});
-  button.textContent = "Probando…";
+  setButtonContent(button, "loader-2", "Probando...");
   button.disabled = true;
   try {
     const r = await fetch(`${API}/api/test-credentials`, {
@@ -1426,7 +1486,7 @@ async function testCredentials() {
     };
     renderConnection({connection: credentialState});
   } finally {
-    button.textContent = "Probar conexión";
+    setButtonContent(button, "shield-check", "Probar conexión");
     button.disabled = false;
   }
 }
@@ -1443,19 +1503,20 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeCheckli
 let _seenAlertIds = new Set();
 
 function showToast(alert) {
-  const icons = { success: "✅", error: "❌", warning: "⏳", info: "ℹ️" };
+  const icons = { success: "circle-check", error: "circle-x", warning: "clock", info: "info" };
   const container = document.getElementById("toast-container");
   const el = document.createElement("div");
   el.className = `toast toast-${alert.kind}`;
   el.innerHTML = `
-    <span class="toast-icon">${icons[alert.kind] || "📢"}</span>
+    <span class="toast-icon"><i data-lucide="${icons[alert.kind] || "bell"}" class="icon"></i></span>
     <div class="toast-body">
       ${alert.sym ? `<div class="toast-sym">${alert.sym}</div>` : ""}
-      <div class="toast-msg">${alert.msg.replace(/^[✅❌⏳🚀ℹ️]\s*/u,"")}</div>
+      <div class="toast-msg">${alert.msg.replace(/^[^\p{L}\p{N}$%+-]+/u,"")}</div>
       <div class="toast-time">${alert.ts}</div>
     </div>`;
   el.addEventListener("click", () => dismissToast(el));
   container.appendChild(el);
+  refreshIcons();
   const delay = alert.kind === "success" || alert.kind === "error" ? 8000 : 5000;
   setTimeout(() => dismissToast(el), delay);
 }
@@ -1497,6 +1558,7 @@ loadStatusSnapshot();
 loadMarkets();
 fetchLogs();
 fetchHistorial();
+refreshIcons();
 setInterval(refreshLastUpdateLabel, 1000);
 setInterval(fetchHistorial, 10000);
 </script>

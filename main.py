@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field
 
 from bot_engine import TrendBot
 
-app = FastAPI(title="TrendBot")
+app = FastAPI(title="Axiom")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -350,7 +350,7 @@ def start_bot(cfg: ConfigIn):
     bot = TrendBot(config, restore_state=restore_state)
     bot.start()
     _save_runtime_state()
-    return {"ok": True, "msg": "TrendBot iniciado"}
+    return {"ok": True, "msg": "Axiom iniciado"}
 
 
 @app.post("/api/stop")
@@ -359,7 +359,7 @@ def stop_bot():
     if bot:
         bot.stop()
         _save_runtime_state()
-    return {"ok": True, "msg": "TrendBot detenido"}
+    return {"ok": True, "msg": "Axiom detenido"}
 
 
 @app.get("/api/config")

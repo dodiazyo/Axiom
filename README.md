@@ -1,6 +1,8 @@
-# TrendBot
+# Axiom
 
-TrendBot is a FastAPI web app for monitoring crypto futures markets and running trend-following / swing-trading logic with simulated, testnet, or real execution modes.
+Axiom is a FastAPI web app for monitoring crypto futures markets and running trend-following / swing-trading logic with simulated, testnet, or real execution modes.
+
+This copy is being redesigned as a cleaner OKX-style trading console with a serious black/white UI, mobile-first controls, and an upcoming OKX connector migration.
 
 ## Quick Start
 
@@ -20,5 +22,5 @@ http://127.0.0.1:8003
 ## Notes
 
 - API credentials are entered from the UI and are not committed to the repository.
-- `runtime_state.json` is generated while the bot runs and is intentionally ignored.
+- `runtime_state.json` is generated while Axiom runs and is intentionally ignored.
 - `pattern_memory.json` is included as the current learned pattern-memory dataset.
