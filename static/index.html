@@ -897,6 +897,10 @@ function assetIconSlug(asset) {
     BCH: "bch", TRX: "trx", XMR: "xmr", OP: "op", ARB: "arb",
     ATOM: "atom", ARPA: "arpa", PEPE: "pepe", BONK: "bonk",
     MOG: "mog", BOB: "bob", HYPE: "hype", USDT: "usdt",
+    DOT: "dot", SHIB: "shib", MATIC: "matic", FIL: "fil",
+    NEAR: "near", APT: "apt", SUI: "sui", INJ: "inj",
+    WLD: "wld", JTO: "jto", JUP: "jup", SEI: "sei",
+    TAO: "tao", TIA: "tia", PYTH: "pyth", STRK: "strk",
   };
   return aliases[String(asset || "").toUpperCase()] || String(asset || "").toLowerCase();
 }
@@ -909,6 +913,10 @@ function assetColor(asset) {
     XMR: "#ff6600", OP: "#ff0420", ARB: "#28a0f0", PEPE: "#7bdc63",
     BONK: "#ff8a00", MOG: "#c084fc", BOB: "#00ff85",
     ATOM: "#2e3148", ARPA: "#7c3aed", HYPE: "#00e6ff",
+    DOT: "#e6007a", SHIB: "#ffa409", MATIC: "#8247e5", FIL: "#0090ff",
+    NEAR: "#00c08b", APT: "#00b4d8", SUI: "#6fbcf0", INJ: "#00b2ff",
+    WLD: "#ffffff", JTO: "#9fef00", JUP: "#c7a629", SEI: "#9d1a1a",
+    TAO: "#00c4b4", TIA: "#7c3aed", PYTH: "#9945ff", STRK: "#ff875b",
   };
   const clean = String(asset || "").toUpperCase();
   if (colors[clean]) return colors[clean];
