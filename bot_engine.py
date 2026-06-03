@@ -253,9 +253,16 @@ class TrendBot:
         restored_mom = state.get("estados_mom", {})
         if isinstance(restored_mom, dict):
             self._estados_mom = restored_mom
+            for est in self._estados_mom.values():
+                est["signal_confirmado"] = 0
+                est["signal_short_confirmado"] = 0
         restored_states = state.get("estados", {})
         if isinstance(restored_states, dict):
             self._estados = restored_states
+            # Resetear contadores de confirmación para evitar entrada inmediata al reiniciar
+            for est in self._estados.values():
+                est["signal_confirmado"] = 0
+                est["signal_short_confirmado"] = 0
         restored_logs = state.get("logs", [])
         if isinstance(restored_logs, list):
             self._logs = deque(restored_logs[:200], maxlen=200)
@@ -1882,7 +1889,9 @@ class TrendBot:
         }
 
     def _current_open_positions(self) -> int:
-        return sum(1 for est in self._estados.values() if est.get("posicion_abierta"))
+        mnv = sum(1 for est in self._estados.values() if est.get("posicion_abierta"))
+        mom = sum(1 for est in self._estados_mom.values() if est.get("posicion_abierta"))
+        return mnv + mom
 
     def _can_open_new_position(self, sym: str, tendencia: str) -> tuple[bool, str]:
         est = self._estados.get(sym, {})
@@ -2385,23 +2394,46 @@ class TrendBot:
                                         _nst_m["ultimo_resultado"]  = "WIN" if _gan_m >= 0 else "LOSS"
                                         self._estados_mom[sym] = _nst_m
 
-                            elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._MOM_TRADE_SYMS and not int(est_m.get("cooldown_restante", 0) or 0):
+                            elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._MOM_TRADE_SYMS and not int(est_m.get("cooldown_restante", 0) or 0) and self._current_open_positions() < int(cfg.get("max_posiciones", 2)):
                                 _dir_mn = None
                                 _sl_mn = _tp_mn = 0.0
-                                if senal_ml:
-                                    _lrisk_ml = precio - sl_ml
-                                    _lrr_ml   = (tp_ml - precio) / _lrisk_ml if _lrisk_ml > 0 else 0
-                                    if _lrisk_ml > 0 and _lrr_ml >= 1.5:
-                                        _dir_mn, _sl_mn, _tp_mn = "LONG", sl_ml, tp_ml
+                                # Filtro de tendencia: MOM no puede ir en contra de la tendencia principal
+                                # Confirmación de 2 ciclos para evitar entradas prematuras
+                                if senal_ml and tendencia != "BAJISTA":
+                                    est_m["signal_confirmado"] = int(est_m.get("signal_confirmado", 0)) + 1
+                                    est_m["signal_short_confirmado"] = 0
+                                    if est_m["signal_confirmado"] < 2:
+                                        pending_logs_m.append((f"[{sym}][MOM] Setup LONG — esperando confirmación ciclo 2/2", "info"))
+                                        self._push_alert(f"⏳ {sym} [MOM] LONG — setup detectado, esperando ciclo 2/2", "warning", sym)
                                     else:
-                                        pending_logs_m.append((f"[{sym}][MOM] Sin LONG: R:R {_lrr_ml:.1f}", "info"))
-                                elif senal_ms:
-                                    _lrisk_ms = sl_ms - precio
-                                    _lrr_ms   = (precio - tp_ms) / _lrisk_ms if _lrisk_ms > 0 else 0
-                                    if _lrisk_ms > 0 and _lrr_ms >= 1.5:
-                                        _dir_mn, _sl_mn, _tp_mn = "SHORT", sl_ms, tp_ms
+                                        _lrisk_ml = precio - sl_ml
+                                        _lrr_ml   = (tp_ml - precio) / _lrisk_ml if _lrisk_ml > 0 else 0
+                                        if _lrisk_ml > 0 and _lrr_ml >= 1.5:
+                                            _dir_mn, _sl_mn, _tp_mn = "LONG", sl_ml, tp_ml
+                                            est_m["signal_confirmado"] = 0
+                                        else:
+                                            pending_logs_m.append((f"[{sym}][MOM] Sin LONG: R:R {_lrr_ml:.1f}", "info"))
+                                elif senal_ms and tendencia != "ALCISTA":
+                                    est_m["signal_short_confirmado"] = int(est_m.get("signal_short_confirmado", 0)) + 1
+                                    est_m["signal_confirmado"] = 0
+                                    if est_m["signal_short_confirmado"] < 2:
+                                        pending_logs_m.append((f"[{sym}][MOM] Setup SHORT — esperando confirmación ciclo 2/2", "info"))
+                                        self._push_alert(f"⏳ {sym} [MOM] SHORT — setup detectado, esperando ciclo 2/2", "warning", sym)
                                     else:
-                                        pending_logs_m.append((f"[{sym}][MOM] Sin SHORT: R:R {_lrr_ms:.1f}", "info"))
+                                        _lrisk_ms = sl_ms - precio
+                                        _lrr_ms   = (precio - tp_ms) / _lrisk_ms if _lrisk_ms > 0 else 0
+                                        if _lrisk_ms > 0 and _lrr_ms >= 1.5:
+                                            _dir_mn, _sl_mn, _tp_mn = "SHORT", sl_ms, tp_ms
+                                            est_m["signal_short_confirmado"] = 0
+                                        else:
+                                            pending_logs_m.append((f"[{sym}][MOM] Sin SHORT: R:R {_lrr_ms:.1f}", "info"))
+                                else:
+                                    est_m["signal_confirmado"] = 0
+                                    est_m["signal_short_confirmado"] = 0
+                                    if senal_ml and tendencia == "BAJISTA":
+                                        pending_logs_m.append((f"[{sym}][MOM] LONG bloqueado — tendencia BAJISTA", "info"))
+                                    elif senal_ms and tendencia == "ALCISTA":
+                                        pending_logs_m.append((f"[{sym}][MOM] SHORT bloqueado — tendencia ALCISTA", "info"))
                                 if _dir_mn:
                                     _cap_mn  = self._symbol_capital(sym)
                                     _apal_mn = self._symbol_leverage(sym)
@@ -2412,7 +2444,7 @@ class TrendBot:
                                             _cap_mn = self._effective_order_capital(_cap_mn)
                                             _qty_mn, _ord_mn = self._place_live_order(sym, _dir_mn, _cap_mn, _apal_mn, precio)
                                             _qty_mn = float(_ord_mn.get("executedQty") or _ord_mn.get("origQty") or 0)
-                                            precio  = float(_ord_mn.get("avgPrice") or _ord_mn.get("price") or precio)
+                                            precio  = float(_ord_mn.get("avgPx") or _ord_mn.get("price") or precio)
                                             pending_logs_m.append((f"[{sym}][MOM] Orden {_dir_mn} #{_ord_mn.get('orderId','—')}", "success"))
                                             _sl_oid_mn = self._place_sl_order(sym, _dir_mn, _sl_mn)
                                             self._sync_account()
