@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
+import stat
 import time
 from pathlib import Path
 from typing import Optional
@@ -222,6 +224,11 @@ def _save_runtime_state():
         return
     payload = bot.export_runtime_state()
     STATE_FILE.write_text(json.dumps(payload, ensure_ascii=True, indent=2))
+    # Restringir permisos: solo el propietario puede leer/escribir (sin secrets, pero por precaución)
+    try:
+        os.chmod(STATE_FILE, stat.S_IRUSR | stat.S_IWUSR)
+    except Exception:
+        pass
 
 
 def _without_secrets(config: dict) -> dict:

@@ -385,7 +385,9 @@ class TrendBot:
             "OK-ACCESS-TIMESTAMP": ts,
             "OK-ACCESS-PASSPHRASE": str(self.cfg.get("okx_passphrase", "")),
         }
-        if self._execution_mode() == "TESTNET" or bool(self.cfg.get("binance_testnet", False)):
+        # Solo TESTNET activa el paper trading de OKX.
+        # binance_testnet=True no debe interferir cuando execution_mode=REAL.
+        if self._execution_mode() == "TESTNET":
             headers["x-simulated-trading"] = "1"
         return headers
 
@@ -507,12 +509,29 @@ class TrendBot:
     def _effective_order_capital(self, requested_capital: float) -> float:
         if not self._is_live_mode():
             return requested_capital
+        # Forzar sincronización si no tenemos balance reciente
+        if self._real_available_balance is None:
+            try:
+                self._sync_account()
+            except Exception as e:
+                raise RuntimeError(f"No se puede verificar balance en OKX antes de operar: {e}") from e
         available = self._real_available_balance
         if available is None:
             available = self._real_balance
         if available is None:
-            return requested_capital
-        safe_capital = max(0.0, available * 0.95)
+            raise RuntimeError("Balance OKX no disponible — verifica tu conexión y credenciales")
+        if available <= 0:
+            raise RuntimeError(f"Balance disponible en OKX es ${available:.2f} USDT — sin fondos suficientes para abrir posición")
+        safe_capital = available * 0.95
+        if requested_capital > safe_capital:
+            self._log(
+                f"Capital solicitado ${requested_capital:.2f} supera disponible OKX ${available:.2f} → ajustado a ${safe_capital:.2f}",
+                "warning"
+            )
+            self._push_alert(
+                f"⚠️ Capital ajustado ${safe_capital:.2f} (OKX disponible: ${available:.2f} USDT)",
+                "warning"
+            )
         return min(requested_capital, safe_capital)
 
     def _sync_exchange_positions(self):
@@ -769,9 +788,16 @@ class TrendBot:
         info = self._exchange_info.get(sym)
         if not info:
             raise RuntimeError(f"No hay reglas de mercado OKX para {sym}")
+        # _effective_order_capital fuerza sync, valida balance y ajusta capital
         capital = self._effective_order_capital(capital)
         if capital <= 0:
             raise RuntimeError("Balance disponible insuficiente para abrir orden")
+        # Verificar que el margen requerido (capital) no supere el balance disponible
+        available = self._real_available_balance or self._real_balance
+        if available is not None and capital > available:
+            raise RuntimeError(
+                f"Margen requerido ${capital:.2f} supera balance disponible ${available:.2f} USDT en OKX"
+            )
 
         self._set_margin_type(sym)
         self._set_leverage(sym, leverage)

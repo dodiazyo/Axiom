@@ -724,11 +724,20 @@ function assetColor(asset) {
   return `hsl(${hash}, 80%, 58%)`;
 }
 
+function assetIconFallbackUrl(slug) {
+  // CDN secundario: LiveCoinWatch tiene íconos de coins más nuevas
+  return `https://lcw.nyc3.cdn.digitaloceanspaces.com/production/currencies/64/${slug.toLowerCase()}.webp`;
+}
+
 function tokenAvatar(sym) {
   const asset = assetFromSymbol(sym);
   const slug = assetIconSlug(asset);
   const glyph = assetGlyph(asset);
-  return `<span class="token-avatar light-text" style="--asset-color:${assetColor(asset)}" data-glyph="${glyph}"><img src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${slug}.svg" alt="${asset}" onerror="this.parentElement.textContent=this.parentElement.dataset.glyph;"/></span>`;
+  const color = assetColor(asset);
+  const primary  = `https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${slug}.svg`;
+  const fallback = assetIconFallbackUrl(slug);
+  // Cadena de fallback: CDN principal → LiveCoinWatch → glifo de texto
+  return `<span class="token-avatar light-text" style="--asset-color:${color}" data-glyph="${glyph}"><img src="${primary}" alt="${asset}" data-fb="${fallback}" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src=this.dataset.fb}else{this.parentElement.textContent=this.parentElement.dataset.glyph}"/></span>`;
 }
 
 function renderPairIdentity(sym) {
