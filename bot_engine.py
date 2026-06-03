@@ -1175,8 +1175,12 @@ class TrendBot:
             self._lock.release()
 
     def get_historial(self) -> list:
-        with self._lock:
-            return list(reversed(list(self._historial)))
+        if self._lock.acquire(timeout=2):
+            try:
+                return list(reversed(list(self._historial)))
+            finally:
+                self._lock.release()
+        return list(reversed(list(self._historial)))
 
     def get_pattern_stats(self) -> dict:
         return self._pattern_memory.get_stats()
@@ -2179,6 +2183,7 @@ class TrendBot:
                                             "ts_open":  _ts_open,
                                             "ts_close": _ts_close,
                                             "min":      _duracion,
+                                            "estrategia": "MNV",
                                         })
 
                                         pending_logs.append((

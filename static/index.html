@@ -285,6 +285,15 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .activity-msg{font-size:12px;line-height:1.35;color:var(--text);overflow-wrap:anywhere;}
 .activity-time{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;}
 .activity-empty{padding:18px;color:var(--muted2);font-size:12px;text-align:center;line-height:1.5;}
+.hist-table{width:100%;border-collapse:collapse;font-size:11px;}
+.hist-table th{padding:7px 10px;text-align:left;color:var(--muted2);font-weight:700;border-bottom:1px solid var(--border2);white-space:nowrap;}
+.hist-table td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.hist-table tbody tr:hover{background:var(--s2);}
+.hist-table .win{color:var(--green);font-weight:700;}
+.hist-table .loss{color:var(--red);font-weight:700;}
+.hist-table .dir-long{color:var(--green);font-weight:700;}
+.hist-table .dir-short{color:var(--red);font-weight:700;}
+.hist-empty{text-align:center;color:var(--muted2);padding:18px;}
 
 /* ── Recommendations ───────────────────────────────────────────────── */
 .rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;padding:12px 14px;}
@@ -382,6 +391,61 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .toast-msg{font-weight:500;}
 .toast-time{font-size:10px;opacity:.5;margin-top:3px;}
 @keyframes toast-in{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+/* ── Config cards ────────────────────────────────────────────────── */
+.icon-xs{width:11px;height:11px;}
+.cfg-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+.cfg-card-head{display:flex;align-items:center;gap:8px;padding:11px 14px 10px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text);}
+.cfg-field{padding:10px 14px 0;}
+.cfg-field label{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2);margin-bottom:5px;font-weight:600;}
+.cfg-field:last-child{padding-bottom:12px;}
+/* Segmented control */
+.seg-ctrl{display:flex;border:1px solid var(--border2);border-radius:6px;overflow:hidden;}
+.seg-btn{flex:1;padding:7px 4px;font-size:11px;font-weight:700;background:transparent;border:none;border-right:1px solid var(--border2);color:var(--muted2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.seg-btn:last-child{border-right:none;}
+.seg-btn:hover:not(.active){background:var(--s2);color:var(--text);}
+.seg-btn.active{background:var(--green-d);color:var(--green);}
+.seg-btn.active-real{background:rgba(255,90,103,.12);color:var(--red);}
+.seg-btn.active-demo{background:rgba(138,180,255,.12);color:var(--blue);}
+/* Input with eye */
+.input-eye{position:relative;}
+.input-eye input{width:100%;padding-right:34px;box-sizing:border-box;}
+.eye-btn{position:absolute;right:0;top:0;height:100%;width:34px;background:none;border:none;color:var(--muted2);cursor:pointer;display:grid;place-items:center;}
+.eye-btn:hover{color:var(--text);}
+/* Toggle switch */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+.toggle-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 14px;}
+.toggle-wrap{position:relative;flex-shrink:0;width:32px;height:18px;margin-top:1px;}
+.toggle-track{position:absolute;inset:0;border-radius:9px;background:var(--s3);border:1px solid var(--border2);transition:all .2s;}
+.toggle-wrap input:checked~.toggle-track{background:rgba(0,255,133,.7);border-color:var(--green);}
+.toggle-track::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.toggle-wrap input:checked~.toggle-track::after{transform:translateX(14px);}
+.toggle-label{font-size:12px;color:var(--muted2);line-height:1.3;}
+.toggle-label-block{display:flex;flex-direction:column;gap:2px;}
+.toggle-label-block>span:first-child{font-size:12px;color:var(--text);font-weight:600;}
+.toggle-sub{font-size:10px;color:var(--muted);}
+.cfg-toggles{border-top:1px solid var(--border);margin-top:10px;}
+/* Params grid */
+.params-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:4px 0 10px;}
+.param-field{display:flex;align-items:flex-start;gap:10px;padding:8px 14px;}
+.param-icon{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;flex-shrink:0;margin-top:16px;}
+.param-body{flex:1;min-width:0;}
+.param-body label{display:block;font-size:11px;color:var(--muted2);margin-bottom:5px;font-weight:600;}
+/* Slow trend params */
+.slow-params-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:10px 14px;}
+.slow-param label{display:block;font-size:11px;color:var(--muted2);margin-bottom:5px;}
+.slow-params-divider{border-top:1px solid var(--border);margin:0 14px;}
+.cfg-hint{font-size:10px;color:var(--muted);padding:6px 14px 10px;line-height:1.4;margin:0;}
+/* Creds saved banner */
+.creds-saved-banner{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(0,255,133,.06);border-top:1px solid rgba(0,255,133,.2);font-size:11px;color:var(--green);}
+.creds-saved-banner button{margin-left:auto;}
+/* Actions card */
+.cfg-actions-card{background:transparent;border:none;}
+.cfg-action-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 8px;}
+.btn-lg{padding:11px 16px;font-size:13px;}
+/* Creds hint */
+.creds-note{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);}
+.creds-note i{flex-shrink:0;}
+@media(max-width:700px){.params-grid{grid-template-columns:1fr;}.slow-params-grid{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
@@ -495,6 +559,38 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
         <div class="activity-empty">Cuando el bot analice, abra o cierre operaciones, lo verás aquí.</div>
       </div>
     </div>
+
+    <!-- ── Historial de órdenes ── -->
+    <div class="section" id="historialSection">
+      <div class="section-head">
+        <span class="section-title"><i data-lucide="book-open" class="icon-sm"></i> Historial de órdenes</span>
+        <span class="section-meta" id="historialSummary">–</span>
+        <button class="mini-btn" onclick="loadHistorial()" title="Actualizar"><i data-lucide="refresh-cw" class="icon-xs"></i></button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="hist-table" id="historialTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Par</th>
+              <th>Dir</th>
+              <th>Estrategia</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Motivo</th>
+              <th>PnL (USDT)</th>
+              <th>PnL %</th>
+              <th>R:R</th>
+              <th>Duración</th>
+              <th>Cierre</th>
+            </tr>
+          </thead>
+          <tbody id="historialBody">
+            <tr><td colspan="12" class="hist-empty">Sin operaciones cerradas aún.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -504,116 +600,175 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
   <div class="config-grid">
 
     <!-- Conexión -->
-    <div class="section" id="configPanel">
-      <div class="section-head">
+    <div class="section" id="configPanel" style="background:transparent;border:none;padding:0;gap:0;">
+      <div class="section-head" style="padding:0 0 10px;">
         <span class="section-title"><i data-lucide="plug" class="icon-sm"></i> Conexión y trading</span>
-        <span class="section-meta">Exchange</span>
       </div>
-      <div class="form-grid">
-        <div class="form-row">
-          <div>
-            <label>Entorno</label>
-            <select id="cfgExecMode">
-              <option value="SIMULADO">Simulado</option>
-              <option value="TESTNET">OKX demo</option>
-              <option value="REAL">OKX real</option>
-            </select>
+
+      <!-- Card 1: Exchange & Acceso -->
+      <div class="cfg-card">
+        <div class="cfg-card-head">
+          <i data-lucide="shield-half" class="icon-sm" style="color:var(--blue)"></i>
+          Exchange &amp; Acceso
+        </div>
+        <div class="cfg-field">
+          <label>Entorno de ejecución</label>
+          <div class="seg-ctrl">
+            <button type="button" class="seg-btn active" id="segSim" onclick="setExecMode('SIMULADO')">Simulado</button>
+            <button type="button" class="seg-btn" id="segDemo" onclick="setExecMode('TESTNET')">OKX Demo</button>
+            <button type="button" class="seg-btn" id="segReal" onclick="setExecMode('REAL')">Real 💰</button>
           </div>
-          <div>
-            <label>Modo del bot</label>
-            <select id="cfgModo">
-              <option value="AUTOMATICO">Automático</option>
-              <option value="MANUAL">Manual (solo alertas)</option>
-            </select>
+          <select id="cfgExecMode" class="sr-only"><option value="SIMULADO">Simulado</option><option value="TESTNET">OKX demo</option><option value="REAL">OKX real</option></select>
+        </div>
+        <div class="cfg-field" style="padding-bottom:12px;">
+          <label>Modo del bot</label>
+          <div class="seg-ctrl">
+            <button type="button" class="seg-btn active" id="segAuto" onclick="setBotMode('AUTOMATICO')"><i data-lucide="zap" class="icon-xs"></i> Automático</button>
+            <button type="button" class="seg-btn" id="segManual" onclick="setBotMode('MANUAL')"><i data-lucide="eye" class="icon-xs"></i> Solo alertas</button>
+          </div>
+          <select id="cfgModo" class="sr-only"><option value="AUTOMATICO">Automático</option><option value="MANUAL">Manual (solo alertas)</option></select>
+        </div>
+        <div id="apiCredsSection">
+          <div style="border-top:1px solid var(--border);padding-top:2px;">
+            <div class="cfg-field">
+              <label><i data-lucide="key" class="icon-xs"></i> API Key</label>
+              <input type="text" id="cfgApiKey" placeholder="Pega tu API Key aquí…" autocomplete="off" spellcheck="false"/>
+            </div>
+            <div class="cfg-field">
+              <label><i data-lucide="lock" class="icon-xs"></i> API Secret</label>
+              <div class="input-eye">
+                <input type="password" id="cfgApiSecret" placeholder="API Secret…" autocomplete="off" spellcheck="false"/>
+                <button type="button" class="eye-btn" onclick="toggleEye('cfgApiSecret',this)" tabindex="-1"><i data-lucide="eye" class="icon-xs"></i></button>
+              </div>
+            </div>
+            <div class="cfg-field" style="padding-bottom:10px;">
+              <label><i data-lucide="lock-keyhole" class="icon-xs"></i> Passphrase OKX</label>
+              <div class="input-eye">
+                <input type="password" id="cfgOkxPassphrase" placeholder="Passphrase…" autocomplete="off" spellcheck="false"/>
+                <button type="button" class="eye-btn" onclick="toggleEye('cfgOkxPassphrase',this)" tabindex="-1"><i data-lucide="eye" class="icon-xs"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="cfg-toggles">
+            <label class="toggle-row">
+              <span class="toggle-wrap"><input type="checkbox" id="cfgRememberApi" class="sr-only"/><span class="toggle-track"></span></span>
+              <span class="toggle-label">Mantener credenciales en esta sesión</span>
+            </label>
+            <label class="toggle-row" style="border-top:1px solid var(--border)">
+              <span class="toggle-wrap"><input type="checkbox" id="cfgTestnet" checked class="sr-only"/><span class="toggle-track"></span></span>
+              <span class="toggle-label">Usar OKX paper trading (demo)</span>
+            </label>
+          </div>
+          <div class="creds-note">
+            <i data-lucide="info" class="icon-xs"></i>
+            Las credenciales nunca se guardan en disco — solo en memoria mientras el bot esté activo.
           </div>
         </div>
-        <div>
-          <label>API Key</label>
-          <input type="text" id="cfgApiKey" placeholder="Solo necesaria para TESTNET o REAL"/>
+      </div>
+
+      <!-- Card 2: Parámetros -->
+      <div class="cfg-card">
+        <div class="cfg-card-head">
+          <i data-lucide="sliders-horizontal" class="icon-sm" style="color:var(--amber)"></i>
+          Parámetros de trading
         </div>
-        <div>
-          <label>API Secret</label>
-          <input type="password" id="cfgApiSecret" placeholder="Se envía al backend al iniciar"/>
+        <div class="params-grid">
+          <div class="param-field">
+            <div class="param-icon" style="background:rgba(0,255,133,.1);color:var(--green)"><i data-lucide="dollar-sign" class="icon-xs"></i></div>
+            <div class="param-body">
+              <label>Capital por trade</label>
+              <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="cfgCapital" value="50" min="1"/><span class="input-suffix">USD</span></div>
+            </div>
+          </div>
+          <div class="param-field">
+            <div class="param-icon" style="background:rgba(138,180,255,.1);color:var(--blue)"><i data-lucide="trending-up" class="icon-xs"></i></div>
+            <div class="param-body">
+              <label>Apalancamiento</label>
+              <div class="input-wrap"><input type="number" id="cfgLev" value="3" min="1" max="20" style="text-align:center"/><span class="input-suffix">X</span></div>
+            </div>
+          </div>
+          <div class="param-field">
+            <div class="param-icon" style="background:rgba(245,197,66,.1);color:var(--amber)"><i data-lucide="wallet" class="icon-xs"></i></div>
+            <div class="param-body">
+              <label>Balance inicial</label>
+              <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="cfgBalance" value="1000" min="10"/></div>
+            </div>
+          </div>
+          <div class="param-field">
+            <div class="param-icon" style="background:rgba(0,255,133,.1);color:var(--green)"><i data-lucide="target" class="icon-xs"></i></div>
+            <div class="param-body">
+              <label title="Relación Riesgo:Recompensa mínima para abrir una posición">R:R mínimo <span style="color:var(--muted);font-size:9px">ℹ</span></label>
+              <div class="input-wrap"><input type="number" id="cfgRR" value="2.0" step="0.1" min="0.5"/><span class="input-suffix">R</span></div>
+            </div>
+          </div>
+          <div class="param-field">
+            <div class="param-icon" style="background:rgba(255,90,103,.1);color:var(--red)"><i data-lucide="bar-chart-2" class="icon-xs"></i></div>
+            <div class="param-body">
+              <label title="El retroceso debe tener menos volumen que este múltiplo del promedio. 0.85 = 85% del vol. promedio.">Vol. pullback máx. <span style="color:var(--muted);font-size:9px">ℹ</span></label>
+              <div class="input-wrap"><input type="number" id="cfgVol" value="0.85" step="0.05" min="0.1"/><span class="input-suffix">×</span></div>
+            </div>
+          </div>
+          <div class="param-field">
+            <div class="param-icon" style="background:rgba(138,180,255,.1);color:var(--blue)"><i data-lucide="timer" class="icon-xs"></i></div>
+            <div class="param-body">
+              <label>Intervalo de análisis</label>
+              <div class="input-wrap"><input type="number" id="cfgInterval" value="60" min="15"/><span class="input-suffix">seg</span></div>
+            </div>
+          </div>
         </div>
-        <div>
-          <label>Passphrase OKX</label>
-          <input type="password" id="cfgOkxPassphrase" placeholder="Requerida por OKX"/>
+      </div>
+
+      <!-- Card 3: Estrategia -->
+      <div class="cfg-card">
+        <div class="cfg-card-head">
+          <i data-lucide="brain" class="icon-sm" style="color:var(--blue)"></i>
+          Estrategia
         </div>
-        <label class="check-inline">
-          <input type="checkbox" id="cfgRememberApi"/>
-          Mantener API solo en esta sesión
+        <label class="toggle-row">
+          <span class="toggle-wrap"><input type="checkbox" id="cfgSlowTrend" class="sr-only" onchange="toggleSlowTrendPanel(this.checked)"/><span class="toggle-track"></span></span>
+          <span class="toggle-label-block">
+            <span>Tendencia Lenta</span>
+            <span class="toggle-sub">Para coins que suben gradualmente: TRX · XLM · ALGO · ADA</span>
+          </span>
         </label>
-        <label class="check-inline">
-          <input type="checkbox" id="cfgTestnet" checked/>
-          Usar OKX demo trading
-        </label>
-        <div class="form-row">
-          <div>
-            <label>Capital por trade (USD)</label>
-            <input type="number" id="cfgCapital" value="50" min="1"/>
-          </div>
-          <div>
-            <label>Apalancamiento por defecto</label>
-            <input type="number" id="cfgLev" value="3" min="1" max="20"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label>Balance inicial (USD)</label>
-            <input type="number" id="cfgBalance" value="1000" min="10"/>
-          </div>
-          <div>
-            <label>R:R mínimo</label>
-            <input type="number" id="cfgRR" value="2.0" step="0.1" min="0.5"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label>Vol máximo en pullback</label>
-            <input type="number" id="cfgVol" value="0.85" step="0.05" min="0.1"/>
-          </div>
-          <div>
-            <label>Intervalo (seg)</label>
-            <input type="number" id="cfgInterval" value="60" min="15"/>
-          </div>
-        </div>
-        <div class="form-row" style="align-items:center;gap:12px;margin-top:4px;">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;">
-            <input type="checkbox" id="cfgSlowTrend" onchange="toggleSlowTrendPanel(this.checked)" style="width:14px;height:14px;accent-color:var(--blue);cursor:pointer;"/>
-            <span>Modo Tendencia Lenta <span style="color:var(--muted);font-size:11px;">(para coins como TRX que suben despacio)</span></span>
-          </label>
-        </div>
-        <div id="slowTrendPanel" style="display:none;background:var(--s2);border:1px solid var(--s3);border-radius:8px;padding:12px;margin-top:6px;">
-          <div style="font-size:11px;color:var(--blue);margin-bottom:8px;font-weight:600;">⚡ Parámetros Tendencia Lenta</div>
-          <div class="form-row">
-            <div>
-              <label>Separación EMAs (%)</label>
-              <input type="number" id="cfgSlowEmaSep" value="0.10" step="0.01" min="0.01" max="1.0" title="Normal=0.3% — Lento=0.1%. Menor valor detecta tendencias más suaves."/>
+        <div id="slowTrendPanel" style="display:none;">
+          <div class="slow-params-divider"></div>
+          <div class="slow-params-grid">
+            <div class="slow-param">
+              <label>Sep. EMAs <span style="color:var(--muted);font-size:9px">(normal 0.3%)</span></label>
+              <div class="input-wrap"><input type="number" id="cfgSlowEmaSep" value="0.10" step="0.01" min="0.01" max="1.0"/><span class="input-suffix">%</span></div>
             </div>
-            <div>
-              <label>ADX mínimo</label>
-              <input type="number" id="cfgSlowAdx" value="15" step="1" min="5" max="30" title="Normal=20 — Lento=15. Permite entrar en tendencias con menos fuerza."/>
+            <div class="slow-param">
+              <label>ADX mín. <span style="color:var(--muted);font-size:9px">(normal 20)</span></label>
+              <input type="number" id="cfgSlowAdx" value="15" step="1" min="5" max="30"/>
             </div>
-            <div>
-              <label>Impulso 3 velas (%)</label>
-              <input type="number" id="cfgSlowImpulso" value="0.05" step="0.01" min="0.01" max="0.5" title="Normal=0.1% — Lento=0.05%. Detecta impulsos más pequeños."/>
+            <div class="slow-param">
+              <label>Impulso 3v <span style="color:var(--muted);font-size:9px">(normal 0.1%)</span></label>
+              <div class="input-wrap"><input type="number" id="cfgSlowImpulso" value="0.05" step="0.01" min="0.01" max="0.5"/><span class="input-suffix">%</span></div>
             </div>
           </div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;">⚠️ Umbrales más bajos = más señales, más riesgo de falsas entradas.</div>
+          <p class="cfg-hint">⚠️ Umbrales menores = más señales, mayor riesgo de falsas entradas en mercados laterales.</p>
         </div>
-        <div class="btn-row">
-          <button type="button" class="btn btn-primary" id="btnStart" onclick="startBot()"><i data-lucide="play" class="icon-sm"></i> Iniciar</button>
-          <button type="button" class="btn btn-danger" id="btnStop" onclick="stopBot()"><i data-lucide="square" class="icon-sm"></i> Detener</button>
+      </div>
+
+      <!-- Card 4: Acciones -->
+      <div class="cfg-card">
+        <div style="padding:12px 14px;display:grid;gap:8px;">
+          <div class="cfg-action-btns">
+            <button type="button" class="btn btn-primary btn-lg" id="btnStart" onclick="startBot()"><i data-lucide="play" class="icon-sm"></i> Iniciar bot</button>
+            <button type="button" class="btn btn-danger btn-lg" id="btnStop" onclick="stopBot()"><i data-lucide="square" class="icon-sm"></i> Detener</button>
+          </div>
+          <button type="button" class="btn btn-secondary" id="btnTestConn" onclick="testCredentials()"><i data-lucide="shield-check" class="icon-sm"></i> Probar conexión a OKX</button>
+          <div class="control-note" id="modeSummary" style="margin:0;">Simulado: analiza y registra operaciones sin enviar órdenes al exchange.</div>
         </div>
-        <button type="button" class="btn btn-secondary" id="btnTestConn" onclick="testCredentials()"><i data-lucide="shield-check" class="icon-sm"></i> Probar conexión</button>
-        <div class="control-note" id="modeSummary">Simulado: analiza y registra operaciones sin enviar órdenes al exchange.</div>
-        <div class="conn-grid" id="connPanel">
+        <div class="conn-grid" id="connPanel" style="border-top:1px solid var(--border);">
           <div class="conn-row"><span>API pública</span><strong>—</strong></div>
           <div class="conn-row"><span>API privada</span><strong>—</strong></div>
           <div class="conn-row"><span>Última sync</span><strong>—</strong></div>
           <div class="conn-row"><span>Error</span><strong>—</strong></div>
         </div>
       </div>
+
     </div>
 
     <!-- Pares -->
@@ -957,6 +1112,36 @@ function connect() {
   };
 }
 
+function setExecMode(val) {
+  document.getElementById("cfgExecMode").value = val;
+  const map = { SIMULADO: "segSim", TESTNET: "segDemo", REAL: "segReal" };
+  const activeClass = { SIMULADO: "active", TESTNET: "active-demo", REAL: "active-real" };
+  ["segSim","segDemo","segReal"].forEach(id => {
+    const btn = document.getElementById(id);
+    btn.classList.remove("active","active-demo","active-real");
+  });
+  const activeBtn = document.getElementById(map[val]);
+  if (activeBtn) activeBtn.classList.add(activeClass[val] || "active");
+  const credsSection = document.getElementById("apiCredsSection");
+  if (credsSection) credsSection.style.display = (val === "SIMULADO") ? "none" : "";
+}
+
+function setBotMode(val) {
+  document.getElementById("cfgModo").value = val;
+  ["segAuto","segManual"].forEach(id => document.getElementById(id)?.classList.remove("active"));
+  const map = { AUTOMATICO: "segAuto", MANUAL: "segManual" };
+  document.getElementById(map[val])?.classList.add("active");
+}
+
+function toggleEye(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const showing = input.type === "text";
+  input.type = showing ? "password" : "text";
+  const icon = btn.querySelector("i");
+  if (icon) { icon.setAttribute("data-lucide", showing ? "eye" : "eye-off"); lucide.createIcons(); }
+}
+
 async function loadConfig() {
   const r = await fetch(`${API}/api/config`);
   const cfg = await r.json();
@@ -973,8 +1158,8 @@ async function loadConfig() {
   document.getElementById("cfgSlowAdx").value = cfg.slow_adx_min ?? 15;
   document.getElementById("cfgSlowImpulso").value = cfg.slow_impulso_pct ?? 0.05;
   toggleSlowTrendPanel(slowOn);
-  document.getElementById("cfgModo").value = cfg.modo_operador ?? "AUTOMATICO";
-  document.getElementById("cfgExecMode").value = cfg.execution_mode ?? "SIMULADO";
+  setExecMode(cfg.execution_mode ?? "SIMULADO");
+  setBotMode(cfg.modo_operador ?? "AUTOMATICO");
   document.getElementById("cfgTestnet").checked = Boolean(cfg.binance_testnet);
   document.getElementById("cfgApiKey").value = savedCreds.api_key || "";
   document.getElementById("cfgApiSecret").value = savedCreds.api_secret || "";
@@ -996,6 +1181,51 @@ async function loadConfig() {
   selectionDirty = false;
   renderSelectedSymbols();
   updateModeSummary();
+}
+
+async function loadHistorial() {
+  try {
+    const r = await fetch(`${API}/api/historial`);
+    const data = await r.json();
+    const tbody = document.getElementById("historialBody");
+    const summary = document.getElementById("historialSummary");
+    if (!data || !data.length) {
+      tbody.innerHTML = `<tr><td colspan="12" class="hist-empty">Sin operaciones cerradas aún.</td></tr>`;
+      summary.textContent = "0 operaciones";
+      return;
+    }
+    const wins = data.filter(t => t.pnl >= 0).length;
+    const totalPnl = data.reduce((s, t) => s + (t.pnl || 0), 0);
+    const wr = Math.round(wins / data.length * 100);
+    summary.innerHTML = `${data.length} ops &nbsp;·&nbsp; WR <b>${wr}%</b> &nbsp;·&nbsp; PnL total <b class="${totalPnl >= 0 ? 'win' : 'loss'}">${totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(2)} USDT</b>`;
+    tbody.innerHTML = data.map(t => {
+      const win = t.pnl >= 0;
+      const pnlCls = win ? "win" : "loss";
+      const pnlSign = win ? "+" : "";
+      const dirCls = t.dir === "LONG" ? "dir-long" : "dir-short";
+      const motivo = t.motivo || "–";
+      const strat = t.estrategia || "MNV";
+      const dur = t.min != null ? (t.min >= 60 ? `${Math.floor(t.min/60)}h ${t.min%60}m` : `${t.min}m`) : "–";
+      const tsClose = t.ts_close ? fmtLocalTime(t.ts_close) : "–";
+      const rr = t.rr != null ? (t.rr >= 0 ? `+${t.rr}` : t.rr) : "–";
+      return `<tr>
+        <td>${t.id}</td>
+        <td><b>${t.sym || "–"}</b></td>
+        <td class="${dirCls}">${t.dir || "–"}</td>
+        <td>${strat}</td>
+        <td>${t.entrada ?? "–"}</td>
+        <td>${t.salida ?? "–"}</td>
+        <td>${motivo}</td>
+        <td class="${pnlCls}">${pnlSign}${(t.pnl ?? 0).toFixed(2)}</td>
+        <td class="${pnlCls}">${pnlSign}${(t.pct ?? 0).toFixed(2)}%</td>
+        <td>${rr}</td>
+        <td>${dur}</td>
+        <td>${tsClose}</td>
+      </tr>`;
+    }).join("");
+  } catch (e) {
+    document.getElementById("historialBody").innerHTML = `<tr><td colspan="12" class="hist-empty">Error cargando historial.</td></tr>`;
+  }
 }
 
 async function loadStatusSnapshot() {
@@ -2081,6 +2311,7 @@ connect();
 loadConfig();
 loadStatusSnapshot();
 loadMarkets();
+loadHistorial();
 fetchActivity();
 refreshIcons();
 setInterval(refreshLastUpdateLabel, 1000);
