@@ -45,8 +45,18 @@ a{color:var(--blue);}
 .brand-copy{display:grid;gap:1px;}
 .brand-sub{font-size:10px;color:var(--muted2);font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background .3s;box-shadow:0 0 0 4px rgba(255,90,103,.12);}
-.dot.on{background:var(--green);}
-.dot.on{box-shadow:0 0 0 4px rgba(0,240,168,.12);}
+.dot.on{background:var(--green);box-shadow:0 0 0 4px rgba(0,240,168,.12);}
+/* indicador en vivo */
+.live-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.06em;border:1px solid;transition:all .4s;}
+.live-badge.live{background:rgba(0,255,133,.08);border-color:rgba(0,255,133,.35);color:var(--green);}
+.live-badge.live .live-dot{background:var(--green);}
+.live-badge.stale{background:rgba(245,197,66,.07);border-color:rgba(245,197,66,.3);color:var(--amber);}
+.live-badge.stale .live-dot{background:var(--amber);}
+.live-badge.dead{background:rgba(255,90,103,.07);border-color:rgba(255,90,103,.3);color:var(--red);}
+.live-badge.dead .live-dot{background:var(--red);}
+.live-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.35}}
+.live-badge.live .live-dot{animation:livepulse 1.4s ease-in-out infinite;}
 .tb-stats{display:flex;align-items:stretch;gap:8px;min-width:0;overflow-x:auto;scrollbar-width:none;}
 .tb-stats::-webkit-scrollbar{display:none;}
 .tb-stat{display:flex;flex-direction:column;justify-content:center;min-width:118px;padding:8px 12px;border:1px solid var(--border);background:var(--s1);border-radius:6px;}
@@ -419,6 +429,10 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
   <div class="tb-sep"></div>
 
   <div class="topbar-right">
+    <span class="live-badge dead" id="liveBadge" title="Tiempo desde última actualización del bot">
+      <span class="live-dot"></span>
+      <span id="liveLabel">Sin datos</span>
+    </span>
     <span class="status-txt" id="statusText">—</span>
     <span class="mode-tag" id="modeBadge">SIMULADO</span>
     <nav class="tab-nav">
@@ -1667,7 +1681,7 @@ async function fetchActivity() {
           <span class="activity-icon ${level}"><i data-lucide="${icon}" class="icon-sm"></i></span>
           <div class="activity-body">
             <div class="activity-msg">${escapeHtml(item.msg || "")}</div>
-            <div class="activity-time">${escapeHtml(item.ts || "—")}</div>
+            <div class="activity-time">${fmtLocalTime(item.ts || "")}</div>
           </div>
         </div>
       `;
@@ -1678,15 +1692,44 @@ async function fetchActivity() {
   }
 }
 
+function fmtLocalTime(isoOrHHMM) {
+  if (!isoOrHHMM) return "—";
+  // Si ya es ISO completo (nuevo formato), convertir a hora local
+  if (isoOrHHMM.includes("T") || isoOrHHMM.includes("Z") || isoOrHHMM.includes("+")) {
+    return new Date(isoOrHHMM).toLocaleTimeString("es", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+  }
+  // Fallback: string HH:MM:SS legacy del estado restaurado
+  return isoOrHHMM;
+}
+
 function refreshLastUpdateLabel() {
   const el = document.getElementById("lastUpdate");
-  if (!el) return;
+  const badge = document.getElementById("liveBadge");
+  const label = document.getElementById("liveLabel");
+  if (el) {
+    if (lastServerUpdateIso) {
+      el.textContent = fmtLocalTime(lastServerUpdateIso);
+    } else {
+      el.textContent = new Date().toLocaleTimeString("es");
+    }
+  }
+  if (!badge || !label) return;
   if (!lastServerUpdateIso) {
-    el.textContent = new Date().toLocaleTimeString("es");
+    badge.className = "live-badge dead";
+    label.textContent = "Sin datos";
     return;
   }
-  const serverTs = new Date(lastServerUpdateIso);
-  el.textContent = serverTs.toLocaleTimeString("es");
+  const secsAgo = Math.floor((Date.now() - new Date(lastServerUpdateIso).getTime()) / 1000);
+  if (secsAgo < 90) {
+    badge.className = "live-badge live";
+    label.textContent = "En vivo";
+  } else if (secsAgo < 300) {
+    badge.className = "live-badge stale";
+    label.textContent = `${secsAgo}s atrás`;
+  } else {
+    badge.className = "live-badge dead";
+    label.textContent = "Sin señal";
+  }
 }
 
 function showChecklist(sym, d) {

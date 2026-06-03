@@ -153,12 +153,12 @@ class TrendBot:
     # ── Logging ───────────────────────────────────────────────────────────────
 
     def _log(self, msg: str, level: str = "info"):
-        ts = datetime.now(timezone.utc).strftime("%H:%M:%S")
-        entry = {"ts": ts, "level": level, "msg": msg}
+        now = datetime.now(timezone.utc)
+        entry = {"ts": now.isoformat(), "level": level, "msg": msg}
         with self._lock:
             self._logs.appendleft(entry)
             self._last_logs_cache = list(self._logs)
-        print(f"[{ts}] {msg}", flush=True)
+        print(f"[{now.strftime('%H:%M:%S')}] {msg}", flush=True)
 
     def _push_alert(self, msg: str, kind: str = "info", sym: str = ""):
         """kind: info | success | warning | error"""
