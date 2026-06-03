@@ -285,6 +285,17 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .activity-msg{font-size:12px;line-height:1.35;color:var(--text);overflow-wrap:anywhere;}
 .activity-time{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;}
 .activity-empty{padding:18px;color:var(--muted2);font-size:12px;text-align:center;line-height:1.5;}
+.act-tag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-right:5px;vertical-align:middle;}
+.tag-long{background:#0d2e1a;color:#00e676;border:1px solid #00e676;}
+.tag-short{background:#2e0d0d;color:#ff5252;border:1px solid #ff5252;}
+.tag-win{background:#0d2e1a;color:#00e676;border:1px solid #00e676;}
+.tag-loss{background:#2e0d0d;color:#ff5252;border:1px solid #ff5252;}
+.tag-neutral{background:#1a1a1a;color:#aaa;border:1px solid #444;}
+.tag-wait{background:#2e2200;color:#ffb300;border:1px solid #ffb300;}
+.tag-manage{background:#0d1f2e;color:#40c4ff;border:1px solid #40c4ff;}
+.activity-icon.long{background:#0d2e1a;color:#00e676;}
+.activity-icon.short{background:#2e0d0d;color:#ff5252;}
+.activity-icon.neutral{background:#1a1a1a;color:#aaa;}
 .hist-table{width:100%;border-collapse:collapse;font-size:11px;}
 .hist-table th{padding:7px 10px;text-align:left;color:var(--muted2);font-weight:700;border-bottom:1px solid var(--border2);white-space:nowrap;}
 .hist-table td{padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
@@ -1912,13 +1923,49 @@ async function fetchActivity() {
       return;
     }
     list.innerHTML = items.map(item => {
+      const msg = item.msg || "";
       const level = item.level || "info";
-      const icon = level === "success" ? "check" : level === "error" ? "x" : level === "warning" ? "triangle-alert" : "scan-line";
+      const msgUp = msg.toUpperCase();
+
+      // Detectar tipo de evento por contenido del mensaje
+      let tag = "", tagCls = "", icon = "scan-line", iconCls = level;
+
+      if (/ABRIÓ|ABRE|ENTRADA|LONG/.test(msgUp) && !/SHORT/.test(msgUp)) {
+        tag = "LONG"; tagCls = "tag-long"; icon = "trending-up"; iconCls = "long";
+      } else if (/ABRIÓ|ABRE|ENTRADA|SHORT/.test(msgUp) && !/LONG/.test(msgUp)) {
+        tag = "SHORT"; tagCls = "tag-short"; icon = "trending-down"; iconCls = "short";
+      } else if (/CERRÓ|CIERRE|CERRAR|TP|SL|TAKE.PROFIT|STOP.LOSS|WIN|LOSS/.test(msgUp)) {
+        const isWin = /WIN|GANANCIA|PROFIT|\+\$/.test(msgUp);
+        tag = isWin ? "WIN" : "LOSS";
+        tagCls = isWin ? "tag-win" : "tag-loss";
+        icon = isWin ? "circle-check" : "circle-x";
+        iconCls = isWin ? "success" : "error";
+      } else if (/NEUTRAL|SIN TENDENCIA|SIN CONTEXTO/.test(msgUp)) {
+        tag = "NEUTRAL"; tagCls = "tag-neutral"; icon = "minus"; iconCls = "neutral";
+      } else if (/BAJISTA|BEARISH|STAGE 4/.test(msgUp)) {
+        tag = "BAJISTA"; tagCls = "tag-short"; icon = "arrow-down"; iconCls = "short";
+      } else if (/ALCISTA|BULLISH|STAGE 2/.test(msgUp)) {
+        tag = "ALCISTA"; tagCls = "tag-long"; icon = "arrow-up"; iconCls = "long";
+      } else if (/SIN ENTRADA|NO ABRE|COOLDOWN|MÁX|MAX/.test(msgUp)) {
+        tag = "ESPERA"; tagCls = "tag-wait"; icon = "clock"; iconCls = "warning";
+      } else if (/BREAKEVEN|PARCIAL|TRAIL/.test(msgUp)) {
+        tag = "GESTIÓN"; tagCls = "tag-manage"; icon = "shield"; iconCls = "warning";
+      } else if (level === "success") {
+        icon = "check"; iconCls = "success";
+      } else if (level === "error") {
+        icon = "x"; iconCls = "error";
+      } else if (level === "warning") {
+        icon = "triangle-alert"; iconCls = "warning";
+      }
+
       return `
         <div class="activity-item">
-          <span class="activity-icon ${level}"><i data-lucide="${icon}" class="icon-sm"></i></span>
+          <span class="activity-icon ${iconCls}"><i data-lucide="${icon}" class="icon-sm"></i></span>
           <div class="activity-body">
-            <div class="activity-msg">${escapeHtml(item.msg || "")}</div>
+            <div class="activity-msg">
+              ${tag ? `<span class="act-tag ${tagCls}">${tag}</span>` : ""}
+              ${escapeHtml(msg)}
+            </div>
             <div class="activity-time">${fmtLocalTime(item.ts || "")}</div>
           </div>
         </div>
