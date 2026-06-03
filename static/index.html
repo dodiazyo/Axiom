@@ -64,6 +64,7 @@ a{color:var(--blue);}
 .tab-btn{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;background:transparent;border:1px solid transparent;border-radius:4px;color:var(--muted2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .tab-btn.active{background:var(--green-d);border-color:rgba(0,255,133,.45);color:var(--green);}
 .tab-btn:hover:not(.active){color:var(--text);background:var(--s2);}
+.section.focus-flash{border-color:rgba(0,255,133,.75);box-shadow:0 0 0 2px rgba(0,255,133,.12),var(--shadow);}
 .tab-page{display:none;}
 .tab-page.active{display:block;}
 
@@ -71,7 +72,7 @@ a{color:var(--blue);}
 .shell{max-width:1600px;margin:0 auto;padding:18px 20px 48px;}
 
 /* ── Sections ──────────────────────────────────────────────────────── */
-.section{background:var(--s1);border:1px solid var(--border);border-radius:7px;overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow);}
+.section{background:var(--s1);border:1px solid var(--border);border-radius:7px;overflow:visible;margin-bottom:10px;box-shadow:var(--shadow);}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--s2),var(--s1));}
 .section-title{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--text);}
 .section-meta{font-size:11px;color:var(--muted);}
@@ -161,7 +162,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 
 /* ── Pairs / markets ───────────────────────────────────────────────── */
 .market-tools{display:grid;gap:12px;padding:14px;}
-.market-search-card{display:grid;gap:8px;padding:12px;border:1px solid var(--border);border-radius:6px;background:#030303;}
+.market-search-card{position:relative;display:grid;gap:8px;padding:14px;border:1px solid rgba(0,255,133,.22);border-radius:8px;background:#030303;z-index:80;}
 .search-field{position:relative;}
 .search-field .icon-sm{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted2);pointer-events:none;}
 .search-field input{padding-left:34px;}
@@ -169,8 +170,9 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .summary-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid var(--border2);border-radius:999px;color:var(--muted2);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
 .summary-pill strong{color:var(--text);}
 .summary-pill.trade strong{color:var(--green);}
-.market-results{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;background:var(--bg);}
-.market-row{display:grid;grid-template-columns:minmax(0,1fr) 96px 72px auto;gap:8px;align-items:end;padding:10px;border-bottom:1px solid var(--border);}
+.market-results{display:none;position:absolute;left:14px;right:14px;top:calc(100% + 6px);z-index:999;max-height:280px;overflow-y:auto;border:1px solid var(--border2);border-radius:7px;background:#030303;box-shadow:0 18px 44px rgba(0,0,0,.72);}
+.market-results.open{display:block;}
+.market-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:11px;border-bottom:1px solid var(--border);}
 .market-row:last-child{border-bottom:none;}
 .market-row:hover{background:var(--s2);}
 .market-asset{display:flex;align-items:center;gap:9px;min-width:0;}
@@ -178,7 +180,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .market-sub{font-size:10px;color:var(--muted);margin-top:1px;}
 .market-empty{padding:14px;color:var(--muted);font-size:11px;}
 .selection-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.token-group{display:grid;gap:7px;min-width:0;}
+.token-group{display:grid;gap:8px;min-width:0;}
 .group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .group-count{font-size:10px;color:var(--muted2);font-weight:800;border:1px solid var(--border2);border-radius:999px;padding:2px 7px;}
 .tokens{display:flex;flex-wrap:wrap;gap:7px;min-height:48px;max-height:172px;overflow:auto;padding:9px;border-radius:6px;border:1px solid var(--border);background:var(--bg);}
@@ -190,26 +192,89 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .token button:hover{background:rgba(255,255,255,.08);color:var(--text);}
 .token button.mode-action{color:var(--blue);}
 .token button.mode-action.trade{color:var(--green);}
-.token-avatar{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;flex:0 0 auto;background:linear-gradient(135deg,var(--asset-color),#111);color:#000;font-size:10px;font-weight:900;border:1px solid rgba(255,255,255,.18);}
+.token-avatar{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;flex:0 0 auto;background:linear-gradient(135deg,var(--asset-color),#111);color:#000;font-size:10px;font-weight:900;border:1px solid rgba(255,255,255,.18);overflow:hidden;}
+.token-avatar img{width:100%;height:100%;display:block;border-radius:50%;object-fit:cover;}
 .token-avatar.dark-text{color:#000;}
 .token-avatar.light-text{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55);}
-.lev-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:7px;}
-.lev-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:7px;background:var(--bg);}
-.lev-row strong{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lev-row input{padding:7px 6px;}
-.coin-controls{grid-column:1 / -1;display:grid;grid-template-columns:1fr 78px auto;gap:7px;align-items:end;}
+.pair-config-panel{display:none;border:1px solid rgba(0,255,133,.42);border-radius:8px;background:linear-gradient(180deg,rgba(0,255,133,.10),#030303);padding:14px;gap:12px;box-shadow:0 12px 30px rgba(0,0,0,.35);}
+.pair-config-panel.open{display:grid;}
+.pair-config-head{display:flex;align-items:center;gap:10px;}
+.pair-config-head .token-avatar{width:36px;height:36px;}
+.pair-config-head strong{font-size:14px;}
+.pair-config-head .market-sub{color:var(--green);}
+.pair-config-grid{display:grid;grid-template-columns:1fr 130px auto auto;gap:8px;align-items:end;}
+.input-wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;border:1px solid var(--border2);border-radius:5px;background:#030303;overflow:hidden;}
+.input-wrap input{border:0;border-left:1px solid var(--border2);border-right:1px solid var(--border2);border-radius:0;background:transparent;padding:8px 10px;min-width:0;}
+.input-wrap input:focus{box-shadow:none;border-color:var(--border2);}
+.input-prefix,.input-suffix{display:grid;place-items:center;min-width:34px;height:100%;padding:0 9px;color:var(--muted2);font-size:11px;font-weight:800;background:#080808;}
+.configured-table{display:grid;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#030303;margin-top:2px;}
+.configured-row{display:grid;grid-template-columns:minmax(0,1.2fr) 140px 130px auto auto;gap:8px;align-items:end;padding:10px;border-bottom:1px solid var(--border);}
+.configured-row:last-child{border-bottom:none;}
+.configured-asset{display:flex;align-items:center;gap:9px;min-width:0;font-weight:800;}
+.configured-asset .token-avatar{width:30px;height:30px;}
+.configured-row input{padding:7px 8px;}
+.lev-list{display:grid;gap:10px;}
+.coin-controls{grid-column:1 / -1;display:grid;grid-template-columns:1fr 86px auto;gap:8px;align-items:end;margin-top:4px;}
 .coin-controls label{margin:0;font-size:10px;}
 .coin-controls .mini-btn{height:34px;}
-.lev-feedback{grid-column:1 / -1;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .3s;}
+.lev-feedback{grid-column:1 / -1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;transition:color .3s;}
+.empty-config{border:1px dashed var(--border2);border-radius:8px;padding:18px;text-align:center;color:var(--muted2);background:#030303;font-size:12px;}
 .primary-config{border-color:rgba(0,255,133,.28);}
 .apply-banner{background:var(--green-d);border:1px solid rgba(34,197,94,.3);border-radius:4px;padding:8px 12px;display:none;align-items:center;justify-content:space-between;gap:10px;}
 .apply-banner span{font-size:11px;color:var(--green);}
 
-/* ── Open pos ──────────────────────────────────────────────────────── */
-.open-pos-list{display:grid;gap:8px;padding:12px 14px;}
-.open-pos-card{padding:10px;border:1px solid var(--border);border-radius:4px;background:var(--bg);}
-.open-pos-card strong{font-size:12px;}
-.open-pos-meta{margin-top:5px;font-size:11px;color:var(--muted2);display:grid;gap:3px;}
+/* ── Dashboard ─────────────────────────────────────────────────────── */
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:10px;align-items:start;}
+.dashboard-main{min-width:0;}
+.activity-panel{position:sticky;top:82px;max-height:calc(100vh - 104px);display:flex;flex-direction:column;}
+.activity-panel .activity-list{overflow:auto;}
+.positions-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:12px 14px;border-bottom:1px solid var(--border);background:#050505;}
+.pos-kpi{display:grid;gap:4px;min-height:64px;padding:10px;border:1px solid var(--border);border-radius:6px;background:#030303;}
+.pos-kpi span{font-size:10px;color:var(--muted2);font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.pos-kpi strong{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.open-pos-list{display:grid;gap:10px;padding:12px 14px;}
+.open-pos-card{display:grid;gap:12px;padding:12px;border:1px solid var(--border);border-radius:7px;background:#030303;}
+.open-pos-card.profit{border-color:rgba(0,255,133,.28);}
+.open-pos-card.loss{border-color:rgba(255,90,103,.32);}
+.open-pos-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;}
+.open-pos-title{display:flex;align-items:center;gap:10px;min-width:0;}
+.open-pos-title .token-avatar{width:34px;height:34px;}
+.open-pos-name{display:grid;gap:2px;min-width:0;}
+.open-pos-symbol{font-size:14px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.open-pos-sub{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;font-weight:800;}
+.open-pos-pnl{text-align:right;display:grid;gap:2px;font-variant-numeric:tabular-nums;}
+.open-pos-pnl strong{font-size:18px;line-height:1;}
+.open-pos-pnl span{font-size:11px;color:var(--muted2);}
+.open-pos-state{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.state-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 7px;border-radius:999px;border:1px solid var(--border2);font-size:10px;font-weight:800;color:var(--muted2);text-transform:uppercase;letter-spacing:.04em;}
+.state-pill.live{border-color:rgba(0,255,133,.35);color:var(--green);background:var(--green-d);}
+.state-pill.watch{border-color:rgba(245,197,66,.35);color:var(--amber);background:var(--amber-d);}
+.state-pill.short{border-color:rgba(255,90,103,.35);color:var(--red);background:var(--red-d);}
+.pos-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.pos-metric{padding:9px;border:1px solid var(--border);border-radius:5px;background:#050505;min-width:0;}
+.pos-metric span{display:block;font-size:10px;color:var(--muted2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em;font-weight:800;}
+.pos-metric strong{font-size:12px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}
+.risk-ladder{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:var(--border);}
+.risk-step{padding:8px 9px;background:#050505;display:grid;gap:3px;min-width:0;}
+.risk-step span{font-size:10px;color:var(--muted2);font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+.risk-step strong{font-size:12px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.risk-step.stop strong{color:var(--red);}
+.risk-step.entry strong{color:var(--text);}
+.risk-step.target strong{color:var(--green);}
+.position-empty{display:grid;place-items:center;gap:8px;min-height:240px;padding:28px;text-align:center;color:var(--muted2);border:1px dashed var(--border2);border-radius:7px;background:#030303;}
+.position-empty i{color:var(--green);}
+.position-empty strong{color:var(--text);font-size:14px;}
+.position-empty span{font-size:12px;line-height:1.5;max-width:360px;}
+.activity-list{display:grid;gap:8px;padding:12px 14px;}
+.activity-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;padding:10px;border:1px solid var(--border);border-radius:7px;background:#030303;}
+.activity-icon{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--s2);color:var(--muted2);}
+.activity-icon.success{background:var(--green-d);color:var(--green);}
+.activity-icon.error{background:var(--red-d);color:var(--red);}
+.activity-icon.warning{background:var(--amber-d);color:var(--amber);}
+.activity-body{display:grid;gap:4px;min-width:0;}
+.activity-msg{font-size:12px;line-height:1.35;color:var(--text);overflow-wrap:anywhere;}
+.activity-time{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;}
+.activity-empty{padding:18px;color:var(--muted2);font-size:12px;text-align:center;line-height:1.5;}
 
 /* ── Recommendations ───────────────────────────────────────────────── */
 .rec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;padding:12px 14px;}
@@ -254,7 +319,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 .cl-detail{font-size:11px;color:var(--muted2);line-height:1.4;}
 
 /* ── Media ─────────────────────────────────────────────────────────── */
-@media(max-width:1100px){.topbar{grid-template-columns:1fr;align-items:stretch;gap:10px;}.topbar-right{justify-content:space-between;}.tb-stats{order:3;}.two-col,.config-grid{grid-template-columns:1fr;}.bottom-row{grid-template-columns:1fr;}}
+@media(max-width:1100px){.topbar{grid-template-columns:1fr;align-items:stretch;gap:10px;}.topbar-right{justify-content:space-between;}.tb-stats{order:3;}.two-col,.config-grid,.dashboard-grid{grid-template-columns:1fr;}.bottom-row{grid-template-columns:1fr;}.activity-panel{position:static;max-height:none;}.positions-overview{grid-template-columns:repeat(2,minmax(0,1fr));}.pos-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:760px){
   body{font-size:12px;}
   .topbar{padding:10px 12px;}
@@ -277,7 +342,18 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
   .market-row{grid-template-columns:1fr 1fr;gap:8px;}
   .market-asset{grid-column:1 / -1;}
   .market-row .mini-btn{grid-column:1 / -1;}
-  .lev-row{grid-template-columns:1fr 60px 62px;}.lev-feedback{grid-column:1 / -1;}
+  .pair-config-grid{grid-template-columns:1fr;}
+  .pair-config-grid .mini-btn{grid-column:1 / -1;}
+  .configured-row{grid-template-columns:1fr;}
+  .configured-row .mini-btn{grid-column:auto;}
+  .positions-overview{grid-template-columns:1fr 1fr;padding:10px;}
+  .pos-kpi{min-height:58px;padding:8px;}
+  .open-pos-list,.activity-list{padding:10px;}
+  .open-pos-top{grid-template-columns:1fr;}
+  .open-pos-pnl{text-align:left;grid-template-columns:auto auto;align-items:end;justify-content:space-between;}
+  .pos-metrics{grid-template-columns:1fr 1fr;}
+  .risk-ladder{grid-template-columns:1fr;}
+  .lev-feedback{grid-column:1 / -1;}
   #toast-container{left:10px;right:10px;bottom:12px;}
   .toast{min-width:0;max-width:none;width:100%;}
 }
@@ -334,6 +410,10 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
       <span class="tb-val val-neutral" id="positions">0 abiertas</span>
       <span class="tb-lbl"><span id="connMode">simulado</span></span>
     </div>
+    <div class="tb-stat" id="connectionTopStat">
+      <span class="tb-val" id="connectionTopValue">—</span>
+      <span class="tb-lbl">conexión</span>
+    </div>
   </div>
 
   <div class="tb-sep"></div>
@@ -342,7 +422,8 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
     <span class="status-txt" id="statusText">—</span>
     <span class="mode-tag" id="modeBadge">SIMULADO</span>
     <nav class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('config')"><i data-lucide="bot" class="icon-sm"></i> Bot</button>
+      <button class="tab-btn active" onclick="switchTab('dashboard')"><i data-lucide="bot" class="icon-sm"></i> Bot</button>
+      <button class="tab-btn" onclick="switchTab('config')" title="Configuración"><i data-lucide="settings-2" class="icon-sm"></i></button>
     </nav>
   </div>
 </header>
@@ -360,13 +441,56 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
   <div id="logsWrap"></div>
 </div>
 
+<!-- ══ TAB DASHBOARD ═══════════════════════════════════════════════════ -->
+<div id="tabDashboard" class="tab-page active">
+  <div class="dashboard-grid">
+    <div class="section dashboard-main">
+      <div class="section-head">
+        <span class="section-title"><i data-lucide="briefcase" class="icon-sm"></i> Posiciones abiertas</span>
+        <span class="section-meta" id="openCountSide">0 activas</span>
+      </div>
+      <div class="positions-overview">
+        <div class="pos-kpi">
+          <span>Exposición</span>
+          <strong id="dashExposure">$0.00</strong>
+        </div>
+        <div class="pos-kpi">
+          <span>P&amp;L abierto</span>
+          <strong id="dashOpenPnl">$0.00</strong>
+        </div>
+        <div class="pos-kpi">
+          <span>Mercado</span>
+          <strong id="dashMarketBias">—</strong>
+        </div>
+        <div class="pos-kpi">
+          <span>Estado</span>
+          <strong id="dashBotState">Escaneando</strong>
+        </div>
+      </div>
+      <div class="open-pos-list" id="openPositionsList">
+        <div class="hint">No hay posiciones abiertas.</div>
+      </div>
+    </div>
+
+    <div class="section activity-panel">
+      <div class="section-head">
+        <span class="section-title"><i data-lucide="activity" class="icon-sm"></i> Actividad del bot</span>
+        <span class="section-meta" id="activitySummary">En espera</span>
+      </div>
+      <div class="activity-list" id="activityList">
+        <div class="activity-empty">Cuando el bot analice, abra o cierre operaciones, lo verás aquí.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ TAB CONFIG ══════════════════════════════════════════════════════ -->
-<div id="tabConfig" class="tab-page active">
+<div id="tabConfig" class="tab-page">
 
   <div class="config-grid">
 
     <!-- Conexión -->
-    <div class="section">
+    <div class="section" id="configPanel">
       <div class="section-head">
         <span class="section-title"><i data-lucide="plug" class="icon-sm"></i> Conexión y trading</span>
         <span class="section-meta">Exchange</span>
@@ -377,8 +501,8 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
             <label>Entorno</label>
             <select id="cfgExecMode">
               <option value="SIMULADO">Simulado</option>
-              <option value="TESTNET">Testnet exchange</option>
-              <option value="REAL">Real exchange</option>
+              <option value="TESTNET">OKX demo</option>
+              <option value="REAL">OKX real</option>
             </select>
           </div>
           <div>
@@ -397,13 +521,17 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
           <label>API Secret</label>
           <input type="password" id="cfgApiSecret" placeholder="Se envía al backend al iniciar"/>
         </div>
+        <div>
+          <label>Passphrase OKX</label>
+          <input type="password" id="cfgOkxPassphrase" placeholder="Requerida por OKX"/>
+        </div>
         <label class="check-inline">
-          <input type="checkbox" id="cfgRememberApi" checked/>
-          Recordar API en este navegador
+          <input type="checkbox" id="cfgRememberApi"/>
+          Mantener API solo en esta sesión
         </label>
         <label class="check-inline">
           <input type="checkbox" id="cfgTestnet" checked/>
-          Usar endpoint testnet
+          Usar OKX demo trading
         </label>
         <div class="form-row">
           <div>
@@ -441,6 +569,12 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
         </div>
         <button type="button" class="btn btn-secondary" id="btnTestConn" onclick="testCredentials()"><i data-lucide="shield-check" class="icon-sm"></i> Probar conexión</button>
         <div class="control-note" id="modeSummary">Simulado: analiza y registra operaciones sin enviar órdenes al exchange.</div>
+        <div class="conn-grid" id="connPanel">
+          <div class="conn-row"><span>API pública</span><strong>—</strong></div>
+          <div class="conn-row"><span>API privada</span><strong>—</strong></div>
+          <div class="conn-row"><span>Última sync</span><strong>—</strong></div>
+          <div class="conn-row"><span>Error</span><strong>—</strong></div>
+        </div>
       </div>
     </div>
 
@@ -452,30 +586,44 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
       </div>
       <div class="market-tools">
         <div class="market-search-card">
-          <div>
-            <label>Buscar moneda</label>
-            <div class="search-field">
-              <i data-lucide="search" class="icon-sm"></i>
-              <input type="text" id="marketSearch" placeholder="BTC, ETH, SOL, PEPE..." oninput="renderMarketResults()" onkeyup="renderMarketResults()"/>
+          <div class="search-field">
+            <i data-lucide="search" class="icon-sm"></i>
+            <input type="text" id="marketSearch" placeholder="Buscar moneda..." oninput="renderMarketResults()" onkeyup="renderMarketResults()"/>
+          </div>
+          <div class="market-results" id="marketResults"></div>
+        </div>
+        <div class="pair-config-panel" id="pairConfigPanel">
+          <div class="pair-config-head">
+            <span id="pendingPairIcon"></span>
+            <div>
+              <strong id="pendingPairSymbol">—</strong>
+              <div class="market-sub">Moneda seleccionada</div>
             </div>
           </div>
-          <div class="market-summary">
-            <span class="summary-pill trade">Configuradas <strong id="tradeCount">0</strong></span>
-            <span class="summary-pill">Resultados <strong id="marketCount">0</strong></span>
+          <div class="pair-config-grid">
+            <div>
+              <label>Monto</label>
+              <div class="input-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" min="1" step="0.01" id="pendingAmount"/>
+                <span class="input-suffix">USDT</span>
+              </div>
+            </div>
+            <div>
+              <label>Apalancamiento</label>
+              <div class="input-wrap">
+                <input type="number" min="1" max="20" id="pendingLeverage" style="text-align:center"/>
+                <span class="input-suffix">X</span>
+              </div>
+            </div>
+            <button type="button" class="mini-btn trade" onclick="savePendingPair()"><i data-lucide="check" class="icon-sm"></i> Agregar</button>
+            <button type="button" class="mini-btn" onclick="clearPendingPair()"><i data-lucide="x" class="icon-sm"></i> Cancelar</button>
           </div>
         </div>
-        <div class="market-results" id="marketResults">
-          <div class="market-empty">Cargando pares del exchange…</div>
-        </div>
-        <div class="token-group">
-          <div class="group-head">
-            <label>Monedas configuradas</label>
-            <span class="group-count" id="tradeCountInline">0</span>
-          </div>
-          <div class="lev-list" id="levList"></div>
+        <div class="token-group" id="configuredGroup" style="display:none">
+          <div class="configured-table" id="levList"></div>
           <div class="tokens" id="tradeTokens" style="display:none"></div>
           <div class="tokens" id="watchTokens" style="display:none"></div>
-          <div class="hint">Cada moneda queda lista con su monto y apalancamiento. El bot usará esos valores cuando encuentre una entrada.</div>
         </div>
         <div id="applyParesBanner" class="apply-banner">
           <span>Hay pares sin aplicar</span>
@@ -485,31 +633,6 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
     </div>
 
   </div><!-- fin config-grid -->
-
-  <!-- Posiciones + Estado -->
-  <div class="bottom-row">
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title"><i data-lucide="briefcase" class="icon-sm"></i> Posiciones abiertas</span>
-        <span class="section-meta" id="openCountSide">0</span>
-      </div>
-      <div class="open-pos-list" id="openPositionsList">
-        <div class="hint">No hay posiciones abiertas.</div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="section-head">
-        <span class="section-title"><i data-lucide="wifi" class="icon-sm"></i> Estado de conexión</span>
-        <span class="section-meta">Último snapshot</span>
-      </div>
-      <div class="conn-grid" id="connPanel">
-        <div class="conn-row"><span>API pública</span><strong>—</strong></div>
-        <div class="conn-row"><span>API privada</span><strong>—</strong></div>
-        <div class="conn-row"><span>Última sync</span><strong>—</strong></div>
-        <div class="conn-row"><span>Error</span><strong>—</strong></div>
-      </div>
-    </div>
-  </div>
 
 </div><!-- fin tabConfig -->
 
@@ -529,7 +652,7 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
 </div>
 
 <script>
-const API = window.location.port === "8003" ? window.location.origin : "http://127.0.0.1:8003";
+const API = window.location.origin;
 const WS_URL = API.replace("http://", "ws://").replace("https://", "wss://") + "/ws";
 
 let selectedSym = null;
@@ -539,12 +662,13 @@ let watchSymbols = [];
 let tradeSymbols = [];
 let symbolLeverage = {};
 let symbolCapital = {};
+let pendingPair = null;
 let selectionDirty = false;
 let leverageDirty = false;
 let credentialState = null;
 const LEVERAGE_STORAGE_KEY = "axiom_symbol_leverage";
 const CAPITAL_STORAGE_KEY = "axiom_symbol_capital";
-const API_CREDENTIALS_STORAGE_KEY = "trendbot_api_credentials";
+const API_CREDENTIALS_STORAGE_KEY = "axiom_api_credentials";
 let lastServerUpdateIso = null;
 
 function refreshIcons() {
@@ -557,7 +681,8 @@ function setButtonContent(button, icon, text) {
 }
 
 function assetFromSymbol(sym) {
-  return String(sym || "").split("/")[0].replace(/^1000+/, "") || String(sym || "");
+  const raw = String(sym || "").split("/")[0].toUpperCase();
+  return raw.replace(/^(1000000|10000|1000)/, "") || raw;
 }
 
 function assetGlyph(asset) {
@@ -566,9 +691,21 @@ function assetGlyph(asset) {
     DOGE: "DOGE", ADA: "ADA", AVAX: "AVAX", LINK: "LINK", LTC: "LTC",
     BCH: "BCH", TRX: "TRX", XMR: "XMR", OP: "OP", ARB: "ARB",
     PEPE: "PEPE", BONK: "BONK", MOG: "MOG", BOB: "BOB",
+    ARPA: "ARPA", ATOM: "ATOM", HYPE: "HYPE",
   };
   const clean = String(asset || "").toUpperCase();
   return (map[clean] || clean).slice(0, 4);
+}
+
+function assetIconSlug(asset) {
+  const aliases = {
+    BTC: "btc", ETH: "eth", SOL: "sol", BNB: "bnb", XRP: "xrp",
+    DOGE: "doge", ADA: "ada", AVAX: "avax", LINK: "link", LTC: "ltc",
+    BCH: "bch", TRX: "trx", XMR: "xmr", OP: "op", ARB: "arb",
+    ATOM: "atom", ARPA: "arpa", PEPE: "pepe", BONK: "bonk",
+    MOG: "mog", BOB: "bob", HYPE: "hype", USDT: "usdt",
+  };
+  return aliases[String(asset || "").toUpperCase()] || String(asset || "").toLowerCase();
 }
 
 function assetColor(asset) {
@@ -578,6 +715,7 @@ function assetColor(asset) {
     LINK: "#2a5ada", LTC: "#b8b8b8", BCH: "#8dc351", TRX: "#ff304f",
     XMR: "#ff6600", OP: "#ff0420", ARB: "#28a0f0", PEPE: "#7bdc63",
     BONK: "#ff8a00", MOG: "#c084fc", BOB: "#00ff85",
+    ATOM: "#2e3148", ARPA: "#7c3aed", HYPE: "#00e6ff",
   };
   const clean = String(asset || "").toUpperCase();
   if (colors[clean]) return colors[clean];
@@ -588,7 +726,9 @@ function assetColor(asset) {
 
 function tokenAvatar(sym) {
   const asset = assetFromSymbol(sym);
-  return `<span class="token-avatar light-text" style="--asset-color:${assetColor(asset)}">${assetGlyph(asset)}</span>`;
+  const slug = assetIconSlug(asset);
+  const glyph = assetGlyph(asset);
+  return `<span class="token-avatar light-text" style="--asset-color:${assetColor(asset)}" data-glyph="${glyph}"><img src="https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/${slug}.svg" alt="${asset}" onerror="this.parentElement.textContent=this.parentElement.dataset.glyph;"/></span>`;
 }
 
 function renderPairIdentity(sym) {
@@ -608,11 +748,24 @@ function switchTab(name) {
   document.querySelectorAll(".tab-page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.getElementById("tab" + name.charAt(0).toUpperCase() + name.slice(1)).classList.add("active");
-  document.querySelector(`.tab-btn[onclick="switchTab('${name}')"]`).classList.add("active");
+  const tabButton = document.querySelector(`.tab-btn[onclick="switchTab('${name}')"]`) || document.querySelector(".tab-btn");
+  if (tabButton) tabButton.classList.add("active");
   if (name === "config") {
     if (allMarkets.length) renderMarketResults();
     else loadMarkets();
+  } else if (name === "dashboard") {
+    fetchActivity();
+    renderOpenPositions();
   }
+}
+
+function openBotPanel() {
+  switchTab("dashboard");
+  const panel = document.getElementById("tabDashboard");
+  if (!panel) return;
+  panel.scrollIntoView({behavior: "smooth", block: "start"});
+  panel.classList.add("focus-flash");
+  setTimeout(() => panel.classList.remove("focus-flash"), 1400);
 }
 
 function uniqueSorted(items) {
@@ -660,7 +813,8 @@ function persistCapital() {
 
 function loadSavedApiCredentials() {
   try {
-    const raw = localStorage.getItem(API_CREDENTIALS_STORAGE_KEY);
+    localStorage.removeItem(API_CREDENTIALS_STORAGE_KEY);
+    const raw = sessionStorage.getItem(API_CREDENTIALS_STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === "object" ? parsed : {};
@@ -673,11 +827,12 @@ function persistApiCredentials() {
   const remember = document.getElementById("cfgRememberApi")?.checked;
   const apiKey = document.getElementById("cfgApiKey").value.trim();
   const apiSecret = document.getElementById("cfgApiSecret").value.trim();
+  const okxPassphrase = document.getElementById("cfgOkxPassphrase").value.trim();
   try {
-    if (remember && (apiKey || apiSecret)) {
-      localStorage.setItem(API_CREDENTIALS_STORAGE_KEY, JSON.stringify({ api_key: apiKey, api_secret: apiSecret }));
+    if (remember && (apiKey || apiSecret || okxPassphrase)) {
+      sessionStorage.setItem(API_CREDENTIALS_STORAGE_KEY, JSON.stringify({ api_key: apiKey, api_secret: apiSecret, okx_passphrase: okxPassphrase }));
     } else if (!remember) {
-      localStorage.removeItem(API_CREDENTIALS_STORAGE_KEY);
+      sessionStorage.removeItem(API_CREDENTIALS_STORAGE_KEY);
     }
   } catch {}
 }
@@ -709,6 +864,7 @@ function collectConfigPayload() {
     execution_mode: document.getElementById("cfgExecMode").value,
     api_key: document.getElementById("cfgApiKey").value.trim(),
     api_secret: document.getElementById("cfgApiSecret").value.trim(),
+    okx_passphrase: document.getElementById("cfgOkxPassphrase").value.trim(),
     binance_testnet: document.getElementById("cfgTestnet").checked,
   };
 }
@@ -724,11 +880,11 @@ function updateModeSummary() {
   const summary = document.getElementById("modeSummary");
   let text = "Simulado: analiza y registra operaciones sin enviar órdenes al exchange. El bot está configurado para usar margen ISOLATED.";
   if (execMode === "TESTNET") {
-    text = "Testnet: enviará órdenes de prueba al entorno testnet con tus credenciales y margen ISOLATED.";
+    text = "OKX demo: valida tus credenciales con x-simulated-trading activo.";
   } else if (execMode === "REAL") {
     text = testnet
-      ? "Real + testnet activado: revisa esto. Si quieres dinero real, desmarca testnet."
-      : "Real: enviará órdenes reales al exchange con margen ISOLATED. Verifica capital, claves y pares antes de iniciar.";
+      ? "Real + demo activado: revisa esto. Si quieres dinero real, desmarca OKX demo trading."
+      : "OKX real: conexión real activa. La ejecución de órdenes OKX se migrará en el siguiente paso.";
   }
   summary.textContent = text;
 }
@@ -761,12 +917,15 @@ async function loadConfig() {
   document.getElementById("cfgTestnet").checked = Boolean(cfg.binance_testnet);
   document.getElementById("cfgApiKey").value = savedCreds.api_key || "";
   document.getElementById("cfgApiSecret").value = savedCreds.api_secret || "";
-  if (cfg.api_credentials_saved && !savedCreds.api_key && !savedCreds.api_secret) {
+  document.getElementById("cfgOkxPassphrase").value = savedCreds.okx_passphrase || "";
+  if (cfg.api_credentials_saved && !savedCreds.api_key && !savedCreds.api_secret && !savedCreds.okx_passphrase) {
     document.getElementById("cfgApiKey").placeholder = `Guardada en backend ${cfg.api_key_hint || ""}`.trim();
     document.getElementById("cfgApiSecret").placeholder = "Guardada en backend";
+    document.getElementById("cfgOkxPassphrase").placeholder = "Guardada en backend";
   } else {
     document.getElementById("cfgApiKey").placeholder = "Solo necesaria para TESTNET o REAL";
     document.getElementById("cfgApiSecret").placeholder = "Se envía al backend al iniciar";
+    document.getElementById("cfgOkxPassphrase").placeholder = "Requerida por OKX";
   }
   symbolLeverage = {...(cfg.symbol_leverage || {}), ...loadSavedLeverage()};
   symbolCapital = {...(cfg.symbol_capital || {}), ...loadSavedCapital()};
@@ -804,19 +963,15 @@ function renderSelectedSymbols() {
   const tradeWrap = document.getElementById("tradeTokens");
   const watchWrap = document.getElementById("watchTokens");
   const levWrap = document.getElementById("levList");
-  const counts = [
-    ["tradeCount", tradeSymbols.length],
-    ["tradeCountInline", tradeSymbols.length],
-  ];
-  counts.forEach(([id, value]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  });
+  const configuredGroup = document.getElementById("configuredGroup");
+  if (configuredGroup) configuredGroup.style.display = tradeSymbols.length ? "grid" : "none";
 
   tradeWrap.innerHTML = "";
   watchWrap.innerHTML = "";
 
-  const expectedSymKey = tradeSymbols.join(",");
+  const expectedSymKey = tradeSymbols
+    .map(sym => `${sym}:${symbolCapital[sym] || ""}:${symbolLeverage[sym] || ""}`)
+    .join(",");
   const renderedSymKey = levWrap.getAttribute("data-syms") || "";
   if (expectedSymKey !== renderedSymKey) {
     levWrap.setAttribute("data-syms", expectedSymKey);
@@ -830,28 +985,68 @@ function renderSelectedSymbols() {
           const btnId   = `lev-btn-${safeKey}`;
           const fbId    = `lev-fb-${safeKey}`;
           return `
-            <div class="lev-row">
-              ${tokenAvatar(sym)}
-              <strong>${sym}</strong>
-              <div class="coin-controls">
-                <div>
-                  <label>Monto USDT</label>
-                  <input type="number" min="1" step="0.01" value="${amountValue}" id="${amountId}"/>
+            <div class="configured-row">
+              <div class="configured-asset">${tokenAvatar(sym)}<span>${sym}</span></div>
+              <div>
+                <label>Monto</label>
+                <div class="input-wrap">
+                  <span class="input-prefix">$</span>
+                  <input type="number" min="1" step="0.01" value="${amountValue}" id="${amountId}" aria-label="Monto USDT para ${sym}"/>
+                  <span class="input-suffix">USDT</span>
                 </div>
-                <div>
-                  <label>Lev.</label>
-                  <input type="number" min="1" max="20" value="${levValue}" id="${inputId}" style="text-align:center"/>
-                </div>
-                <button type="button" class="mini-btn trade" id="${btnId}" onclick="setPairConfig('${sym}', '${amountId}', '${inputId}', '${btnId}', '${fbId}')">Guardar</button>
               </div>
+              <div>
+                <label>Apalancamiento</label>
+                <div class="input-wrap">
+                  <input type="number" min="1" max="20" value="${levValue}" id="${inputId}" style="text-align:center" aria-label="Apalancamiento para ${sym}"/>
+                  <span class="input-suffix">X</span>
+                </div>
+              </div>
+              <button type="button" class="mini-btn trade" id="${btnId}" onclick="setPairConfig('${sym}', '${amountId}', '${inputId}', '${btnId}', '${fbId}')"><i data-lucide="save" class="icon-sm"></i> Guardar</button>
+              <button type="button" class="mini-btn" onclick="removeTrade('${sym}')"><i data-lucide="trash-2" class="icon-sm"></i></button>
               <span class="lev-feedback" id="${fbId}" style="color:var(--muted2)">monto: $${amountValue} · ${levValue}x</span>
-              <button type="button" class="mini-btn" onclick="removeTrade('${sym}')"><i data-lucide="trash-2" class="icon-sm"></i> Quitar</button>
             </div>
           `;
         }).join("")
-      : `<span class="hint">Busca una moneda, define monto y apalancamiento, y agrégala al bot.</span>`;
+      : "";
   }
   refreshIcons();
+}
+
+function selectPair(sym) {
+  pendingPair = sym;
+  document.getElementById("pendingPairIcon").innerHTML = tokenAvatar(sym);
+  document.getElementById("pendingPairSymbol").textContent = sym;
+  document.getElementById("pendingAmount").value = Number(symbolCapital[sym] || document.getElementById("cfgCapital").value || 25);
+  document.getElementById("pendingLeverage").value = Number(symbolLeverage[sym] || document.getElementById("cfgLev").value || 3);
+  document.getElementById("pairConfigPanel").classList.add("open");
+  document.getElementById("marketSearch").value = "";
+  renderMarketResults();
+  refreshIcons();
+}
+
+function clearPendingPair() {
+  pendingPair = null;
+  document.getElementById("pairConfigPanel").classList.remove("open");
+}
+
+function savePendingPair() {
+  if (!pendingPair) return;
+  const sym = pendingPair;
+  if (!tradeSymbols.includes(sym)) tradeSymbols.push(sym);
+  watchSymbols = watchSymbols.filter(item => item !== sym);
+  const amount = Math.max(1, parseFloat(document.getElementById("pendingAmount").value || "0") || 1);
+  const leverage = Math.max(1, Math.min(20, parseInt(document.getElementById("pendingLeverage").value || "0", 10) || 1));
+  symbolCapital[sym] = amount;
+  symbolLeverage[sym] = leverage;
+  persistCapital();
+  persistLeverage();
+  selectionDirty = true;
+  normalizeSelections();
+  clearPendingPair();
+  renderSelectedSymbols();
+  renderMarketResults();
+  showApplyBanner(true);
 }
 
 function addTrade(sym) {
@@ -1046,13 +1241,14 @@ async function setSymbolLeverage(sym, inputId = null, btnId = null, fbId = null)
 function renderMarketResults() {
   const wrap = document.getElementById("marketResults");
   const q = document.getElementById("marketSearch").value.trim().toUpperCase();
-  let markets = allMarkets;
-  if (q) {
-    markets = markets.filter(sym => sym.includes(q) || assetFromSymbol(sym).includes(q));
+  wrap.classList.toggle("open", Boolean(q));
+  if (!q) {
+    wrap.innerHTML = "";
+    return;
   }
-  markets = markets.slice(0, 60);
-  const marketCount = document.getElementById("marketCount");
-  if (marketCount) marketCount.textContent = markets.length;
+  let markets = allMarkets;
+  markets = markets.filter(sym => sym.includes(q) || assetFromSymbol(sym).includes(q));
+  markets = markets.slice(0, 12);
 
   if (!markets.length) {
     wrap.innerHTML = `<div class="market-empty">No encontré pares con ese filtro.</div>`;
@@ -1061,22 +1257,12 @@ function renderMarketResults() {
 
   wrap.innerHTML = markets.map(sym => {
     const inTrade = tradeSymbols.includes(sym);
-    const safeKey = sym.replace(/[^A-Z0-9]/g, "_");
-    const amountId = `amount-search-${safeKey}`;
-    const levId = `lev-search-${safeKey}`;
-    const btnId = `add-search-${safeKey}`;
-    const fbId = `fb-search-${safeKey}`;
-    const amount = Number(symbolCapital[sym] || document.getElementById("cfgCapital").value || 25);
-    const leverage = Number(symbolLeverage[sym] || document.getElementById("cfgLev").value || 3);
     return `
       <div class="market-row">
         ${renderPairIdentity(sym)}
-        <input type="number" min="1" step="0.01" value="${amount}" id="${amountId}" title="Monto USDT"/>
-        <input type="number" min="1" max="20" value="${leverage}" id="${levId}" title="Apalancamiento" style="text-align:center"/>
-        <button class="mini-btn trade" id="${btnId}" onclick="setPairConfig('${sym}', '${amountId}', '${levId}', '${btnId}', '${fbId}')">
-          <i data-lucide="${inTrade ? "save" : "plus"}" class="icon-sm"></i> ${inTrade ? "Actualizar" : "Agregar"}
+        <button class="mini-btn trade" ${inTrade ? "disabled" : ""} onclick="selectPair('${sym}')">
+          <i data-lucide="${inTrade ? "check" : "plus"}" class="icon-sm"></i> ${inTrade ? "Seleccionada" : "Seleccionar"}
         </button>
-        <span class="lev-feedback" id="${fbId}" style="color:var(--muted2)">${inTrade ? "configurada" : "lista para agregar"}</span>
       </div>
     `;
   }).join("");
@@ -1088,9 +1274,25 @@ function renderConnection(data) {
   const publicOk = conn.public_api;
   const privateOk = conn.private_api;
   const lastSync = conn.last_account_sync ? new Date(conn.last_account_sync).toLocaleTimeString("es") : "Sin sincronizar";
+  const topValue = document.getElementById("connectionTopValue");
   document.getElementById("connMode").textContent = conn.mode || "—";
   document.getElementById("lastSync").textContent = conn.mode === "SIMULADO" ? "Sin sync privada" : `Sync: ${lastSync}`;
   document.getElementById("modeBadge").textContent = conn.mode || "SIMULADO";
+  if (topValue) {
+    const mode = conn.mode || "SIMULADO";
+    let label = "Simulado";
+    let cls = "val-neutral";
+    if (conn.error) {
+      label = "Error";
+      cls = "val-down";
+    } else if (mode === "REAL" || mode === "TESTNET") {
+      const ok = publicOk && privateOk;
+      label = ok ? (mode === "REAL" ? "OK real" : "OK test") : "Sin API";
+      cls = ok ? "val-up" : "val-down";
+    }
+    topValue.textContent = label;
+    topValue.className = "tb-val " + cls;
+  }
   document.getElementById("connPanel").innerHTML = `
     <div class="conn-row"><span>API pública</span><strong><span class="conn-pill ${publicOk ? "ok" : "no"}">${publicOk ? "OK" : "NO"}</span></strong></div>
     <div class="conn-row"><span>API privada</span><strong><span class="conn-pill ${privateOk ? "ok" : "no"}">${privateOk ? "OK" : "NO"}</span></strong></div>
@@ -1100,6 +1302,50 @@ function renderConnection(data) {
     <div class="conn-row"><span>Balance cuenta</span><strong>${conn.balance == null ? "—" : "$" + Number(conn.balance).toFixed(2)}</strong></div>
     <div class="conn-row"><span>Error</span><strong>${conn.error || "—"}</strong></div>
   `;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function fmtUsd(value, maxDigits = 2) {
+  const n = Number(value || 0);
+  return "$" + n.toLocaleString("en", {minimumFractionDigits:2, maximumFractionDigits:maxDigits});
+}
+
+function fmtPrice(value) {
+  const n = Number(value || 0);
+  const digits = n >= 100 ? 2 : n >= 1 ? 4 : 6;
+  return "$" + n.toLocaleString("en", {minimumFractionDigits:2, maximumFractionDigits:digits});
+}
+
+function positionStatusText(pos, d) {
+  if (pos.partial) return "Parcial tomado · protegiendo restante";
+  if (pos.breakeven) return "Break-even activo · riesgo reducido";
+  const tp = Number(pos.tp || 0);
+  const sl = Number(pos.sl || 0);
+  const price = Number(d.price || 0);
+  if (tp && sl && price) {
+    const targetDist = Math.abs(tp - price);
+    const stopDist = Math.abs(price - sl);
+    return targetDist < stopDist ? "Cerca del objetivo" : "Gestionando salida";
+  }
+  return "Monitoreando posición";
+}
+
+function marketBiasSummary() {
+  const values = Object.values(symData || {});
+  if (!values.length) return "—";
+  const up = values.filter(d => d.tendencia === "ALCISTA").length;
+  const down = values.filter(d => d.tendencia === "BAJISTA").length;
+  if (up > down) return `${up} alcistas`;
+  if (down > up) return `${down} bajistas`;
+  return "Mixto";
 }
 
 function renderStatus(data) {
@@ -1145,7 +1391,11 @@ function renderStatus(data) {
 
   const openPos = Object.values(symData).filter(s => s.position?.open || s.mom_position?.open).length;
   document.getElementById("positions").textContent = `${openPos} abiertas`;
-  document.getElementById("openCountSide").textContent = String(openPos);
+  document.getElementById("openCountSide").textContent = `${openPos} activa${openPos === 1 ? "" : "s"}`;
+  document.getElementById("dashOpenPnl").textContent = `${Number(data.open_pnl || 0) >= 0 ? "+" : ""}$${Number(data.open_pnl || 0).toFixed(2)}`;
+  document.getElementById("dashOpenPnl").className = Number(data.open_pnl || 0) > 0 ? "val-up" : Number(data.open_pnl || 0) < 0 ? "val-down" : "val-neutral";
+  document.getElementById("dashMarketBias").textContent = marketBiasSummary();
+  document.getElementById("dashBotState").textContent = data.running ? "Operando" : "Detenido";
   refreshLastUpdateLabel();
 
   const tbody = document.getElementById("symTable");
@@ -1226,6 +1476,7 @@ function renderStatus(data) {
   }
 
   renderOpenPositions();
+  fetchActivity();
 }
 
 function renderRecommendations(recs) {
@@ -1268,35 +1519,116 @@ function renderRecommendations(recs) {
 function renderOpenPositions() {
   const wrap = document.getElementById("openPositionsList");
   const cards = [];
+  let exposure = 0;
+  let totalOpenPnl = 0;
+  let longCount = 0;
+  let shortCount = 0;
+  const makeCard = (sym, d, pos, strategy, badgeClass) => {
+    const pnlUsd = Number(pos.pnl_usd || 0);
+    const pnlPct = Number(pos.pnl_pct || 0);
+    const capital = Number(pos.capital || 0);
+    const lev = Number(pos.apalancamiento || symbolLeverage[sym] || 0);
+    const notional = capital * (lev || 1);
+    const direction = pos.direction || "—";
+    const pnlCls = pnlUsd >= 0 ? "val-up" : "val-down";
+    const cardCls = pnlUsd >= 0 ? "profit" : "loss";
+    const sideCls = direction === "LONG" ? "live" : "short";
+    const source = pos.pnl_source === "OKX" ? "OKX live" : "Local";
+    const action = positionStatusText(pos, d);
+    exposure += notional;
+    totalOpenPnl += pnlUsd;
+    if (direction === "LONG") longCount += 1;
+    if (direction === "SHORT") shortCount += 1;
+    return `
+      <div class="open-pos-card ${cardCls}">
+        <div class="open-pos-top">
+          <div class="open-pos-title">
+            ${tokenAvatar(sym)}
+            <div class="open-pos-name">
+              <div class="open-pos-symbol">${escapeHtml(sym)}</div>
+              <div class="open-pos-sub">${escapeHtml(strategy)} · ${escapeHtml(source)}</div>
+            </div>
+          </div>
+          <div class="open-pos-pnl">
+            <strong class="${pnlCls}">${pnlUsd >= 0 ? "+" : ""}$${pnlUsd.toFixed(2)}</strong>
+            <span>${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}%</span>
+          </div>
+        </div>
+        <div class="open-pos-state">
+          <span class="state-pill ${sideCls}">${escapeHtml(direction)}</span>
+          <span class="state-pill">${lev || "—"}X</span>
+          <span class="state-pill ${pos.breakeven || pos.partial ? "live" : "watch"}">${escapeHtml(action)}</span>
+        </div>
+        <div class="pos-metrics">
+          <div class="pos-metric"><span>Capital</span><strong>${fmtUsd(capital)}</strong></div>
+          <div class="pos-metric"><span>Exposición</span><strong>${fmtUsd(notional)}</strong></div>
+          <div class="pos-metric"><span>Precio actual</span><strong>${fmtPrice(d.price)}</strong></div>
+          <div class="pos-metric"><span>Fuente P&amp;L</span><strong>${escapeHtml(source)}</strong></div>
+        </div>
+        <div class="risk-ladder">
+          <div class="risk-step stop"><span>Stop</span><strong>${fmtPrice(pos.sl)}</strong></div>
+          <div class="risk-step entry"><span>Entrada</span><strong>${fmtPrice(pos.entry)}</strong></div>
+          <div class="risk-step target"><span>Objetivo</span><strong>${fmtPrice(pos.tp)}</strong></div>
+        </div>
+      </div>
+    `;
+  };
   for (const [sym, d] of Object.entries(symData)) {
     const pos  = d.position     || {};
     const posM = d.mom_position || {};
     if (pos.open) {
-      const pnlUsd = Number(pos.pnl_usd || 0);
-      const pnlPct = Number(pos.pnl_pct || 0);
-      const cls = pnlUsd >= 0 ? "chg-up" : "chg-dn";
-      cards.push(`<div class="open-pos-card">
-        <strong>${sym} · ${pos.direction || "—"} · ${pos.apalancamiento || "—"}x <span style="font-size:10px;color:var(--muted2);font-weight:400">Minervini</span></strong>
-        <div class="open-pos-meta">
-          <div>Entrada: $${Number(pos.entry || 0).toLocaleString("en", {maximumFractionDigits:6})} · SL: $${Number(pos.sl||0).toLocaleString("en",{maximumFractionDigits:6})} · TP: $${Number(pos.tp||0).toLocaleString("en",{maximumFractionDigits:6})}</div>
-          <div class="${cls}">PnL: ${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}% · ${pnlUsd >= 0 ? "+" : ""}$${pnlUsd.toFixed(2)}</div>
-        </div>
-      </div>`);
+      cards.push(makeCard(sym, d, pos, "Minervini", "badge-green"));
     }
     if (posM.open) {
-      const pnlUsd = Number(posM.pnl_usd || 0);
-      const pnlPct = Number(posM.pnl_pct || 0);
-      const cls = pnlUsd >= 0 ? "chg-up" : "chg-dn";
-      cards.push(`<div class="open-pos-card" style="border-color:rgba(59,130,246,.3)">
-        <strong>${sym} · ${posM.direction || "—"} · ${posM.apalancamiento || "—"}x <span style="font-size:10px;color:var(--blue);font-weight:400">Momentum</span></strong>
-        <div class="open-pos-meta">
-          <div>Entrada: $${Number(posM.entry || 0).toLocaleString("en", {maximumFractionDigits:6})} · SL: $${Number(posM.sl||0).toLocaleString("en",{maximumFractionDigits:6})} · TP: $${Number(posM.tp||0).toLocaleString("en",{maximumFractionDigits:6})}</div>
-          <div class="${cls}">PnL: ${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}% · ${pnlUsd >= 0 ? "+" : ""}$${pnlUsd.toFixed(2)}</div>
-        </div>
-      </div>`);
+      cards.push(makeCard(sym, d, posM, "Momentum", "badge-blue"));
     }
   }
-  wrap.innerHTML = cards.length ? cards.join("") : `<div class="hint" style="padding:12px">No hay posiciones abiertas.</div>`;
+  document.getElementById("dashExposure").textContent = fmtUsd(exposure);
+  document.getElementById("dashOpenPnl").textContent = `${totalOpenPnl >= 0 ? "+" : ""}$${totalOpenPnl.toFixed(2)}`;
+  document.getElementById("dashOpenPnl").className = totalOpenPnl > 0 ? "val-up" : totalOpenPnl < 0 ? "val-down" : "val-neutral";
+  document.getElementById("dashBotState").textContent = cards.length
+    ? `${longCount}L / ${shortCount}S`
+    : (window.__lastStatus?.running ? "Escaneando" : "Detenido");
+  wrap.innerHTML = cards.length ? cards.join("") : `
+    <div class="position-empty">
+      <i data-lucide="radar" class="icon"></i>
+      <strong>Sin posiciones abiertas</strong>
+      <span>El bot está leyendo mercado, evaluando señales y esperando una entrada con suficiente confirmación.</span>
+    </div>
+  `;
+  refreshIcons();
+}
+
+async function fetchActivity() {
+  const list = document.getElementById("activityList");
+  const summary = document.getElementById("activitySummary");
+  if (!list || !summary) return;
+  try {
+    const r = await fetch(`${API}/api/logs`);
+    const logs = await r.json();
+    const items = (Array.isArray(logs) ? logs : []).slice(0, 14);
+    summary.textContent = items.length ? `${items.length} eventos recientes` : "En espera";
+    if (!items.length) {
+      list.innerHTML = `<div class="activity-empty">Cuando el bot analice, abra o cierre operaciones, lo verás aquí.</div>`;
+      return;
+    }
+    list.innerHTML = items.map(item => {
+      const level = item.level || "info";
+      const icon = level === "success" ? "check" : level === "error" ? "x" : level === "warning" ? "triangle-alert" : "scan-line";
+      return `
+        <div class="activity-item">
+          <span class="activity-icon ${level}"><i data-lucide="${icon}" class="icon-sm"></i></span>
+          <div class="activity-body">
+            <div class="activity-msg">${escapeHtml(item.msg || "")}</div>
+            <div class="activity-time">${escapeHtml(item.ts || "—")}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+    refreshIcons();
+  } catch {
+    summary.textContent = "Sin conexión";
+  }
 }
 
 function refreshLastUpdateLabel() {
@@ -1573,6 +1905,7 @@ async function testCredentials() {
         execution_mode: execMode,
         api_key: document.getElementById("cfgApiKey").value.trim(),
         api_secret: document.getElementById("cfgApiSecret").value.trim(),
+        okx_passphrase: document.getElementById("cfgOkxPassphrase").value.trim(),
         binance_testnet: document.getElementById("cfgTestnet").checked,
       }),
     });
@@ -1597,6 +1930,7 @@ document.getElementById("cfgTestnet").addEventListener("change", updateModeSumma
 document.getElementById("cfgRememberApi").addEventListener("change", persistApiCredentials);
 document.getElementById("cfgApiKey").addEventListener("change", persistApiCredentials);
 document.getElementById("cfgApiSecret").addEventListener("change", persistApiCredentials);
+document.getElementById("cfgOkxPassphrase").addEventListener("change", persistApiCredentials);
 
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeChecklist(); });
 
@@ -1657,8 +1991,10 @@ connect();
 loadConfig();
 loadStatusSnapshot();
 loadMarkets();
+fetchActivity();
 refreshIcons();
 setInterval(refreshLastUpdateLabel, 1000);
+setInterval(fetchActivity, 4000);
 </script>
 </body>
 </html>

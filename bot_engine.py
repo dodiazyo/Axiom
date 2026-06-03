@@ -6,9 +6,11 @@ Sin sesgo: opera LONG en alcistas y SHORT en bajistas
 from __future__ import annotations
 
 import copy
+import base64
 import fcntl
 import hashlib
 import hmac
+import json
 import math
 import threading
 import time
@@ -124,6 +126,8 @@ class TrendBot:
         self._real_balance: Optional[float] = None
         self._real_available_balance: Optional[float] = None
         self._exchange_positions: dict[str, dict] = {}
+        self._live_prices: dict[str, float] = {}
+        self._position_mode = "net_mode"
         self._alerts: deque = deque(maxlen=50)
         self._last_status: dict = {
             "running": False,
@@ -280,6 +284,7 @@ class TrendBot:
             cfg = copy.deepcopy(self.cfg)
             cfg["api_key"] = ""
             cfg["api_secret"] = ""
+            cfg["okx_passphrase"] = ""
             balance_ini = self._balance_ini
             ganancia = self._ganancia
             if self._is_live_mode() and not self._has_private_keys():
@@ -334,64 +339,92 @@ class TrendBot:
         return float(self.cfg.get("capital_usd", 25.0))
 
     def _base_url(self) -> str:
-        if self._execution_mode() == "TESTNET" or bool(self.cfg.get("binance_testnet", False)):
-            return "https://testnet.binancefuture.com"
-        return "https://fapi.binance.com"
+        return "https://www.okx.com"
 
     def _api_symbol(self, sym: str) -> str:
-        return sym.replace("/", "")
+        base, quote = sym.split("/") if "/" in sym else (sym.replace("USDT", ""), "USDT")
+        return f"{base}-{quote}-SWAP"
+
+    def _ui_symbol(self, inst_id: str) -> str:
+        parts = str(inst_id or "").split("-")
+        if len(parts) >= 2:
+            return f"{parts[0]}/{parts[1]}"
+        return str(inst_id or "").replace("USDT", "/USDT")
 
     def _has_private_keys(self) -> bool:
-        return bool(self.cfg.get("api_key")) and bool(self.cfg.get("api_secret"))
+        return bool(self.cfg.get("api_key")) and bool(self.cfg.get("api_secret")) and bool(self.cfg.get("okx_passphrase"))
 
     def _request_public(self, path: str, params: Optional[dict] = None, timeout: tuple[int, int] = (5, 10)):
         r = requests.get(f"{self._base_url()}{path}", params=params or {}, timeout=timeout)
         r.raise_for_status()
-        return r.json()
+        payload = r.json()
+        if isinstance(payload, dict) and payload.get("code") not in (None, "0"):
+            raise RuntimeError(payload.get("msg") or str(payload))
+        return payload
+
+    def _okx_headers(self, method: str, request_path: str, body: str = "") -> dict:
+        ts = datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+        prehash = f"{ts}{method.upper()}{request_path}{body}"
+        signature = base64.b64encode(
+            hmac.new(
+                str(self.cfg.get("api_secret", "")).encode(),
+                prehash.encode(),
+                hashlib.sha256,
+            ).digest()
+        ).decode()
+        headers = {
+            "OK-ACCESS-KEY": str(self.cfg.get("api_key", "")),
+            "OK-ACCESS-SIGN": signature,
+            "OK-ACCESS-TIMESTAMP": ts,
+            "OK-ACCESS-PASSPHRASE": str(self.cfg.get("okx_passphrase", "")),
+        }
+        if self._execution_mode() == "TESTNET" or bool(self.cfg.get("binance_testnet", False)):
+            headers["x-simulated-trading"] = "1"
+        return headers
 
     def _request_signed(self, method: str, path: str, params: Optional[dict] = None):
         if not self._has_private_keys():
-            raise RuntimeError("Faltan API key y API secret de Binance")
-        payload = dict(params or {})
-        payload["timestamp"] = int(time.time() * 1000)
-        payload["recvWindow"] = 10_000
-        query = urlencode(payload, doseq=True)
-        signature = hmac.new(
-            str(self.cfg.get("api_secret", "")).encode(),
-            query.encode(),
-            hashlib.sha256,
-        ).hexdigest()
-        payload["signature"] = signature
-        headers = {"X-MBX-APIKEY": str(self.cfg.get("api_key", ""))}
+            raise RuntimeError("Faltan API key, API secret y passphrase de OKX")
+        method = method.upper()
+        query = urlencode(params or {}, doseq=True)
+        request_path = f"{path}?{query}" if method == "GET" and query else path
+        body = "" if method == "GET" else json.dumps(params or {}, separators=(",", ":"))
+        headers = self._okx_headers(method, request_path, body)
+        headers["Content-Type"] = "application/json"
         url = f"{self._base_url()}{path}"
-        if method.upper() == "GET":
-            r = requests.get(url, params=payload, headers=headers, timeout=(5, 15))
+        if method == "GET":
+            r = requests.get(url, params=params or {}, headers=headers, timeout=(5, 15))
         else:
-            r = requests.post(url, params=payload, headers=headers, timeout=(5, 15))
+            r = requests.post(url, data=body, headers=headers, timeout=(5, 15))
         try:
             r.raise_for_status()
         except requests.HTTPError as e:
             detail = (r.text or "").strip()
             if detail:
-                raise requests.HTTPError(f"{e} | Binance: {detail}", response=r) from e
+                raise requests.HTTPError(f"{e} | OKX: {detail}", response=r) from e
             raise
-        return r.json()
+        payload = r.json()
+        if isinstance(payload, dict) and payload.get("code") not in (None, "0"):
+            raise RuntimeError(payload.get("msg") or str(payload))
+        return payload
 
     def _load_exchange_info(self):
-        payload = self._request_public("/fapi/v1/exchangeInfo")
+        payload = self._request_public("/api/v5/public/instruments", {"instType": "SWAP"})
         exchange_info: dict[str, dict] = {}
-        for item in payload.get("symbols", []):
-            if item.get("status") != "TRADING" or item.get("quoteAsset") != "USDT" or item.get("contractType") != "PERPETUAL":
+        for item in payload.get("data", []):
+            if item.get("state") != "live" or item.get("settleCcy") != "USDT":
                 continue
-            sym = item.get("symbol", "")
-            filters = {f.get("filterType"): f for f in item.get("filters", [])}
-            lot = filters.get("LOT_SIZE", {})
-            price = filters.get("PRICE_FILTER", {})
-            exchange_info[f"{sym[:-4]}/USDT"] = {
-                "symbol": sym,
-                "qty_step": float(lot.get("stepSize", 1.0) or 1.0),
-                "qty_min": float(lot.get("minQty", 0.0) or 0.0),
-                "price_tick": float(price.get("tickSize", 0.01) or 0.01),
+            inst_id = item.get("instId", "")
+            base = item.get("uly", "").split("-")[0] or item.get("baseCcy", "")
+            if not inst_id or not base:
+                continue
+            exchange_info[f"{base}/USDT"] = {
+                "symbol": inst_id,
+                "qty_step": float(item.get("lotSz", 1.0) or 1.0),
+                "qty_min": float(item.get("minSz", 0.0) or 0.0),
+                "price_tick": float(item.get("tickSz", 0.01) or 0.01),
+                "ct_val": float(item.get("ctVal", 1.0) or 1.0),
+                "ct_val_ccy": item.get("ctValCcy", base),
             }
         self._exchange_info = exchange_info
 
@@ -400,16 +433,56 @@ class TrendBot:
             return value
         return math.floor(value / step) * step
 
+    def _format_okx_number(self, value: float) -> str:
+        return f"{value:.12f}".rstrip("0").rstrip(".")
+
+    def _contracts_to_base_qty(self, sym: str, contracts: float) -> float:
+        info = self._exchange_info.get(sym, {})
+        return float(contracts) * float(info.get("ct_val") or 1.0)
+
+    def _base_qty_to_contracts(self, sym: str, base_qty: float) -> float:
+        info = self._exchange_info.get(sym, {})
+        ct_val = float(info.get("ct_val") or 1.0)
+        return float(base_qty) / ct_val if ct_val > 0 else float(base_qty)
+
+    def _position_side(self, direction: str) -> str:
+        return "long" if direction == "LONG" else "short"
+
+    def _order_side(self, direction: str, closing: bool = False) -> str:
+        if direction == "LONG":
+            return "sell" if closing else "buy"
+        return "buy" if closing else "sell"
+
+    def _trade_mode(self) -> str:
+        return "isolated" if str(self.cfg.get("margin_type", "ISOLATED")).upper() == "ISOLATED" else "cross"
+
+    def _order_payload_base(self, sym: str, direction: str) -> dict:
+        payload = {"instId": self._api_symbol(sym), "tdMode": self._trade_mode()}
+        if self._position_mode == "long_short_mode":
+            payload["posSide"] = self._position_side(direction)
+        return payload
+
+    def _sync_account_config(self):
+        if not self._has_private_keys():
+            return
+        try:
+            payload = self._request_signed("GET", "/api/v5/account/config")
+            data = (payload.get("data") or [{}])[0]
+            self._position_mode = str(data.get("posMode") or "net_mode")
+        except Exception as e:
+            self._log(f"No pude leer modo de posiciones OKX: {e}", "warning")
+
     def _sync_account(self):
         if not self._private_connected or not self._has_private_keys():
             self._exchange_positions = {}
             return
-        account = self._request_signed("GET", "/fapi/v2/account")
-        usdt = next((a for a in account.get("assets", []) if a.get("asset") == "USDT"), None)
+        account = self._request_signed("GET", "/api/v5/account/balance", {"ccy": "USDT"})
+        data = (account.get("data") or [{}])[0]
+        usdt = next((a for a in data.get("details", []) if a.get("ccy") == "USDT"), None)
         if not usdt:
             return
-        wallet_balance = float(usdt.get("walletBalance", 0.0))
-        available_balance = float(usdt.get("availableBalance", wallet_balance) or 0.0)
+        wallet_balance = float(usdt.get("cashBal") or usdt.get("eq") or 0.0)
+        available_balance = float(usdt.get("availBal") or usdt.get("availEq") or wallet_balance or 0.0)
         first_real_sync = self._real_balance is None
         # Siempre actualiza el balance real (visible en UI)
         self._real_balance = wallet_balance
@@ -440,34 +513,43 @@ class TrendBot:
             self._exchange_positions = {}
             return
         try:
-            positions = self._request_signed("GET", "/fapi/v2/positionRisk")
+            payload = self._request_signed("GET", "/api/v5/account/positions", {"instType": "SWAP"})
         except Exception as e:
-            self._log(f"No se pudo sincronizar PnL real de posiciones: {e}", "warning")
+            self._log(f"No se pudo sincronizar PnL real de posiciones OKX: {e}", "warning")
             return
 
         live_positions = {}
-        for pos in positions:
+        for pos in payload.get("data", []):
             try:
-                amt = float(pos.get("positionAmt", 0.0) or 0.0)
+                amt = float(pos.get("pos", 0.0) or 0.0)
             except Exception:
                 continue
             if amt == 0.0:
                 continue
-            raw_sym = pos.get("symbol", "")
-            if not raw_sym.endswith("USDT"):
+            raw_sym = pos.get("instId", "")
+            if not raw_sym or "-USDT-" not in raw_sym:
                 continue
 
-            sym = raw_sym[:-4] + "/USDT"
+            sym = self._ui_symbol(raw_sym)
+            pos_side = str(pos.get("posSide") or "net").lower()
+            if pos_side == "short":
+                raw_qty = -abs(amt)
+            elif pos_side == "long":
+                raw_qty = abs(amt)
+            else:
+                raw_qty = amt
             try:
-                lev = int(float(pos.get("leverage", 1) or 1))
+                lev = int(float(pos.get("lever", 1) or 1))
             except Exception:
                 lev = 1
+            base_qty = self._contracts_to_base_qty(sym, abs(raw_qty))
             live_positions[sym] = {
-                "qty": abs(amt),
-                "raw_qty": amt,
-                "entry": float(pos.get("entryPrice", 0.0) or 0.0),
-                "mark_price": float(pos.get("markPrice", 0.0) or 0.0),
-                "unrealized_pnl": float(pos.get("unRealizedProfit", 0.0) or 0.0),
+                "qty": base_qty,
+                "raw_qty": -base_qty if raw_qty < 0 else base_qty,
+                "okx_contracts": abs(raw_qty),
+                "entry": float(pos.get("avgPx", 0.0) or 0.0),
+                "mark_price": float(pos.get("markPx", 0.0) or 0.0),
+                "unrealized_pnl": float(pos.get("upl", 0.0) or 0.0),
                 "leverage": lev,
             }
         self._exchange_positions = live_positions
@@ -475,7 +557,7 @@ class TrendBot:
             self._clear_missing_exchange_positions(live_positions)
 
     def _clear_missing_exchange_positions(self, live_positions: dict[str, dict]):
-        """Limpia posiciones locales que Binance ya no reporta como abiertas."""
+        """Limpia posiciones locales que OKX ya no reporta como abiertas."""
         with self._lock:
             for sym, est in list(self._estados.items()):
                 if not est.get("posicion_abierta") or sym in live_positions:
@@ -488,46 +570,50 @@ class TrendBot:
                 new_st["ultimo_cierre"] = datetime.now(timezone.utc).isoformat()
                 new_st["ultimo_resultado"] = "SYNC"
                 self._estados[sym] = new_st
-                self._log(f"[{sym}] Posición {old_dir} limpiada: Binance ya no la reporta abierta", "warning")
+                self._log(f"[{sym}] Posición {old_dir} limpiada: OKX ya no la reporta abierta", "warning")
 
     def _reconcile_positions(self):
         """
-        Consulta posiciones abiertas en Binance y sincroniza el estado interno.
+        Consulta posiciones abiertas en OKX y sincroniza el estado interno.
         Evita operar ciego si el bot se reinició con posiciones ya abiertas.
         """
         if not self._is_live_mode() or not self._private_connected:
             return
         try:
-            positions = self._request_signed("GET", "/fapi/v2/positionRisk")
+            payload = self._request_signed("GET", "/api/v5/account/positions", {"instType": "SWAP"})
         except Exception as e:
             self._log(f"No se pudo reconciliar posiciones: {e}", "warning")
             return
 
         reconciled = 0
-        for pos in positions:
-            amt = float(pos.get("positionAmt", 0.0))
+        for pos in payload.get("data", []):
+            amt = float(pos.get("pos", 0.0) or 0.0)
             if amt == 0.0:
                 continue
 
-            raw_sym = pos.get("symbol", "")
-            if not raw_sym.endswith("USDT"):
+            raw_sym = pos.get("instId", "")
+            if not raw_sym or "-USDT-" not in raw_sym:
                 continue
-            sym = raw_sym[:-4] + "/USDT"
+            sym = self._ui_symbol(raw_sym)
 
             if sym not in self.cfg.get("symbols", []):
                 continue
 
-            direction = "LONG" if amt > 0 else "SHORT"
-            entry_price = float(pos.get("entryPrice", 0.0))
-            leverage    = int(float(pos.get("leverage", 1)))
-            qty         = abs(amt)
-            capital     = round((qty * entry_price) / leverage, 2)
+            pos_side = str(pos.get("posSide") or "net").lower()
+            signed_amt = -abs(amt) if pos_side == "short" else abs(amt) if pos_side == "long" else amt
+            direction = "LONG" if signed_amt > 0 else "SHORT"
+            entry_price = float(pos.get("avgPx", 0.0) or 0.0)
+            leverage    = int(float(pos.get("lever", 1) or 1))
+            okx_contracts = abs(amt)
+            qty           = self._contracts_to_base_qty(sym, okx_contracts)
+            capital       = round((qty * entry_price) / leverage, 2)
             self._exchange_positions[sym] = {
                 "qty": qty,
-                "raw_qty": amt,
+                "raw_qty": -qty if signed_amt < 0 else qty,
+                "okx_contracts": okx_contracts,
                 "entry": entry_price,
-                "mark_price": float(pos.get("markPrice", 0.0) or 0.0),
-                "unrealized_pnl": float(pos.get("unRealizedProfit", 0.0) or 0.0),
+                "mark_price": float(pos.get("markPx", 0.0) or 0.0),
+                "unrealized_pnl": float(pos.get("upl", 0.0) or 0.0),
                 "leverage": leverage,
             }
 
@@ -576,49 +662,51 @@ class TrendBot:
                 })
                 reconciled += 1
                 self._log(
-                    f"[{sym}] Posición {direction} reconciliada desde Binance — "
+                    f"[{sym}] Posición {direction} reconciliada desde OKX — "
                     f"entrada ${entry_price:,.4f} | qty {qty} | lev {leverage}x | "
                     f"SL ${sl_p:,.4f} TP ${tp_p:,.4f}",
                     "warning"
                 )
 
         if reconciled:
-            self._log(f"Reconciliación completa: {reconciled} posición(es) importada(s) de Binance", "success")
+            self._log(f"Reconciliación completa: {reconciled} posición(es) importada(s) de OKX", "success")
         else:
-            self._log("Reconciliación completa: no hay posiciones abiertas en Binance", "info")
+            self._log("Reconciliación completa: no hay posiciones abiertas en OKX", "info")
 
     def _set_leverage(self, sym: str, leverage: int):
         if not self._is_live_mode():
             return
-        self._request_signed("POST", "/fapi/v1/leverage",
-                              {"symbol": self._api_symbol(sym), "leverage": leverage})
+        payload = {
+            "instId": self._api_symbol(sym),
+            "lever": str(leverage),
+            "mgnMode": self._trade_mode(),
+        }
+        if self._position_mode == "long_short_mode":
+            for pos_side in ("long", "short"):
+                self._request_signed("POST", "/api/v5/account/set-leverage", {**payload, "posSide": pos_side})
+            return
+        self._request_signed("POST", "/api/v5/account/set-leverage", payload)
 
     def _set_margin_type(self, sym: str):
-        if not self._is_live_mode():
-            return
-        try:
-            self._request_signed("POST", "/fapi/v1/marginType",
-                                  {"symbol": self._api_symbol(sym), "marginType": "ISOLATED"})
-        except requests.HTTPError as e:
-            text = getattr(getattr(e, "response", None), "text", "")
-            if "No need to change margin type" not in text and '"code":-4046' not in text:
-                raise
+        return
 
     def _conectar(self):
         self._connection_error = None
-        self._request_public("/fapi/v1/ping", timeout=(5, 10))
+        self._request_public("/api/v5/public/time", timeout=(5, 10))
         self._public_connected = True
         self._load_exchange_info()
         if self._is_live_mode():
             if not self._has_private_keys():
-                raise RuntimeError("Modo real/testnet requiere API key y API secret")
-            self._request_signed("GET", "/fapi/v2/account")
+                raise RuntimeError("Modo real/demo requiere API key, API secret y passphrase de OKX")
+            self._sync_account_config()
+            self._request_signed("GET", "/api/v5/account/balance", {"ccy": "USDT"})
             self._private_connected = True
             self._sync_account()
         elif self._has_private_keys():
             # Simulado con claves — conectar en modo lectura para ver balance real
             try:
-                self._request_signed("GET", "/fapi/v2/account")
+                self._sync_account_config()
+                self._request_signed("GET", "/api/v5/account/balance", {"ccy": "USDT"})
                 self._private_connected = True
                 self._sync_account()
                 self._log("API privada conectada (solo lectura — modo simulado)", "info")
@@ -652,53 +740,18 @@ class TrendBot:
         return round(round(price / tick) * tick, 8)
 
     def _place_sl_order(self, sym: str, direction: str, sl_price: float) -> Optional[int]:
-        """Coloca una orden STOP_MARKET en Binance como SL de seguridad."""
+        """SL exchange pendiente de migración a OKX."""
         if not self._is_live_mode():
             return None
-        info = self._exchange_info.get(sym)
-        symbol = info["symbol"] if info else self._api_symbol(sym)
-        side = "SELL" if direction == "LONG" else "BUY"
-        sl_rounded = self._round_price(sym, sl_price)
-        try:
-            order = self._request_signed("POST", "/fapi/v1/order", {
-                "symbol":        symbol,
-                "side":          side,
-                "type":          "STOP_MARKET",
-                "stopPrice":     f"{sl_rounded:.8f}",
-                "closePosition": "true",
-                "workingType":   "CONTRACT_PRICE",
-                "newOrderRespType": "RESULT",
-            })
-            order_id = int(order.get("orderId", 0))
-            self._log(f"[{sym}] SL exchange colocado #{order_id} @ ${sl_rounded:,.4f}", "info")
-            return order_id
-        except Exception as e:
-            self._log(f"[{sym}] Error colocando SL en exchange: {e}", "error")
-            return None
+        self._log(f"[{sym}] SL exchange pendiente de migración OKX; gestión local activa", "warning")
+        return None
 
     def _cancel_sl_order(self, sym: str, order_id: Optional[int]) -> bool:
-        """Cancela la orden SL existente en Binance."""
+        """Cancela la orden SL existente cuando la ejecución OKX esté activa."""
         if not self._is_live_mode() or not order_id:
             return True
-        info = self._exchange_info.get(sym)
-        symbol = info["symbol"] if info else self._api_symbol(sym)
-        try:
-            payload = {"symbol": symbol, "orderId": order_id, "timestamp": int(time.time() * 1000), "recvWindow": 10_000}
-            query = urlencode(payload, doseq=True)
-            signature = hmac.new(str(self.cfg.get("api_secret", "")).encode(), query.encode(), hashlib.sha256).hexdigest()
-            payload["signature"] = signature
-            headers = {"X-MBX-APIKEY": str(self.cfg.get("api_key", ""))}
-            r = requests.delete(f"{self._base_url()}/fapi/v1/order", params=payload, headers=headers, timeout=(5, 15))
-            if r.status_code == 200:
-                self._log(f"[{sym}] SL exchange cancelado #{order_id}", "info")
-                return True
-            # Orden ya cerrada/inexistente — no es error crítico
-            if r.status_code == 400 and "-2011" in r.text:
-                return True
-            r.raise_for_status()
-        except Exception as e:
-            self._log(f"[{sym}] Error cancelando SL #{order_id}: {e}", "warning")
-        return False
+        self._log(f"[{sym}] Cancelación SL OKX pendiente de migración #{order_id}", "warning")
+        return True
 
     def _update_sl_order(self, sym: str, direction: str, old_order_id: Optional[int], new_sl_price: float) -> Optional[int]:
         """Cancela el SL viejo y coloca uno nuevo. Retorna el nuevo order_id."""
@@ -708,44 +761,95 @@ class TrendBot:
     def _place_live_order(self, sym: str, direction: str, capital: float, leverage: int, price: float) -> tuple[float, dict]:
         info = self._exchange_info.get(sym)
         if not info:
-            raise RuntimeError(f"No hay reglas de mercado para {sym}")
+            raise RuntimeError(f"No hay reglas de mercado OKX para {sym}")
         capital = self._effective_order_capital(capital)
         if capital <= 0:
             raise RuntimeError("Balance disponible insuficiente para abrir orden")
+
         self._set_margin_type(sym)
         self._set_leverage(sym, leverage)
-        qty = self._round_step((capital * leverage) / price, info["qty_step"])
-        if qty < info["qty_min"]:
-            raise RuntimeError(f"Cantidad {qty} menor al mínimo {info['qty_min']} para {sym}")
-        order = self._request_signed("POST", "/fapi/v1/order", {
-            "symbol": info["symbol"], "side": "BUY" if direction == "LONG" else "SELL",
-            "type": "MARKET", "quantity": f"{qty:.8f}", "newOrderRespType": "RESULT",
-        })
-        return qty, order
+
+        ct_val = float(info.get("ct_val") or 1.0)
+        base_qty = (capital * leverage) / price if price > 0 else 0.0
+        contracts = self._round_step(base_qty / ct_val if ct_val > 0 else base_qty, float(info["qty_step"]))
+        if contracts < float(info["qty_min"]):
+            raise RuntimeError(f"Cantidad {contracts:g} menor al mínimo {info['qty_min']} contrato(s) para {sym}")
+
+        payload = {
+            **self._order_payload_base(sym, direction),
+            "side": self._order_side(direction),
+            "ordType": "market",
+            "sz": self._format_okx_number(contracts),
+        }
+        order = self._request_signed("POST", "/api/v5/trade/order", payload)
+        data = (order.get("data") or [{}])[0]
+        ord_id = data.get("ordId") or data.get("clOrdId") or "—"
+        base_qty_filled = self._contracts_to_base_qty(sym, contracts)
+        normalized = {
+            **data,
+            "orderId": ord_id,
+            "ordId": ord_id,
+            "executedQty": base_qty_filled,
+            "origQty": base_qty_filled,
+            "okxContracts": contracts,
+            "okx_payload": payload,
+        }
+        return base_qty_filled, normalized
 
     def _close_live_order(self, sym: str, direction: str, qty: float) -> dict:
         if qty <= 0:
             raise RuntimeError(f"Cantidad inválida para cerrar {sym}")
         info = self._exchange_info.get(sym)
-        symbol = info["symbol"] if info else self._api_symbol(sym)
-        return self._request_signed("POST", "/fapi/v1/order", {
-            "symbol": symbol, "side": "SELL" if direction == "LONG" else "BUY",
-            "type": "MARKET", "quantity": f"{qty:.8f}", "reduceOnly": "true",
-            "newOrderRespType": "RESULT",
-        })
+        if not info:
+            raise RuntimeError(f"No hay reglas de mercado OKX para {sym}")
+        contracts = self._round_step(self._base_qty_to_contracts(sym, float(qty)), float(info["qty_step"]))
+        if contracts < float(info["qty_min"]):
+            raise RuntimeError(f"Cantidad {contracts:g} menor al mínimo {info['qty_min']} contrato(s) para cerrar {sym}")
+
+        payload = {
+            **self._order_payload_base(sym, direction),
+            "side": self._order_side(direction, closing=True),
+            "ordType": "market",
+            "sz": self._format_okx_number(contracts),
+        }
+        if self._position_mode != "long_short_mode":
+            payload["reduceOnly"] = "true"
+        order = self._request_signed("POST", "/api/v5/trade/order", payload)
+        data = (order.get("data") or [{}])[0]
+        ord_id = data.get("ordId") or data.get("clOrdId") or "—"
+        return {
+            **data,
+            "orderId": ord_id,
+            "ordId": ord_id,
+            "executedQty": self._contracts_to_base_qty(sym, contracts),
+            "origQty": self._contracts_to_base_qty(sym, contracts),
+            "okxContracts": contracts,
+            "okx_payload": payload,
+        }
 
     def _fetch_df(self, sym: str, tf: str, limit: int = 300) -> pd.DataFrame:
-        raw = self._request_public(
-            "/fapi/v1/klines",
-            params={"symbol": self._api_symbol(sym), "interval": tf, "limit": limit},
+        bar = {"1h": "1H"}.get(tf, tf)
+        payload = self._request_public(
+            "/api/v5/market/candles",
+            params={"instId": self._api_symbol(sym), "bar": bar, "limit": limit},
             timeout=(5, 10),
         )
-        cols = ["ts","open","high","low","close","volume","ct","qv","n","tb","tq","_"]
+        raw = list(reversed(payload.get("data", [])))
+        cols = ["ts","open","high","low","close","volume","vol_ccy","vol_quote","confirm"]
         df = pd.DataFrame(raw, columns=cols)[["ts","open","high","low","close","volume"]]
         df = df.astype({"ts":"int64","open":"float64","high":"float64",
                         "low":"float64","close":"float64","volume":"float64"})
         df["ts"] = pd.to_datetime(df["ts"], unit="ms", utc=True)
         return _prepare(df)
+
+    def _fetch_ticker_price(self, sym: str) -> float:
+        payload = self._request_public(
+            "/api/v5/market/ticker",
+            params={"instId": self._api_symbol(sym)},
+            timeout=(5, 10),
+        )
+        data = (payload.get("data") or [{}])[0]
+        return float(data.get("last") or data.get("askPx") or data.get("bidPx") or 0.0)
 
     # ── Status público ────────────────────────────────────────────────────────
 
@@ -762,6 +866,7 @@ class TrendBot:
                     continue
                 u    = df.iloc[-1]
                 prev = df.iloc[-2]
+                live_price = float(self._live_prices.get(sym) or u["close"])
                 position = {
                     "open":       est.get("posicion_abierta", False),
                     "direction":  est.get("direccion_pos"),
@@ -782,7 +887,7 @@ class TrendBot:
                         position["pnl_usd"] = round(float(exchange_pos.get("unrealized_pnl") or 0.0), 2)
                         position["mark_price"] = round(mark_price, 8)
                         position["exchange_qty"] = float(exchange_pos.get("qty") or 0.0)
-                        position["pnl_source"] = "BINANCE"
+                        position["pnl_source"] = "OKX"
                         if mark_price > 0:
                             if position["direction"] == "LONG":
                                 position["pnl_pct"] = round((mark_price - float(position["entry"])) / float(position["entry"]) * 100, 2)
@@ -793,9 +898,9 @@ class TrendBot:
                         if qty <= 0:
                             qty = (float(position["capital"]) * int(position["apalancamiento"])) / float(position["entry"])
                         if position["direction"] == "LONG":
-                            position["pnl_usd"] = round((float(u["close"]) - float(position["entry"])) * qty, 2)
+                            position["pnl_usd"] = round((live_price - float(position["entry"])) * qty, 2)
                         else:
-                            position["pnl_usd"] = round((float(position["entry"]) - float(u["close"])) * qty, 2)
+                            position["pnl_usd"] = round((float(position["entry"]) - live_price) * qty, 2)
                         position["pnl_source"] = "LOCAL"
                     open_pnl_total += position["pnl_usd"]
 
@@ -821,7 +926,7 @@ class TrendBot:
                         mom_pos["pnl_usd"] = round(float(exchange_pos.get("unrealized_pnl") or 0.0), 2)
                         mom_pos["mark_price"] = round(mark_price, 8)
                         mom_pos["exchange_qty"] = float(exchange_pos.get("qty") or 0.0)
-                        mom_pos["pnl_source"] = "BINANCE"
+                        mom_pos["pnl_source"] = "OKX"
                         if mark_price > 0:
                             if mom_pos["direction"] == "LONG":
                                 mom_pos["pnl_pct"] = round((mark_price - float(mom_pos["entry"])) / float(mom_pos["entry"]) * 100, 2)
@@ -832,9 +937,9 @@ class TrendBot:
                         if qty_m <= 0:
                             qty_m = (float(mom_pos["capital"]) * int(mom_pos["apalancamiento"])) / float(mom_pos["entry"])
                         if mom_pos["direction"] == "LONG":
-                            mom_pos["pnl_usd"] = round((float(u["close"]) - float(mom_pos["entry"])) * qty_m, 2)
+                            mom_pos["pnl_usd"] = round((live_price - float(mom_pos["entry"])) * qty_m, 2)
                         else:
-                            mom_pos["pnl_usd"] = round((float(mom_pos["entry"]) - float(u["close"])) * qty_m, 2)
+                            mom_pos["pnl_usd"] = round((float(mom_pos["entry"]) - live_price) * qty_m, 2)
                         mom_pos["pnl_source"] = "LOCAL"
                     open_pnl_total += mom_pos["pnl_usd"]
 
@@ -851,8 +956,9 @@ class TrendBot:
                     estructura = "NEUTRAL"
 
                 syms_data[sym] = {
-                    "price":        round(float(u["close"]), 6),
-                    "change_pct":   round((float(u["close"]) - float(prev["close"])) / float(prev["close"]) * 100, 2),
+                    "price":        round(live_price, 6),
+                    "price_source": "OKX ticker" if sym in self._live_prices else "OKX candle",
+                    "change_pct":   round((live_price - float(prev["close"])) / float(prev["close"]) * 100, 2),
                     "ema20":        round(float(u["ema20"]), 4),
                     "ema50":        round(float(u["ema50"]), 4),
                     "ema200":       round(float(u["ema200"]), 4),
@@ -971,6 +1077,24 @@ class TrendBot:
                 (source == "MNV" and score >= score_min and trend != "NEUTRAL") or
                 (source == "MOM" and score >= 5)
             )
+            critical_missing = {
+                "Reset bajista",
+                "No extendida",
+                "RSI",
+                "RSI 32–52",
+                "RSI 48–68",
+                "Rebote + Rechazo",
+                "Pullback + Rebote",
+                "Espacio a soporte",
+                "Espacio a resistencia",
+                "Volumen sano",
+                "Impulso 3 velas",
+                "Caída 3 velas",
+                "LH/LL",
+                "HH/HL",
+            }
+            if any(name in critical_missing for name in missing):
+                ready = False
             if source == "MNV" and side_used == "LONG" and bool(data.get("signal_long")):
                 ready = True
             if source == "MNV" and side_used == "SHORT" and bool(data.get("signal_short")):
@@ -1123,7 +1247,61 @@ class TrendBot:
                          f"EMA20 {e20:.4f} < {e20_prev:.4f}" if slope_down else "EMA20 plana o subiendo",))
         if slope_down: score_s += 1
 
-        # Requiere 5/6 Y ventaja clara sobre la dirección contraria (≥2 pts)
+        # 7. Si la caída ya está extendida, solo buscar SHORT después de respiro y rechazo.
+        reset_short_ok, reset_short_detail = self._short_extension_reset(
+            df, p, atr, rsi_ok_s, mom_down and slope_down
+        )
+        conds_s.append((
+            "Reset bajista",
+            reset_short_ok,
+            reset_short_detail,
+        ))
+        if reset_short_ok:
+            score_s += 1
+
+        nearest_res = self._nearest_resistance(df, p)
+        res_room_pct = (nearest_res - p) / p * 100 if nearest_res else 999.0
+        min_room_pct = max(1.2, (atr / p * 100) * 1.2) if p > 0 else 1.2
+        room_to_resistance = nearest_res is None or res_room_pct >= min_room_pct
+        conds_l.append((
+            "Espacio a resistencia",
+            room_to_resistance,
+            "sin resistencia cercana" if nearest_res is None else (
+                f"resistencia ${nearest_res:,.4f} a {res_room_pct:.1f}%"
+                if room_to_resistance else
+                f"resistencia ${nearest_res:,.4f} demasiado cerca ({res_room_pct:.1f}%)"
+            ),
+        ))
+        if room_to_resistance:
+            score_l += 1
+
+        nearest_sup = self._nearest_support(df, p)
+        support_room_pct = (p - nearest_sup) / p * 100 if nearest_sup else 999.0
+        min_support_room_pct = max(1.2, (atr / p * 100) * 1.2) if p > 0 else 1.2
+        room_to_support = nearest_sup is None or support_room_pct >= min_support_room_pct
+        conds_s.append((
+            "Espacio a soporte",
+            room_to_support,
+            "sin soporte cercano" if nearest_sup is None else (
+                f"soporte ${nearest_sup:,.4f} a {support_room_pct:.1f}%"
+                if room_to_support else
+                f"soporte ${nearest_sup:,.4f} demasiado cerca ({support_room_pct:.1f}%)"
+            ),
+        ))
+        if room_to_support:
+            score_s += 1
+
+        capitulation_long, cap_detail_long = self._capitulation_risk(df, "LONG")
+        conds_l.append(("Volumen sano", not capitulation_long, cap_detail_long if not capitulation_long else f"{cap_detail_long} — esperar enfriamiento"))
+        if not capitulation_long:
+            score_l += 1
+
+        capitulation_short, cap_detail_short = self._capitulation_risk(df, "SHORT")
+        conds_s.append(("Volumen sano", not capitulation_short, cap_detail_short if not capitulation_short else f"{cap_detail_short} — esperar rebote"))
+        if not capitulation_short:
+            score_s += 1
+
+        # Requiere ventaja clara sobre la dirección contraria (≥2 pts)
         # Si ambas suman ≥4 simultáneamente → mercado lateral, no operar
         conflicto = score_l >= 4 and score_s >= 4
         # EMA200 debe estar moviéndose — filtro de mercado lateral
@@ -1133,8 +1311,8 @@ class TrendBot:
         # ADX > 20: confirmar que hay tendencia real, no rango
         adx_ok = adx >= 20.0
         # RSI obligatorio: si falla RSI no hay entrada
-        senal_l = score_l >= 5 and rsi_ok_l and score_l >= score_s + 2 and not conflicto and ema200_trending_up and adx_ok
-        senal_s = score_s >= 5 and rsi_ok_s and score_s >= score_l + 2 and not conflicto and ema200_trending_down and adx_ok
+        senal_l = score_l >= 6 and rsi_ok_l and mom_up and score_l >= score_s + 2 and not conflicto and ema200_trending_up and adx_ok and room_to_resistance and not capitulation_long
+        senal_s = score_s >= 6 and rsi_ok_s and mom_down and score_s >= score_l + 2 and not conflicto and ema200_trending_down and adx_ok and reset_short_ok and room_to_support and not capitulation_short
 
         # SL más ancho (2×ATR) para no ser golpeado por ruido
         min_dist_l = max(atr * 2.0, p * 0.02)
@@ -1243,6 +1421,59 @@ class TrendBot:
         u = df.iloc[-1]
         return float(u["close"]) < float(u[ema_col]) and float(u["close"]) < float(u["open"])
 
+    def _nearest_resistance(self, df: pd.DataFrame, price: float) -> Optional[float]:
+        candidates = [h for h in _swing_highs(df) if h > price * 1.001]
+        return min(candidates) if candidates else None
+
+    def _nearest_support(self, df: pd.DataFrame, price: float) -> Optional[float]:
+        candidates = [l for l in _swing_lows(df) if l < price * 0.999]
+        return max(candidates) if candidates else None
+
+    def _capitulation_risk(self, df: pd.DataFrame, side: str) -> tuple[bool, str]:
+        """Detecta velas de agotamiento por volumen antes de perseguir entrada."""
+        if len(df) < 5:
+            return False, "sin datos suficientes"
+        u = df.iloc[-1]
+        prev = df.iloc[-2]
+        close = float(u["close"])
+        open_ = float(u["open"])
+        prev_close = float(prev["close"])
+        vol_ratio = float(u.get("vol_ratio", 0.0) or 0.0)
+        move_pct = (close - prev_close) / prev_close * 100 if prev_close > 0 else 0.0
+        if side == "SHORT":
+            risky = close < open_ and move_pct < -1.2 and vol_ratio >= 1.6
+            return risky, f"venta fuerte {move_pct:.1f}% con volumen {vol_ratio:.2f}x"
+        risky = close > open_ and move_pct > 1.2 and vol_ratio >= 1.6
+        return risky, f"compra fuerte {move_pct:.1f}% con volumen {vol_ratio:.2f}x"
+
+    def _short_extension_reset(self, df: pd.DataFrame, price: float, atr: float, rsi_ok: bool, rejection_ok: bool) -> tuple[bool, str]:
+        lookback_7d = min(168, max(24, len(df) - 1))
+        recent_high_7d = float(df.iloc[-lookback_7d:]["high"].max()) if lookback_7d > 0 else price
+        drop_7d = (recent_high_7d - price) / recent_high_7d * 100 if recent_high_7d > 0 else 0.0
+        max_drop_7d = float(self.cfg.get("max_7d_drop_short_pct", 4.0))
+
+        lookback_3d = min(72, max(12, len(df) - 1))
+        recent_high_3d = float(df.iloc[-lookback_3d:]["high"].max()) if lookback_3d > 0 else price
+        recent_low_3d = float(df.iloc[-lookback_3d:]["low"].min()) if lookback_3d > 0 else price
+        drop_3d = (recent_high_3d - price) / recent_high_3d * 100 if recent_high_3d > 0 else 0.0
+        max_drop_3d = float(self.cfg.get("max_3d_drop_short_pct", 2.5))
+
+        lookback_24h = min(24, max(6, len(df) - 1))
+        recent_high_24h = float(df.iloc[-lookback_24h:]["high"].max()) if lookback_24h > 0 else price
+        drop_24h = (recent_high_24h - price) / recent_high_24h * 100 if recent_high_24h > 0 else 0.0
+        max_drop_24h = float(self.cfg.get("max_24h_drop_short_pct", 2.0))
+
+        extended = drop_7d > max_drop_7d or drop_3d > max_drop_3d or drop_24h > max_drop_24h
+        rebound_pct = (price - recent_low_3d) / recent_low_3d * 100 if recent_low_3d > 0 else 0.0
+        min_rebound_pct = max(1.2, (atr / price * 100) * 1.2) if price > 0 else 1.2
+        reset_ok = rebound_pct >= min_rebound_pct and rsi_ok and rejection_ok
+
+        if not extended:
+            return True, f"Caída 7d {drop_7d:.1f}% / 3d {drop_3d:.1f}% / 24h {drop_24h:.1f}% — entrada no tardía"
+        if reset_ok:
+            return True, f"Caída extendida, pero hubo rebote {rebound_pct:.1f}% y rechazo — SHORT permitido"
+        return False, f"Caída 7d {drop_7d:.1f}% / 3d {drop_3d:.1f}% / 24h {drop_24h:.1f}% — esperar rebote/rechazo antes de otro SHORT"
+
     # ── Señal LONG ────────────────────────────────────────────────────────────
 
     def _verificar_long(self, df: pd.DataFrame, sym: str) -> tuple[bool, list, float, float, float]:
@@ -1327,7 +1558,27 @@ class TrendBot:
         else:
             conds.append(("Vol bajo en retroceso", False, f"Vol {vr:.2f}x — demasiada presión vendedora"))
 
-        # 7. SL: debajo del mínimo reciente Y debajo del EMA50, tomar el MÁS BAJO (más margen)
+        # 7. Espacio real hasta resistencia: no comprar debajo de techo cercano.
+        nearest_res = self._nearest_resistance(df, p)
+        res_room_pct = (nearest_res - p) / p * 100 if nearest_res else 999.0
+        min_room_pct = max(1.2, (atr / p * 100) * 1.2) if p > 0 else 1.2
+        room_to_resistance = nearest_res is None or res_room_pct >= min_room_pct
+        if room_to_resistance:
+            score += 0.8
+            detail = "sin resistencia cercana" if nearest_res is None else f"resistencia ${nearest_res:,.2f} a {res_room_pct:.1f}%"
+            conds.append(("Espacio a resistencia", True, detail))
+        else:
+            conds.append(("Espacio a resistencia", False, f"resistencia ${nearest_res:,.2f} demasiado cerca ({res_room_pct:.1f}%)"))
+
+        # 8. Evitar velas de euforia con volumen alto.
+        capitulation_long, cap_detail_long = self._capitulation_risk(df, "LONG")
+        if not capitulation_long:
+            score += 0.5
+            conds.append(("Volumen sano", True, cap_detail_long))
+        else:
+            conds.append(("Volumen sano", False, f"{cap_detail_long} — esperar enfriamiento"))
+
+        # 9. SL: debajo del mínimo reciente Y debajo del EMA50, tomar el MÁS BAJO (más margen)
         n_sl = min(5, len(df) - 2)
         recent_low = float(df.iloc[-(n_sl + 1):-1]["low"].min())
         sl_structural = recent_low - atr * 0.5
@@ -1340,7 +1591,7 @@ class TrendBot:
         # Máximo: SL no puede estar más de 3% del precio (evita pérdidas enormes en coins volátiles)
         sl = max(sl, p * 0.97)
 
-        # 8. TP: primera resistencia real, máximo 6R (evita TPs irreales por swing lejano)
+        # 10. TP: primera resistencia real, máximo 6R (evita TPs irreales por swing lejano)
         highs = _swing_highs(df)
         highs_arriba = [h for h in highs if h > p * 1.005]
         riesgo = p - sl
@@ -1365,6 +1616,8 @@ class TrendBot:
             and pullback_real
             and mature_ok
             and vol_bajo
+            and room_to_resistance
+            and not capitulation_long
             and rr_ok
             and score >= float(c.get("score_minimo", 6.5))
         )
@@ -1412,7 +1665,7 @@ class TrendBot:
             score += 1.0
             conds.append(("RSI", True, f"RSI {rsi:.0f} — momentum bajista sin sobreventa"))
         else:
-            motivo = "sobrevendido (<35)" if rsi < 35 else "demasiado alto (>60)"
+            motivo = "sin rebote suficiente (<45)" if rsi < 45 else "demasiado alto (>65)"
             conds.append(("RSI", False, f"RSI {rsi:.0f} — {motivo}"))
 
         # 4. Rebote real a resistencia: precio tocó EMA50/20 desde abajo Y última vela rechazada
@@ -1433,7 +1686,17 @@ class TrendBot:
             conds.append(("Rebote + Rechazo", False,
                           f"Sin toque de EMA50 ({dist_e50:.1f}%) o sin vela rechazo — esperar rebote"))
 
-        # 5. Volumen bajo en el rebote
+        # 5. Evitar perseguir caídas fuertes: si ya cayó demasiado, exigir rebote y rechazo.
+        reset_short_ok, reset_short_detail = self._short_extension_reset(
+            df, p, atr, rsi_ok, rebote_resistencia
+        )
+        if reset_short_ok:
+            score += 1.0
+            conds.append(("Reset bajista", True, reset_short_detail))
+        else:
+            conds.append(("Reset bajista", False, reset_short_detail))
+
+        # 6. Volumen bajo en el rebote
         vol_bajo = vr < float(c.get("vol_pullback_max", 0.85))
         if vol_bajo:
             score += 1.0
@@ -1441,7 +1704,27 @@ class TrendBot:
         else:
             conds.append(("Vol bajo en rebote", False, f"Vol {vr:.2f}x — demasiada presión compradora"))
 
-        # 6. SL: encima del máximo reciente Y encima del EMA50, tomar el MÁS ALTO (más margen)
+        # 7. Espacio real hasta soporte: no vender encima de soporte cercano.
+        nearest_sup = self._nearest_support(df, p)
+        support_room_pct = (p - nearest_sup) / p * 100 if nearest_sup else 999.0
+        min_support_room_pct = max(1.2, (atr / p * 100) * 1.2) if p > 0 else 1.2
+        room_to_support = nearest_sup is None or support_room_pct >= min_support_room_pct
+        if room_to_support:
+            score += 0.8
+            detail = "sin soporte cercano" if nearest_sup is None else f"soporte ${nearest_sup:,.2f} a {support_room_pct:.1f}%"
+            conds.append(("Espacio a soporte", True, detail))
+        else:
+            conds.append(("Espacio a soporte", False, f"soporte ${nearest_sup:,.2f} demasiado cerca ({support_room_pct:.1f}%)"))
+
+        # 8. Evitar vender en capitulación: alto volumen tras vela roja grande suele rebotar.
+        capitulation_short, cap_detail_short = self._capitulation_risk(df, "SHORT")
+        if not capitulation_short:
+            score += 0.5
+            conds.append(("Volumen sano", True, cap_detail_short))
+        else:
+            conds.append(("Volumen sano", False, f"{cap_detail_short} — esperar rebote"))
+
+        # 9. SL: encima del máximo reciente Y encima del EMA50, tomar el MÁS ALTO (más margen)
         n_sl = min(5, len(df) - 2)
         recent_high = float(df.iloc[-(n_sl + 1):-1]["high"].max())
         sl_structural = recent_high + atr * 0.5
@@ -1454,7 +1737,7 @@ class TrendBot:
         # Máximo: SL no puede estar más de 3% del precio
         sl = min(sl, p * 1.03)
 
-        # 7. TP: primer soporte real, máximo 6R (evita TPs irreales por swing lejano)
+        # 10. TP: primer soporte real, máximo 6R (evita TPs irreales por swing lejano)
         lows = _swing_lows(df)
         lows_abajo = [l for l in lows if l < p * 0.995]
         riesgo = sl - p
@@ -1477,7 +1760,10 @@ class TrendBot:
             and lh_ll
             and rsi_ok
             and rebote_resistencia
+            and reset_short_ok
             and vol_bajo
+            and room_to_support
+            and not capitulation_short
             and rr_ok
             and score >= float(c.get("score_minimo", 6.5))
         )
@@ -1613,7 +1899,7 @@ class TrendBot:
     # ── Loop principal ────────────────────────────────────────────────────────
 
     def _run(self):
-        self._log("Conectando a Binance…")
+        self._log("Conectando a OKX…")
         try:
             self._conectar()
             mode_str = self._execution_mode()
@@ -1637,7 +1923,7 @@ class TrendBot:
                     self._estados[sym] = self._estado_vacio()
 
         if self._is_live_mode():
-            self._log("Reconciliando posiciones con Binance…")
+            self._log("Reconciliando posiciones con OKX…")
             self._reconcile_positions()
 
         self._log(f"Monitoreando {len(symbols)} par(es)…")
@@ -1669,10 +1955,18 @@ class TrendBot:
                         if len(df_signal) < 50:
                             continue
 
+                        try:
+                            live_ticker_price = self._fetch_ticker_price(sym)
+                        except Exception as price_error:
+                            live_ticker_price = float(df_1h.iloc[-1]["close"])
+                            self._log(f"[{sym}] Precio ticker OKX no disponible, usando vela: {price_error}", "warning")
+                        with self._lock:
+                            self._live_prices[sym] = live_ticker_price
+
                         # ── Memoria de patrones ───────────────────────────
                         try:
                             last_candle_ts = float(df_signal.iloc[-1]["ts"].timestamp())
-                            current_price_pm = float(df_1h.iloc[-1]["close"])
+                            current_price_pm = live_ticker_price
                             current_ts_pm = float(df_1h.iloc[-1]["ts"].timestamp())
                             if sym == "BTC/USDT":
                                 detected = detect_patterns(df_signal)
@@ -1693,10 +1987,12 @@ class TrendBot:
                         else:
                             checklist = [{"name": n, "ok": ok, "detail": d} for n, ok, d in conds_l]
 
-                        # Precio live (vela actual) para entry y P&L
-                        precio = float(df_1h.iloc[-1]["close"])
+                        # Precio live de OKX para entry, P&L y salidas.
+                        precio = live_ticker_price
                         u_live = df_1h.iloc[-1]
                         rsi_live = float(u_live["rsi"])
+                        df_live = df_1h.copy()
+                        df_live.loc[df_live.index[-1], "close"] = precio
 
                         # Chequeo spread: si el precio live se alejó >1.5% del cierre de la última vela
                         # cerrada, el setup ya no es válido para entrar
@@ -1722,7 +2018,7 @@ class TrendBot:
                                 elif dir_ == "SHORT" and precio < (est["precio_ext"] or float("inf")):
                                     est["precio_ext"] = precio
 
-                                cerrar, parcial, nuevo_sl, exit_price, eventos = self._verificar_salida(df_1h, est)
+                                cerrar, parcial, nuevo_sl, exit_price, eventos = self._verificar_salida(df_live, est)
 
                                 sl_movio = False
                                 if dir_ == "LONG" and nuevo_sl > est["sl_actual"]:
@@ -1858,7 +2154,8 @@ class TrendBot:
                                         new_st["fase"] = fase
                                         loss_cd = int(cfg.get("cooldown_loss_ciclos", cfg.get("cooldown_ciclos", 8)))
                                         base_cd = int(cfg.get("cooldown_ciclos", 3))
-                                        new_st["cooldown_restante"] = loss_cd if gan < 0 else base_cd
+                                        short_cd = int(cfg.get("cooldown_short_after_drop_ciclos", 12))
+                                        new_st["cooldown_restante"] = loss_cd if gan < 0 else max(base_cd, short_cd) if dir_ == "SHORT" else base_cd
                                         new_st["ultimo_cierre"] = datetime.now(timezone.utc).isoformat()
                                         new_st["ultimo_resultado"] = "WIN" if gan >= 0 else "LOSS"
                                         self._estados[sym] = new_st
@@ -1972,7 +2269,9 @@ class TrendBot:
                             est_m = self._estados_mom.setdefault(sym, self._estado_vacio())
                             est_m["score_mom_l"]   = score_ml
                             est_m["score_mom_s"]   = score_ms
-                            est_m["checklist_mom"] = [{"name": n, "ok": ok, "detail": d} for n, ok, d in conds_ml]
+                            mom_dir_for_checklist = est_m.get("direccion_pos") or ("SHORT" if score_ms > score_ml else "LONG")
+                            active_mom_conds = conds_ms if mom_dir_for_checklist == "SHORT" else conds_ml
+                            est_m["checklist_mom"] = [{"name": n, "ok": ok, "detail": d} for n, ok, d in active_mom_conds]
                             if int(est_m.get("cooldown_restante", 0) or 0) > 0 and not est_m.get("posicion_abierta"):
                                 est_m["cooldown_restante"] = max(int(est_m.get("cooldown_restante", 0)) - 1, 0)
 
@@ -1983,7 +2282,7 @@ class TrendBot:
                                 elif dir_m == "SHORT" and precio < (est_m.get("precio_ext") or float("inf")):
                                     est_m["precio_ext"] = precio
 
-                                cerrar_m, parcial_m, nuevo_sl_m, exit_price_m, eventos_m = self._verificar_salida(df_1h, est_m)
+                                cerrar_m, parcial_m, nuevo_sl_m, exit_price_m, eventos_m = self._verificar_salida(df_live, est_m)
 
                                 if dir_m == "LONG" and nuevo_sl_m > est_m["sl_actual"]:
                                     est_m["sl_actual"] = nuevo_sl_m
@@ -2080,7 +2379,8 @@ class TrendBot:
                                         _nst_m = self._estado_vacio()
                                         _nst_m["tendencia"] = tendencia
                                         _nst_m["fase"]      = fase
-                                        _nst_m["cooldown_restante"] = 20 if _gan_m < 0 else 3
+                                        _short_cd_m = int(cfg.get("cooldown_short_after_drop_ciclos", 12))
+                                        _nst_m["cooldown_restante"] = 20 if _gan_m < 0 else max(3, _short_cd_m) if dir_m == "SHORT" else 3
                                         _nst_m["ultimo_cierre"]     = datetime.now(timezone.utc).isoformat()
                                         _nst_m["ultimo_resultado"]  = "WIN" if _gan_m >= 0 else "LOSS"
                                         self._estados_mom[sym] = _nst_m

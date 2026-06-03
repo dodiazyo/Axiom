@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import Optional
 
 import requests
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -16,8 +17,28 @@ from pydantic import BaseModel, Field
 from bot_engine import TrendBot
 
 app = FastAPI(title="Axiom")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+LOCAL_ORIGINS = [
+    "http://127.0.0.1:8004",
+    "http://localhost:8004",
+]
+LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost"])
+app.add_middleware(CORSMiddleware, allow_origins=LOCAL_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.middleware("http")
+async def local_only_and_security_headers(request: Request, call_next):
+    client_host = request.client.host if request.client else ""
+    if client_host not in LOCAL_HOSTS:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"error": "Axiom solo acepta conexiones locales"}, status_code=403)
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://cdn.jsdelivr.net data:; connect-src 'self' ws://127.0.0.1:8004 ws://localhost:8004; base-uri 'self'; frame-ancestors 'none'"
+    return response
 
 @app.get("/")
 def index():
@@ -35,6 +56,10 @@ DEFAULT_CFG = {
     "balance_inicial":  1000.0,
     "rr_minimo":        2.0,
     "score_minimo":     6.5,
+    "max_7d_rise_long_pct": 6.0,
+    "max_7d_drop_short_pct": 4.0,
+    "max_3d_drop_short_pct": 2.5,
+    "max_24h_drop_short_pct": 2.0,
     "vol_pullback_max": 0.85,
     "atr_sl_mult":      1.5,
     "atr_tp_mult":      4.0,
@@ -44,12 +69,14 @@ DEFAULT_CFG = {
     "intervalo_segundos": 60,
     "cooldown_ciclos":  3,
     "cooldown_loss_ciclos": 8,
+    "cooldown_short_after_drop_ciclos": 12,
     "max_posiciones":   2,
     "modo_operador":    "AUTOMATICO",
     "execution_mode":   "SIMULADO",
     "margin_type":      "ISOLATED",
     "api_key":          "",
     "api_secret":       "",
+    "okx_passphrase":   "",
     "binance_testnet":  True,
 }
 
@@ -130,7 +157,7 @@ def _preserve_runtime_secrets(config: dict) -> dict:
     if not bot:
         return config
     current_cfg = getattr(bot, "cfg", {}) or {}
-    for key in ("api_key", "api_secret"):
+    for key in ("api_key", "api_secret", "okx_passphrase"):
         if not config.get(key) and current_cfg.get(key):
             config[key] = current_cfg[key]
     return config
@@ -170,20 +197,19 @@ def _fetch_markets() -> list[str]:
     if MARKETS_CACHE["data"] and now - MARKETS_CACHE["ts"] < 300:
         return MARKETS_CACHE["data"]
 
-    r = requests.get("https://fapi.binance.com/fapi/v1/exchangeInfo", timeout=10)
+    r = requests.get("https://www.okx.com/api/v5/public/instruments", params={"instType": "SWAP"}, timeout=10)
     r.raise_for_status()
     payload = r.json()
     markets = []
-    for item in payload.get("symbols", []):
-        if item.get("status") != "TRADING":
+    if payload.get("code") != "0":
+        raise RuntimeError(payload.get("msg") or "OKX public instruments error")
+    for item in payload.get("data", []):
+        if item.get("state") != "live" or item.get("settleCcy") != "USDT":
             continue
-        if item.get("quoteAsset") != "USDT":
-            continue
-        if item.get("contractType") != "PERPETUAL":
-            continue
-        symbol = item.get("symbol", "")
-        if symbol.endswith("USDT"):
-            markets.append(symbol.replace("USDT", "/USDT"))
+        uly = item.get("uly", "")
+        base = uly.split("-")[0] if "-" in uly else item.get("baseCcy", "")
+        if base:
+            markets.append(f"{base}/USDT")
 
     markets = sorted(set(markets))
     MARKETS_CACHE["ts"] = now
@@ -196,6 +222,14 @@ def _save_runtime_state():
         return
     payload = bot.export_runtime_state()
     STATE_FILE.write_text(json.dumps(payload, ensure_ascii=True, indent=2))
+
+
+def _without_secrets(config: dict) -> dict:
+    safe = dict(config)
+    safe["api_key"] = ""
+    safe["api_secret"] = ""
+    safe["okx_passphrase"] = ""
+    return safe
 
 
 def _load_runtime_state() -> Optional[dict]:
@@ -244,6 +278,10 @@ async def startup():
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):
+    client_host = ws.client.host if ws.client else ""
+    if client_host not in LOCAL_HOSTS:
+        await ws.close(code=1008)
+        return
     await ws.accept()
     ws_clients.append(ws)
     try:
@@ -271,6 +309,10 @@ class ConfigIn(BaseModel):
     balance_inicial:    float = Field(1000.0,ge=10.0)
     rr_minimo:          float = Field(2.0,   ge=0.5)
     score_minimo:       float = Field(6.5,   ge=1.0)
+    max_7d_rise_long_pct: float = Field(6.0, ge=0.5)
+    max_7d_drop_short_pct: float = Field(4.0, ge=0.5)
+    max_3d_drop_short_pct: float = Field(2.5, ge=0.5)
+    max_24h_drop_short_pct: float = Field(2.0, ge=0.5)
     vol_pullback_max:   float = Field(0.85,  ge=0.1, le=2.0)
     atr_sl_mult:        float = Field(1.5,   ge=0.5)
     atr_tp_mult:        float = Field(4.0,   ge=1.0)
@@ -280,20 +322,23 @@ class ConfigIn(BaseModel):
     intervalo_segundos: int   = Field(60,    ge=15)
     cooldown_ciclos:    int   = Field(3,     ge=0, le=20)
     cooldown_loss_ciclos: int = Field(8,     ge=0, le=50)
+    cooldown_short_after_drop_ciclos: int = Field(12, ge=0, le=80)
     max_posiciones:     int   = Field(2,     ge=1, le=20)
     modo_operador:      str   = Field("AUTOMATICO")
     execution_mode:     str   = Field("SIMULADO")
     margin_type:        str   = Field("ISOLATED")
     api_key:            str   = Field("")
     api_secret:         str   = Field("")
+    okx_passphrase:     str   = Field("")
     binance_testnet:    bool  = Field(True)
 
 
-class BinanceCredsIn(BaseModel):
+class OKXCredsIn(BaseModel):
     execution_mode:     str   = Field("SIMULADO")
     margin_type:        str   = Field("ISOLATED")
     api_key:            str   = Field("")
     api_secret:         str   = Field("")
+    okx_passphrase:     str   = Field("")
     binance_testnet:    bool  = Field(True)
 
 
@@ -387,10 +432,12 @@ def get_config():
     payload = dict(cfg)
     api_key = str(cfg.get("api_key", "") or "")
     api_secret = str(cfg.get("api_secret", "") or "")
-    payload["api_credentials_saved"] = bool(api_key and api_secret)
+    okx_passphrase = str(cfg.get("okx_passphrase", "") or "")
+    payload["api_credentials_saved"] = bool(api_key and api_secret and okx_passphrase)
     payload["api_key_hint"] = f"****{api_key[-4:]}" if api_key else ""
     payload["api_key"] = ""
     payload["api_secret"] = ""
+    payload["okx_passphrase"] = ""
     return payload
 
 
@@ -402,7 +449,7 @@ def update_config(cfg: ConfigIn):
         bot.update_config(config)
     else:
         saved = _load_runtime_state() or {}
-        saved["cfg"] = config
+        saved["cfg"] = _without_secrets(config)
         STATE_FILE.write_text(json.dumps(saved, ensure_ascii=True, indent=2))
         return {"ok": True, "msg": "Configuracion guardada"}
     _save_runtime_state()
@@ -414,8 +461,38 @@ def get_markets():
     return {"markets": _fetch_markets()}
 
 
+@app.get("/api/price-check")
+def price_check():
+    if not bot:
+        return {"ok": False, "error": "Bot no iniciado", "items": []}
+    status = bot.get_status()
+    symbols = status.get("configured_symbols") or list((status.get("symbols") or {}).keys())
+    items = []
+    for sym in symbols:
+        try:
+            inst_id = bot._api_symbol(sym)
+            r = requests.get("https://www.okx.com/api/v5/market/ticker", params={"instId": inst_id}, timeout=10)
+            r.raise_for_status()
+            payload = r.json()
+            if payload.get("code") != "0":
+                raise RuntimeError(payload.get("msg") or "OKX ticker error")
+            okx_price = float((payload.get("data") or [{}])[0].get("last") or 0.0)
+            axiom_price = float((status.get("symbols") or {}).get(sym, {}).get("price") or 0.0)
+            diff_pct = abs(axiom_price - okx_price) / okx_price * 100 if okx_price else 0.0
+            items.append({
+                "symbol": sym,
+                "axiom_price": axiom_price,
+                "okx_price": okx_price,
+                "diff_pct": round(diff_pct, 5),
+                "synced": diff_pct <= 0.1,
+            })
+        except Exception as e:
+            items.append({"symbol": sym, "error": str(e), "synced": False})
+    return {"ok": True, "items": items}
+
+
 @app.post("/api/test-credentials")
-def test_credentials(creds: BinanceCredsIn):
+def test_credentials(creds: OKXCredsIn):
     config = _normalize_symbols({
         **DEFAULT_CFG,
         **creds.model_dump(),

@@ -8,10 +8,10 @@
       "neutral": 0
     },
     "Pin Bar Bajista": {
-      "total": 41,
-      "correct": 12,
+      "total": 42,
+      "correct": 13,
       "bullish": 0,
-      "bearish": 41,
+      "bearish": 42,
       "neutral": 0
     },
     "Three White Soldiers": {
@@ -36,9 +36,9 @@
       "neutral": 0
     },
     "Bullish Engulfing": {
-      "total": 44,
+      "total": 45,
       "correct": 12,
-      "bullish": 44,
+      "bullish": 45,
       "bearish": 0,
       "neutral": 0
     },
@@ -50,16 +50,16 @@
       "neutral": 0
     },
     "Hammer": {
-      "total": 9,
+      "total": 10,
       "correct": 4,
-      "bullish": 9,
+      "bullish": 10,
       "bearish": 0,
       "neutral": 0
     },
     "Pin Bar Alcista": {
-      "total": 47,
+      "total": 48,
       "correct": 12,
-      "bullish": 47,
+      "bullish": 48,
       "bearish": 0,
       "neutral": 0
     },
@@ -141,8 +141,8 @@
         "correct": 2
       },
       "Pin Bar Bajista": {
-        "total": 41,
-        "correct": 12
+        "total": 42,
+        "correct": 13
       },
       "Three White Soldiers": {
         "total": 37,
@@ -157,7 +157,7 @@
         "correct": 17
       },
       "Bullish Engulfing": {
-        "total": 44,
+        "total": 45,
         "correct": 12
       },
       "Bearish Engulfing": {
@@ -165,11 +165,11 @@
         "correct": 25
       },
       "Hammer": {
-        "total": 9,
+        "total": 10,
         "correct": 4
       },
       "Pin Bar Alcista": {
-        "total": 47,
+        "total": 48,
         "correct": 12
       },
       "Bullish Marubozu": {
@@ -217,35 +217,35 @@
   "pending": [
     {
       "symbol": "BTC/USDT",
-      "pattern": "Pin Bar Bajista",
+      "pattern": "Bearish Marubozu",
       "direction": "BEARISH",
-      "entry_price": 67500.8,
-      "candle_ts": 1780419600.0,
-      "resolve_ts": 1780437600.0
+      "entry_price": 67000.0,
+      "candle_ts": 1780473600.0,
+      "resolve_ts": 1780491600.0
     },
     {
       "symbol": "BTC/USDT",
-      "pattern": "Hammer",
-      "direction": "BULLISH",
-      "entry_price": 66982.8,
-      "candle_ts": 1780426800.0,
-      "resolve_ts": 1780444800.0
+      "pattern": "Bearish Engulfing",
+      "direction": "BEARISH",
+      "entry_price": 67000.0,
+      "candle_ts": 1780473600.0,
+      "resolve_ts": 1780491600.0
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Doji",
+      "direction": "NEUTRAL",
+      "entry_price": 67067.9,
+      "candle_ts": 1780477200.0,
+      "resolve_ts": 1780495200.0
     },
     {
       "symbol": "BTC/USDT",
       "pattern": "Pin Bar Alcista",
       "direction": "BULLISH",
-      "entry_price": 66982.8,
-      "candle_ts": 1780426800.0,
-      "resolve_ts": 1780444800.0
-    },
-    {
-      "symbol": "BTC/USDT",
-      "pattern": "Bullish Engulfing",
-      "direction": "BULLISH",
-      "entry_price": 67624.2,
-      "candle_ts": 1780430400.0,
-      "resolve_ts": 1780448400.0
+      "entry_price": 67067.9,
+      "candle_ts": 1780477200.0,
+      "resolve_ts": 1780495200.0
     }
   ],
   "observations": [
@@ -4728,6 +4728,46 @@
       "change_pct": 0.201,
       "correct": false,
       "ts": "2026-06-02 21:04"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Bajista",
+      "direction": "BEARISH",
+      "entry_price": 67500.8,
+      "exit_price": 67000.0,
+      "change_pct": -0.742,
+      "correct": true,
+      "ts": "2026-06-03 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Hammer",
+      "direction": "BULLISH",
+      "entry_price": 66982.8,
+      "exit_price": 67000.0,
+      "change_pct": 0.026,
+      "correct": false,
+      "ts": "2026-06-03 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Pin Bar Alcista",
+      "direction": "BULLISH",
+      "entry_price": 66982.8,
+      "exit_price": 67000.0,
+      "change_pct": 0.026,
+      "correct": false,
+      "ts": "2026-06-03 09:00"
+    },
+    {
+      "symbol": "BTC/USDT",
+      "pattern": "Bullish Engulfing",
+      "direction": "BULLISH",
+      "entry_price": 67624.2,
+      "exit_price": 67000.0,
+      "change_pct": -0.923,
+      "correct": false,
+      "ts": "2026-06-03 09:00"
     }
   ]
 }
