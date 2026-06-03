@@ -1939,9 +1939,9 @@ class TrendBot:
         cooldown = int(est.get("cooldown_restante", 0) or 0)
         if cooldown > 0:
             return False, f"Cooldown {cooldown} ciclo(s)"
-        max_pos = int(self.cfg.get("max_posiciones", 2))
-        if self._current_open_positions() >= max_pos:
-            return False, f"Máx posiciones abiertas ({max_pos})"
+        # Una posición por moneda — si ya tiene una abierta (MNV o MOM) no abre otra
+        if est.get("posicion_abierta") or self._estados_mom.get(sym, {}).get("posicion_abierta"):
+            return False, f"Ya hay una posición abierta en {sym}"
         if tendencia == "NEUTRAL":
             return False, "Sin contexto tendencial"
         return True, "OK"
@@ -2436,7 +2436,7 @@ class TrendBot:
                                         _nst_m["ultimo_resultado"]  = "WIN" if _gan_m >= 0 else "LOSS"
                                         self._estados_mom[sym] = _nst_m
 
-                            elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._MOM_TRADE_SYMS and not int(est_m.get("cooldown_restante", 0) or 0) and self._current_open_positions() < int(cfg.get("max_posiciones", 2)):
+                            elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._MOM_TRADE_SYMS and not int(est_m.get("cooldown_restante", 0) or 0) and not est_m.get("posicion_abierta") and not self._estados.get(sym, {}).get("posicion_abierta"):
                                 _dir_mn = None
                                 _sl_mn = _tp_mn = 0.0
                                 # Filtro de tendencia: MOM no puede ir en contra de la tendencia principal
