@@ -1259,9 +1259,10 @@ class TrendBot:
 
         if rsi_ok_s: score_s += 1
 
-        # 5. Impulso de precio: vs 3 velas atrás
-        mom_up   = p > p3 * 1.001
-        mom_down = p < p3 * 0.999
+        # 5. Impulso de precio: vs 3 velas atrás (umbral reducido en modo lento)
+        imp_pct  = float(self.cfg.get("slow_impulso_pct", 0.05)) / 100 if self.cfg.get("slow_trend") else 0.001
+        mom_up   = p > p3 * (1 + imp_pct)
+        mom_down = p < p3 * (1 - imp_pct)
         pct3 = (p / p3 - 1) * 100
         conds_l.append(("Impulso 3 velas", mom_up,
                          f"+{pct3:.2f}% vs hace 3 velas" if mom_up else f"{pct3:.2f}% — sin impulso alcista",))
@@ -1341,8 +1342,9 @@ class TrendBot:
         e200_prev = float(df.iloc[-10]["ema200"]) if len(df) >= 10 else e200
         ema200_trending_up   = e200 > e200_prev * 1.001
         ema200_trending_down = e200 < e200_prev * 0.999
-        # ADX > 20: confirmar que hay tendencia real, no rango
-        adx_ok = adx >= 20.0
+        # ADX mínimo: 20 normal, configurable en modo lento
+        adx_min = float(self.cfg.get("slow_adx_min", 15.0)) if self.cfg.get("slow_trend") else 20.0
+        adx_ok = adx >= adx_min
         # RSI obligatorio: si falla RSI no hay entrada
         senal_l = score_l >= 6 and rsi_ok_l and mom_up and score_l >= score_s + 2 and not conflicto and ema200_trending_up and adx_ok and room_to_resistance and not capitulation_long
         senal_s = score_s >= 6 and rsi_ok_s and mom_down and score_s >= score_l + 2 and not conflicto and ema200_trending_down and adx_ok and reset_short_ok and room_to_support and not capitulation_short
@@ -1362,16 +1364,23 @@ class TrendBot:
 
     # ── Análisis de tendencia ─────────────────────────────────────────────────
 
+    def _ema_sep_threshold(self) -> float:
+        """Separación mínima entre EMAs. Modo lento usa umbral reducido."""
+        if self.cfg.get("slow_trend"):
+            return 1.0 + float(self.cfg.get("slow_ema_sep_pct", 0.1)) / 100
+        return 1.003
+
     def _analizar_tendencia(self, df: pd.DataFrame) -> tuple[str, str]:
         u = df.iloc[-1]
         p = float(u["close"])
         e20, e50, e150, e200 = float(u["ema20"]), float(u["ema50"]), float(u["ema150"]), float(u["ema200"])
 
+        sep = self._ema_sep_threshold()
         # EMA200 tendencia establecida: debe llevar 20 velas moviéndose en la misma dirección
         ema200_20 = float(df.iloc[-20]["ema200"]) if len(df) >= 20 else float(df.iloc[0]["ema200"])
-        # EMAs deben estar SEPARADAS (no apenas tocándose) — mínimo 0.3% entre sí
-        emas_sep_up   = e50 > e150 * 1.003 and e150 > e200 * 1.003
-        emas_sep_down = e50 < e150 * 0.997 and e150 < e200 * 0.997
+        # EMAs deben estar SEPARADAS — umbral normal 0.3%, modo lento configurable
+        emas_sep_up   = e50 > e150 * sep   and e150 > e200 * sep
+        emas_sep_down = e50 < e150 / sep   and e150 < e200 / sep
 
         stage2 = (p > e200 and p > e150 and p > e50 and
                   emas_sep_up and
@@ -1524,10 +1533,11 @@ class TrendBot:
         score  = 0.0
         conds  = []
 
-        # 1. Stage 2 — filtro duro (EMAs separadas ≥0.3%, EMA200 subiendo 20 velas)
+        # 1. Stage 2 — filtro duro (EMAs separadas, EMA200 subiendo 20 velas)
         e150    = float(u["ema150"])
         ema200_20 = float(df.iloc[-20]["ema200"]) if len(df) >= 20 else float(df.iloc[0]["ema200"])
-        emas_sep_up = float(u["ema50"]) > e150 * 1.003 and e150 > e200 * 1.003
+        sep = self._ema_sep_threshold()
+        emas_sep_up = float(u["ema50"]) > e150 * sep and e150 > e200 * sep
         stage2 = (p > e200 and emas_sep_up and float(u["ema200"]) > ema200_20)
         if stage2:
             score += 2.0
@@ -1673,10 +1683,11 @@ class TrendBot:
         score  = 0.0
         conds  = []
 
-        # 1. Stage 4 — filtro duro (EMAs separadas ≥0.3%, EMA200 bajando 20 velas)
+        # 1. Stage 4 — filtro duro (EMAs separadas, EMA200 bajando 20 velas)
         e150    = float(u["ema150"])
         ema200_20 = float(df.iloc[-20]["ema200"]) if len(df) >= 20 else float(df.iloc[0]["ema200"])
-        emas_sep_down = float(u["ema50"]) < e150 * 0.997 and e150 < e200 * 0.997
+        sep = self._ema_sep_threshold()
+        emas_sep_down = float(u["ema50"]) < e150 / sep and e150 < e200 / sep
         stage4 = (p < e200 and emas_sep_down and float(u["ema200"]) < ema200_20)
         if stage4:
             score += 2.0

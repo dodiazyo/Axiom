@@ -563,6 +563,30 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
             <input type="number" id="cfgInterval" value="60" min="15"/>
           </div>
         </div>
+        <div class="form-row" style="align-items:center;gap:12px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;">
+            <input type="checkbox" id="cfgSlowTrend" onchange="toggleSlowTrendPanel(this.checked)" style="width:14px;height:14px;accent-color:var(--blue);cursor:pointer;"/>
+            <span>Modo Tendencia Lenta <span style="color:var(--muted);font-size:11px;">(para coins como TRX que suben despacio)</span></span>
+          </label>
+        </div>
+        <div id="slowTrendPanel" style="display:none;background:var(--s2);border:1px solid var(--s3);border-radius:8px;padding:12px;margin-top:6px;">
+          <div style="font-size:11px;color:var(--blue);margin-bottom:8px;font-weight:600;">⚡ Parámetros Tendencia Lenta</div>
+          <div class="form-row">
+            <div>
+              <label>Separación EMAs (%)</label>
+              <input type="number" id="cfgSlowEmaSep" value="0.10" step="0.01" min="0.01" max="1.0" title="Normal=0.3% — Lento=0.1%. Menor valor detecta tendencias más suaves."/>
+            </div>
+            <div>
+              <label>ADX mínimo</label>
+              <input type="number" id="cfgSlowAdx" value="15" step="1" min="5" max="30" title="Normal=20 — Lento=15. Permite entrar en tendencias con menos fuerza."/>
+            </div>
+            <div>
+              <label>Impulso 3 velas (%)</label>
+              <input type="number" id="cfgSlowImpulso" value="0.05" step="0.01" min="0.01" max="0.5" title="Normal=0.1% — Lento=0.05%. Detecta impulsos más pequeños."/>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;">⚠️ Umbrales más bajos = más señales, más riesgo de falsas entradas.</div>
+        </div>
         <div class="btn-row">
           <button type="button" class="btn btn-primary" id="btnStart" onclick="startBot()"><i data-lucide="play" class="icon-sm"></i> Iniciar</button>
           <button type="button" class="btn btn-danger" id="btnStop" onclick="stopBot()"><i data-lucide="square" class="icon-sm"></i> Detener</button>
@@ -753,6 +777,10 @@ function renderPairIdentity(sym) {
   `;
 }
 
+function toggleSlowTrendPanel(on) {
+  document.getElementById("slowTrendPanel").style.display = on ? "block" : "none";
+}
+
 function switchTab(name) {
   document.querySelectorAll(".tab-page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -861,6 +889,10 @@ function collectConfigPayload() {
     rr_minimo: parseFloat(document.getElementById("cfgRR").value),
     score_minimo: 6.5,
     vol_pullback_max: parseFloat(document.getElementById("cfgVol").value),
+    slow_trend: document.getElementById("cfgSlowTrend").checked,
+    slow_ema_sep_pct: parseFloat(document.getElementById("cfgSlowEmaSep").value),
+    slow_adx_min: parseFloat(document.getElementById("cfgSlowAdx").value),
+    slow_impulso_pct: parseFloat(document.getElementById("cfgSlowImpulso").value),
     atr_sl_mult: 1.5,
     atr_tp_mult: 4.0,
     atr_trail_mult: 2.0,
@@ -921,6 +953,12 @@ async function loadConfig() {
   document.getElementById("cfgRR").value = cfg.rr_minimo ?? 2.0;
   document.getElementById("cfgVol").value = cfg.vol_pullback_max ?? 0.85;
   document.getElementById("cfgInterval").value = cfg.intervalo_segundos ?? 60;
+  const slowOn = !!cfg.slow_trend;
+  document.getElementById("cfgSlowTrend").checked = slowOn;
+  document.getElementById("cfgSlowEmaSep").value = cfg.slow_ema_sep_pct ?? 0.10;
+  document.getElementById("cfgSlowAdx").value = cfg.slow_adx_min ?? 15;
+  document.getElementById("cfgSlowImpulso").value = cfg.slow_impulso_pct ?? 0.05;
+  toggleSlowTrendPanel(slowOn);
   document.getElementById("cfgModo").value = cfg.modo_operador ?? "AUTOMATICO";
   document.getElementById("cfgExecMode").value = cfg.execution_mode ?? "SIMULADO";
   document.getElementById("cfgTestnet").checked = Boolean(cfg.binance_testnet);
