@@ -898,6 +898,8 @@ function assetGlyph(asset) {
     ARPA: "ARPA", ATOM: "ATOM", HYPE: "HYPE",
     UNI: "UNI", TON: "TON", NEAR: "NEAR", APT: "APT",
     SUI: "SUI", INJ: "INJ", ARB: "ARB", SEI: "SEI",
+    RENDER: "RNDR", ORDI: "ORDI", FLOKI: "FLOK", STX: "STX",
+    LDO: "LDO", GRT: "GRT", ONDO: "ONDO", PENDLE: "PNDL",
   };
   const clean = String(asset || "").toUpperCase();
   return (map[clean] || clean).slice(0, 4);
@@ -915,6 +917,8 @@ function assetIconSlug(asset) {
     NEAR: "near", APT: "apt", SUI: "sui", INJ: "inj",
     WLD: "wld", JTO: "jto", JUP: "jup", SEI: "sei",
     TAO: "tao", TIA: "tia", PYTH: "pyth", STRK: "strk",
+    RENDER: "render", ORDI: "ordi", FLOKI: "floki", STX: "stx",
+    LDO: "ldo", GRT: "grt", ONDO: "ondo", PENDLE: "pendle",
   };
   return aliases[String(asset || "").toUpperCase()] || String(asset || "").toLowerCase();
 }
@@ -932,6 +936,8 @@ function assetColor(asset) {
     NEAR: "#00c08b", APT: "#00b4d8", SUI: "#6fbcf0", INJ: "#00b2ff",
     WLD: "#ffffff", JTO: "#9fef00", JUP: "#c7a629", SEI: "#9d1a1a",
     TAO: "#00c4b4", TIA: "#7c3aed", PYTH: "#9945ff", STRK: "#ff875b",
+    RENDER: "#1a1a2e", ORDI: "#ff6600", FLOKI: "#f0b90b", STX: "#5546ff",
+    LDO: "#f0f0f0", GRT: "#6f4cff", ONDO: "#1a1a1a", PENDLE: "#3bbebc",
   };
   const clean = String(asset || "").toUpperCase();
   if (colors[clean]) return colors[clean];
