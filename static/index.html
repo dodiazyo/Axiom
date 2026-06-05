@@ -896,6 +896,8 @@ function assetGlyph(asset) {
     BCH: "BCH", TRX: "TRX", XMR: "XMR", OP: "OP", ARB: "ARB",
     PEPE: "PEPE", BONK: "BONK", MOG: "MOG", BOB: "BOB",
     ARPA: "ARPA", ATOM: "ATOM", HYPE: "HYPE",
+    UNI: "UNI", TON: "TON", NEAR: "NEAR", APT: "APT",
+    SUI: "SUI", INJ: "INJ", ARB: "ARB", SEI: "SEI",
   };
   const clean = String(asset || "").toUpperCase();
   return (map[clean] || clean).slice(0, 4);
@@ -908,6 +910,7 @@ function assetIconSlug(asset) {
     BCH: "bch", TRX: "trx", XMR: "xmr", OP: "op", ARB: "arb",
     ATOM: "atom", ARPA: "arpa", PEPE: "pepe", BONK: "bonk",
     MOG: "mog", BOB: "bob", HYPE: "hype", USDT: "usdt",
+    UNI: "uni", TON: "ton",
     DOT: "dot", SHIB: "shib", MATIC: "matic", FIL: "fil",
     NEAR: "near", APT: "apt", SUI: "sui", INJ: "inj",
     WLD: "wld", JTO: "jto", JUP: "jup", SEI: "sei",
@@ -924,6 +927,7 @@ function assetColor(asset) {
     XMR: "#ff6600", OP: "#ff0420", ARB: "#28a0f0", PEPE: "#7bdc63",
     BONK: "#ff8a00", MOG: "#c084fc", BOB: "#00ff85",
     ATOM: "#2e3148", ARPA: "#7c3aed", HYPE: "#00e6ff",
+    UNI: "#ff007a", TON: "#0088cc",
     DOT: "#e6007a", SHIB: "#ffa409", MATIC: "#8247e5", FIL: "#0090ff",
     NEAR: "#00c08b", APT: "#00b4d8", SUI: "#6fbcf0", INJ: "#00b2ff",
     WLD: "#ffffff", JTO: "#9fef00", JUP: "#c7a629", SEI: "#9d1a1a",
