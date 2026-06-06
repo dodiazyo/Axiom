@@ -917,6 +917,7 @@ class TrendBot:
         try:
             syms_data = {}
             open_pnl_total = 0.0
+            _okx_pnl_counted = set()   # evita doble conteo cuando MNV+MOM usan la misma pos OKX
             trade_syms = self._trade_symbols()
             for sym, est in self._estados.items():
                 df = self._df_cache.get(sym)
@@ -951,6 +952,9 @@ class TrendBot:
                                 position["pnl_pct"] = round((mark_price - float(position["entry"])) / float(position["entry"]) * 100, 2)
                             else:
                                 position["pnl_pct"] = round((float(position["entry"]) - mark_price) / float(position["entry"]) * 100, 2)
+                        if sym not in _okx_pnl_counted:
+                            open_pnl_total += position["pnl_usd"]
+                            _okx_pnl_counted.add(sym)
                     else:
                         qty = float(est.get("exchange_qty") or 0.0)
                         if qty <= 0:
@@ -960,7 +964,7 @@ class TrendBot:
                         else:
                             position["pnl_usd"] = round((float(position["entry"]) - live_price) * qty, 2)
                         position["pnl_source"] = "LOCAL"
-                    open_pnl_total += position["pnl_usd"]
+                        open_pnl_total += position["pnl_usd"]
 
                 est_m = self._estados_mom.get(sym, {})
                 mom_pos = {
@@ -990,6 +994,9 @@ class TrendBot:
                                 mom_pos["pnl_pct"] = round((mark_price - float(mom_pos["entry"])) / float(mom_pos["entry"]) * 100, 2)
                             else:
                                 mom_pos["pnl_pct"] = round((float(mom_pos["entry"]) - mark_price) / float(mom_pos["entry"]) * 100, 2)
+                        if sym not in _okx_pnl_counted:
+                            open_pnl_total += mom_pos["pnl_usd"]
+                            _okx_pnl_counted.add(sym)
                     else:
                         qty_m = float(est_m.get("exchange_qty") or 0.0)
                         if qty_m <= 0:
@@ -999,7 +1006,7 @@ class TrendBot:
                         else:
                             mom_pos["pnl_usd"] = round((float(mom_pos["entry"]) - live_price) * qty_m, 2)
                         mom_pos["pnl_source"] = "LOCAL"
-                    open_pnl_total += mom_pos["pnl_usd"]
+                        open_pnl_total += mom_pos["pnl_usd"]
 
                 try:
                     df_sig = df.iloc[:-1] if len(df) > 20 else df
