@@ -2206,9 +2206,17 @@ class TrendBot:
                                             f"[{sym}] Cerrado {'✅' if gan >= 0 else '❌'} ${gan:+.2f} | Balance ${self._balance:.2f}",
                                             "success" if gan >= 0 else "error"
                                         ))
+                                        _pct_close = round(gan / est.get("capital", 1) * 100, 2) if est.get("capital") else 0
                                         self._push_alert(
                                             f"{'✅ WIN' if gan >= 0 else '❌ LOSS'} {sym} {dir_} ${gan:+.2f} vía {_motivo}",
                                             "success" if gan >= 0 else "error", sym
+                                        )
+                                        self._send_telegram(
+                                            f"{'✅ GANANCIA' if gan >= 0 else '❌ PÉRDIDA'} <b>{sym}</b>\n"
+                                            f"💰 P&L: <b>${gan:+.2f}</b> ({_pct_close:+.2f}%)\n"
+                                            f"📍 Entrada: ${ent:,.4f} → Salida: ${exit_price:,.4f}\n"
+                                            f"📋 Motivo: {_motivo}\n"
+                                            f"💼 Balance: ${self._balance:,.2f}"
                                         )
                                         if self._is_live_mode():
                                             try:
@@ -2434,9 +2442,17 @@ class TrendBot:
                                             f"[{sym}][MOM] Cerrado {'✅' if _gan_m >= 0 else '❌'} ${_gan_m:+.2f} | Balance ${self._balance:.2f}",
                                             "success" if _gan_m >= 0 else "error"
                                         ))
+                                        _pct_close_m = round(_gan_m / _cap_m * 100, 2) if _cap_m > 0 else 0
                                         self._push_alert(
                                             f"{'✅ WIN' if _gan_m >= 0 else '❌ LOSS'} [MOM] {sym} {dir_m} ${_gan_m:+.2f} vía {_mot_m}",
                                             "success" if _gan_m >= 0 else "error", sym
+                                        )
+                                        self._send_telegram(
+                                            f"{'✅ GANANCIA' if _gan_m >= 0 else '❌ PÉRDIDA'} <b>{sym}</b> [MOM]\n"
+                                            f"💰 P&L: <b>${_gan_m:+.2f}</b> ({_pct_close_m:+.2f}%)\n"
+                                            f"📍 Entrada: ${_ent_m:,.4f} → Salida: ${exit_price_m:,.4f}\n"
+                                            f"📋 Motivo: {_mot_m}\n"
+                                            f"💼 Balance: ${self._balance:,.2f}"
                                         )
                                         if self._is_live_mode():
                                             try:
