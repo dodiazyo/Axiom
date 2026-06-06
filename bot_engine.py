@@ -1219,12 +1219,15 @@ class TrendBot:
 
     # ── Estrategia Momentum ───────────────────────────────────────────────────
 
-    # Sólo estos pares tienen permitido abrir posiciones MOM
-    _MOM_TRADE_SYMS = {"BTC/USDT", "ETH/USDT"}
+    def _momentum_trade_symbols(self) -> set[str]:
+        configured = self.cfg.get("momentum_symbols")
+        if configured:
+            return set(configured)
+        return self._trade_symbols()
 
     def _verificar_momentum(self, df: pd.DataFrame, sym: str):
         """
-        Estrategia Momentum conservadora: solo BTC/ETH, ADX>20, RSI obligatorio,
+        Estrategia Momentum conservadora: ADX>20, RSI obligatorio,
         SL 2×ATR, TP 1.5R — movimientos pequeños pero certeros.
         """
         if len(df) < 20:
@@ -1962,9 +1965,15 @@ class TrendBot:
         }
 
     def _current_open_positions(self) -> int:
-        mnv = sum(1 for est in self._estados.values() if est.get("posicion_abierta"))
-        mom = sum(1 for est in self._estados_mom.values() if est.get("posicion_abierta"))
-        return mnv + mom
+        open_symbols = {
+            sym for sym, est in self._estados.items()
+            if est.get("posicion_abierta")
+        }
+        open_symbols.update(
+            sym for sym, est in self._estados_mom.items()
+            if est.get("posicion_abierta")
+        )
+        return len(open_symbols)
 
     def _can_open_new_position(self, sym: str, tendencia: str) -> tuple[bool, str]:
         est = self._estados.get(sym, {})
@@ -1974,6 +1983,9 @@ class TrendBot:
         # Una posición por moneda — si ya tiene una abierta (MNV o MOM) no abre otra
         if est.get("posicion_abierta") or self._estados_mom.get(sym, {}).get("posicion_abierta"):
             return False, f"Ya hay una posición abierta en {sym}"
+        max_positions = int(self.cfg.get("max_posiciones", 2) or 0)
+        if max_positions > 0 and self._current_open_positions() >= max_positions:
+            return False, f"Máximo de {max_positions} posiciones abiertas alcanzado"
         if tendencia == "NEUTRAL":
             return False, "Sin contexto tendencial"
         return True, "OK"
@@ -2493,9 +2505,15 @@ class TrendBot:
                                         _nst_m["ultimo_resultado"]  = "WIN" if _gan_m >= 0 else "LOSS"
                                         self._estados_mom[sym] = _nst_m
 
-                            elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._MOM_TRADE_SYMS and not int(est_m.get("cooldown_restante", 0) or 0) and not est_m.get("posicion_abierta") and not self._estados.get(sym, {}).get("posicion_abierta"):
+                            elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._momentum_trade_symbols() and not int(est_m.get("cooldown_restante", 0) or 0) and not est_m.get("posicion_abierta") and not self._estados.get(sym, {}).get("posicion_abierta"):
                                 _dir_mn = None
                                 _sl_mn = _tp_mn = 0.0
+                                can_open_mom, open_reason_mom = self._can_open_new_position(sym, tendencia)
+                                if not can_open_mom:
+                                    pending_logs_m.append((f"[{sym}][MOM] Sin entrada: {open_reason_mom}", "info"))
+                                    for msg, level in pending_logs_m:
+                                        self._log(msg, level)
+                                    continue
                                 # Filtro de tendencia: MOM no puede ir en contra de la tendencia principal
                                 # Confirmación de 2 ciclos para evitar entradas prematuras
                                 if senal_ml and tendencia != "BAJISTA":
