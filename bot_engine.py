@@ -235,6 +235,15 @@ class TrendBot:
 
     def update_config(self, new_cfg: dict):
         with self._lock:
+            old_mode = str(self.cfg.get("execution_mode", "SIMULADO")).upper()
+            new_mode = str(new_cfg.get("execution_mode", "SIMULADO")).upper()
+            # Al cambiar de SIMULADO a REAL/TESTNET, limpiar posiciones simuladas
+            if old_mode == "SIMULADO" and new_mode in {"REAL", "TESTNET"}:
+                for sym in self._estados:
+                    self._estados[sym] = self._estado_vacio()
+                for sym in self._estados_mom:
+                    self._estados_mom[sym] = self._estado_vacio()
+                self._log("Modo cambiado a REAL — posiciones simuladas limpiadas", "warning")
             self.cfg = new_cfg
             for sym in self.cfg.get("symbols", []):
                 if sym not in self._estados:
