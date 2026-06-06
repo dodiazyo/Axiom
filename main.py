@@ -24,15 +24,16 @@ LOCAL_ORIGINS = [
     "http://localhost:8004",
 ]
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost"])
-app.add_middleware(CORSMiddleware, allow_origins=LOCAL_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
+ALLOW_EXTERNAL = os.environ.get("AXIOM_PUBLIC", "").lower() in {"1", "true", "yes"}
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"] if ALLOW_EXTERNAL else ["127.0.0.1", "localhost"])
+app.add_middleware(CORSMiddleware, allow_origins=["*"] if ALLOW_EXTERNAL else LOCAL_ORIGINS, allow_methods=["GET", "POST"], allow_headers=["Content-Type", "ngrok-skip-browser-warning"])
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.middleware("http")
 async def local_only_and_security_headers(request: Request, call_next):
     client_host = request.client.host if request.client else ""
-    if client_host not in LOCAL_HOSTS:
+    if not ALLOW_EXTERNAL and client_host not in LOCAL_HOSTS:
         from fastapi.responses import JSONResponse
         return JSONResponse({"error": "Axiom solo acepta conexiones locales"}, status_code=403)
     response = await call_next(request)
@@ -84,6 +85,8 @@ DEFAULT_CFG = {
     "api_secret":       "",
     "okx_passphrase":   "",
     "binance_testnet":  True,
+    "telegram_token":   "",
+    "telegram_chat_id": "",
 }
 
 bot: Optional[TrendBot] = None
