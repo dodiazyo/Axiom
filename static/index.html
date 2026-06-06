@@ -660,6 +660,18 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
               </div>
             </div>
           </div>
+          <!-- Telegram -->
+          <div style="margin:12px 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Notificaciones Telegram</div>
+          <div class="cfg-creds">
+            <div class="cfg-field">
+              <label><i data-lucide="bot" class="icon-xs"></i> Bot Token</label>
+              <input type="password" id="cfgTelegramToken" placeholder="123456:ABC-DEF…" autocomplete="off" spellcheck="false"/>
+            </div>
+            <div class="cfg-field">
+              <label><i data-lucide="message-circle" class="icon-xs"></i> Chat ID</label>
+              <input type="text" id="cfgTelegramChatId" placeholder="Tu chat ID…" autocomplete="off" spellcheck="false"/>
+            </div>
+          </div>
           <div class="cfg-toggles">
             <label class="toggle-row">
               <span class="toggle-wrap"><input type="checkbox" id="cfgRememberApi" class="sr-only"/><span class="toggle-track"></span></span>
@@ -1105,6 +1117,8 @@ function collectConfigPayload() {
     api_secret: document.getElementById("cfgApiSecret").value.trim(),
     okx_passphrase: document.getElementById("cfgOkxPassphrase").value.trim(),
     binance_testnet: document.getElementById("cfgTestnet").checked,
+    telegram_token: document.getElementById("cfgTelegramToken").value.trim(),
+    telegram_chat_id: document.getElementById("cfgTelegramChatId").value.trim(),
   };
 }
 
@@ -1193,6 +1207,8 @@ async function loadConfig() {
   document.getElementById("cfgApiKey").value = savedCreds.api_key || "";
   document.getElementById("cfgApiSecret").value = savedCreds.api_secret || "";
   document.getElementById("cfgOkxPassphrase").value = savedCreds.okx_passphrase || "";
+  document.getElementById("cfgTelegramToken").value = cfg.telegram_token || "";
+  document.getElementById("cfgTelegramChatId").value = cfg.telegram_chat_id || "";
   if (cfg.api_credentials_saved && !savedCreds.api_key && !savedCreds.api_secret && !savedCreds.okx_passphrase) {
     document.getElementById("cfgApiKey").placeholder = `Guardada en backend ${cfg.api_key_hint || ""}`.trim();
     document.getElementById("cfgApiSecret").placeholder = "Guardada en backend";

@@ -160,6 +160,20 @@ class TrendBot:
             self._last_logs_cache = list(self._logs)
         print(f"[{now.strftime('%H:%M:%S')}] {msg}", flush=True)
 
+    def _send_telegram(self, msg: str):
+        token = self.cfg.get("telegram_token", "").strip()
+        chat_id = self.cfg.get("telegram_chat_id", "").strip()
+        if not token or not chat_id:
+            return
+        try:
+            requests.post(
+                f"https://api.telegram.org/bot{token}/sendMessage",
+                json={"chat_id": chat_id, "text": msg, "parse_mode": "HTML"},
+                timeout=5,
+            )
+        except Exception:
+            pass
+
     def _push_alert(self, msg: str, kind: str = "info", sym: str = ""):
         """kind: info | success | warning | error"""
         with self._lock:
@@ -170,6 +184,8 @@ class TrendBot:
                 "kind": kind,
                 "sym": sym,
             })
+        if kind == "success":
+            self._send_telegram(f"🤖 <b>Axiom Bot</b>\n{msg}")
 
     # ── Control ───────────────────────────────────────────────────────────────
 
