@@ -2271,6 +2271,7 @@ class TrendBot:
                                     if est["signal_confirmado"] < 2:
                                         pending_logs.append((f"[{sym}] Setup detectado — esperando confirmación ciclo 2/2", "info"))
                                         self._push_alert(f"⏳ {sym} LONG — setup detectado, esperando ciclo 2/2", "warning", sym)
+                                        self._send_telegram(f"⏳ <b>{sym}</b> LONG — Setup detectado\nEsperando confirmación ciclo 2/2\n💵 Precio: ${precio:,.4f}")
                                     else:
                                         # Verificar R:R real al precio live — tolerancia 15% sobre el mínimo
                                         live_risk_l = precio - sl_l
@@ -2288,6 +2289,7 @@ class TrendBot:
                                     if est["signal_short_confirmado"] < 2:
                                         pending_logs.append((f"[{sym}] Setup SHORT detectado — esperando confirmación ciclo 2/2", "info"))
                                         self._push_alert(f"⏳ {sym} SHORT — setup detectado, esperando ciclo 2/2", "warning", sym)
+                                        self._send_telegram(f"⏳ <b>{sym}</b> SHORT — Setup detectado\nEsperando confirmación ciclo 2/2\n💵 Precio: ${precio:,.4f}")
                                     else:
                                         live_risk_s = sl_s - precio
                                         live_rr_s = (precio - tp_s) / live_risk_s if live_risk_s > 0 else 0
@@ -2346,6 +2348,13 @@ class TrendBot:
                                     self._push_alert(
                                         f"🚀 ENTRADA {dir_nueva} {sym} @ ${precio:,.4f} | SL ${sl_usar:,.4f} | TP ${tp_usar:,.4f}",
                                         "success", sym
+                                    )
+                                    self._send_telegram(
+                                        f"🚀 <b>SEÑAL CONFIRMADA {dir_nueva}</b> — <b>{sym}</b>\n"
+                                        f"💵 Entrada: ${precio:,.4f}\n"
+                                        f"🛑 Stop Loss: ${sl_usar:,.4f}\n"
+                                        f"🎯 Objetivo: ${tp_usar:,.4f}\n"
+                                        f"📊 RSI: {rsi_live:.0f} | {tendencia}"
                                     )
 
                         for msg, level in pending_logs:
@@ -2495,6 +2504,7 @@ class TrendBot:
                                     if est_m["signal_confirmado"] < 2:
                                         pending_logs_m.append((f"[{sym}][MOM] Setup LONG — esperando confirmación ciclo 2/2", "info"))
                                         self._push_alert(f"⏳ {sym} [MOM] LONG — setup detectado, esperando ciclo 2/2", "warning", sym)
+                                        self._send_telegram(f"⏳ <b>{sym}</b> [MOM] LONG — Setup detectado\nEsperando confirmación ciclo 2/2\n💵 Precio: ${precio:,.4f}")
                                     else:
                                         _lrisk_ml = precio - sl_ml
                                         _lrr_ml   = (tp_ml - precio) / _lrisk_ml if _lrisk_ml > 0 else 0
@@ -2509,6 +2519,7 @@ class TrendBot:
                                     if est_m["signal_short_confirmado"] < 2:
                                         pending_logs_m.append((f"[{sym}][MOM] Setup SHORT — esperando confirmación ciclo 2/2", "info"))
                                         self._push_alert(f"⏳ {sym} [MOM] SHORT — setup detectado, esperando ciclo 2/2", "warning", sym)
+                                        self._send_telegram(f"⏳ <b>{sym}</b> [MOM] SHORT — Setup detectado\nEsperando confirmación ciclo 2/2\n💵 Precio: ${precio:,.4f}")
                                     else:
                                         _lrisk_ms = sl_ms - precio
                                         _lrr_ms   = (precio - tp_ms) / _lrisk_ms if _lrisk_ms > 0 else 0
@@ -2560,6 +2571,13 @@ class TrendBot:
                                         self._push_alert(
                                             f"🚀 [MOM] ENTRADA {_dir_mn} {sym} @ ${precio:,.4f} | SL ${_sl_mn:,.4f} | TP ${_tp_mn:,.4f}",
                                             "success", sym
+                                        )
+                                        self._send_telegram(
+                                            f"🚀 <b>SEÑAL CONFIRMADA {_dir_mn}</b> — <b>{sym}</b> [MOM]\n"
+                                            f"💵 Entrada: ${precio:,.4f}\n"
+                                            f"🛑 Stop Loss: ${_sl_mn:,.4f}\n"
+                                            f"🎯 Objetivo: ${_tp_mn:,.4f}\n"
+                                            f"📊 RSI: {rsi_live:.0f} | {tendencia}"
                                         )
 
                         for msg, level in pending_logs_m:
