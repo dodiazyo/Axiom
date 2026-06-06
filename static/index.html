@@ -672,6 +672,9 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
               <input type="text" id="cfgTelegramChatId" placeholder="Tu chat ID…" autocomplete="off" spellcheck="false"/>
             </div>
           </div>
+          <button type="button" class="btn btn-secondary" id="btnTestTelegram" onclick="testTelegram()" style="width:100%;justify-content:center;margin-top:8px;">
+            <i data-lucide="send" class="icon-sm"></i> Probar Telegram
+          </button>
           <div class="cfg-toggles">
             <label class="toggle-row">
               <span class="toggle-wrap"><input type="checkbox" id="cfgRememberApi" class="sr-only"/><span class="toggle-track"></span></span>
@@ -1209,6 +1212,11 @@ async function loadConfig() {
   document.getElementById("cfgOkxPassphrase").value = savedCreds.okx_passphrase || "";
   document.getElementById("cfgTelegramToken").value = cfg.telegram_token || "";
   document.getElementById("cfgTelegramChatId").value = cfg.telegram_chat_id || "";
+  if (cfg.telegram_configured && !cfg.telegram_token) {
+    document.getElementById("cfgTelegramToken").placeholder = `Guardado en backend ${cfg.telegram_token_hint || ""}`.trim();
+  } else {
+    document.getElementById("cfgTelegramToken").placeholder = "123456:ABC-DEF...";
+  }
   if (cfg.api_credentials_saved && !savedCreds.api_key && !savedCreds.api_secret && !savedCreds.okx_passphrase) {
     document.getElementById("cfgApiKey").placeholder = `Guardada en backend ${cfg.api_key_hint || ""}`.trim();
     document.getElementById("cfgApiSecret").placeholder = "Guardada en backend";
@@ -2322,6 +2330,30 @@ async function testCredentials() {
     renderConnection({connection: credentialState});
   } finally {
     setButtonContent(button, "shield-check", "Probar conexión");
+    button.disabled = false;
+  }
+}
+
+async function testTelegram() {
+  const button = document.getElementById("btnTestTelegram");
+  setButtonContent(button, "loader-2", "Enviando...");
+  button.disabled = true;
+  try {
+    const r = await fetch(`${API}/api/test-telegram`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        telegram_token: document.getElementById("cfgTelegramToken").value.trim(),
+        telegram_chat_id: document.getElementById("cfgTelegramChatId").value.trim(),
+      }),
+    });
+    const data = await r.json();
+    if (!data.ok) throw new Error(data.error || "No se pudo enviar Telegram");
+    showToast({kind:"success", msg:data.msg || "Telegram conectado", ts:new Date().toLocaleTimeString(), sym:"Telegram"});
+  } catch (e) {
+    showToast({kind:"error", msg:e.message || "No se pudo probar Telegram", ts:new Date().toLocaleTimeString(), sym:"Telegram"});
+  } finally {
+    setButtonContent(button, "send", "Probar Telegram");
     button.disabled = false;
   }
 }

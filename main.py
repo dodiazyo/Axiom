@@ -166,7 +166,7 @@ def _preserve_runtime_secrets(config: dict) -> dict:
     if not bot:
         return config
     current_cfg = getattr(bot, "cfg", {}) or {}
-    for key in ("api_key", "api_secret", "okx_passphrase"):
+    for key in ("api_key", "api_secret", "okx_passphrase", "telegram_token", "telegram_chat_id"):
         if not config.get(key) and current_cfg.get(key):
             config[key] = current_cfg[key]
     return config
@@ -243,6 +243,7 @@ def _without_secrets(config: dict) -> dict:
     safe["api_key"] = ""
     safe["api_secret"] = ""
     safe["okx_passphrase"] = ""
+    safe["telegram_token"] = ""
     return safe
 
 
@@ -349,6 +350,8 @@ class ConfigIn(BaseModel):
     api_secret:         str   = Field("")
     okx_passphrase:     str   = Field("")
     binance_testnet:    bool  = Field(True)
+    telegram_token:     str   = Field("")
+    telegram_chat_id:   str   = Field("")
 
 
 class OKXCredsIn(BaseModel):
@@ -358,6 +361,11 @@ class OKXCredsIn(BaseModel):
     api_secret:         str   = Field("")
     okx_passphrase:     str   = Field("")
     binance_testnet:    bool  = Field(True)
+
+
+class TelegramTestIn(BaseModel):
+    telegram_token:     str   = Field("")
+    telegram_chat_id:   str   = Field("")
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
@@ -451,11 +459,16 @@ def get_config():
     api_key = str(cfg.get("api_key", "") or "")
     api_secret = str(cfg.get("api_secret", "") or "")
     okx_passphrase = str(cfg.get("okx_passphrase", "") or "")
+    telegram_token = str(cfg.get("telegram_token", "") or "")
+    telegram_chat_id = str(cfg.get("telegram_chat_id", "") or "")
     payload["api_credentials_saved"] = bool(api_key and api_secret and okx_passphrase)
     payload["api_key_hint"] = f"****{api_key[-4:]}" if api_key else ""
+    payload["telegram_configured"] = bool(telegram_token and telegram_chat_id)
+    payload["telegram_token_hint"] = f"****{telegram_token[-4:]}" if telegram_token else ""
     payload["api_key"] = ""
     payload["api_secret"] = ""
     payload["okx_passphrase"] = ""
+    payload["telegram_token"] = ""
     return payload
 
 
@@ -507,6 +520,36 @@ def price_check():
         except Exception as e:
             items.append({"symbol": sym, "error": str(e), "synced": False})
     return {"ok": True, "items": items}
+
+
+@app.post("/api/test-telegram")
+def test_telegram(payload: TelegramTestIn):
+    token = payload.telegram_token.strip()
+    chat_id = payload.telegram_chat_id.strip()
+    current_cfg = getattr(bot, "cfg", {}) if bot else {}
+    if not token:
+        token = str(current_cfg.get("telegram_token", "") or "").strip()
+    if not chat_id:
+        chat_id = str(current_cfg.get("telegram_chat_id", "") or "").strip()
+    if not token or not chat_id:
+        return {"ok": False, "error": "Falta Bot Token o Chat ID de Telegram"}
+
+    try:
+        resp = requests.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            json={
+                "chat_id": chat_id,
+                "text": "Axiom: prueba de Telegram correcta. Las alertas del bot llegaran aqui.",
+                "parse_mode": "HTML",
+            },
+            timeout=8,
+        )
+        data = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+        if not resp.ok or not data.get("ok", False):
+            return {"ok": False, "error": data.get("description") or f"Telegram respondio HTTP {resp.status_code}"}
+        return {"ok": True, "msg": "Mensaje de prueba enviado a Telegram"}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
 
 
 @app.post("/api/test-credentials")

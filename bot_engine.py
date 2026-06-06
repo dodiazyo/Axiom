@@ -317,6 +317,7 @@ class TrendBot:
             cfg["api_key"] = ""
             cfg["api_secret"] = ""
             cfg["okx_passphrase"] = ""
+            cfg["telegram_token"] = ""
             balance_ini = self._balance_ini
             ganancia = self._ganancia
             if self._is_live_mode() and not self._has_private_keys():
@@ -2263,6 +2264,42 @@ class TrendBot:
                                         new_st["ultimo_resultado"] = "WIN" if gan >= 0 else "LOSS"
                                         self._estados[sym] = new_st
 
+                            # ── Modo solo alertas: notificar setups sin ejecutar órdenes ─
+                            elif cfg.get("modo_operador", "AUTOMATICO") == "MANUAL" and sym in self._trade_symbols():
+                                if senal_l and tendencia == "ALCISTA":
+                                    est["signal_confirmado"] = int(est.get("signal_confirmado", 0)) + 1
+                                    est["signal_short_confirmado"] = 0
+                                    if est["signal_confirmado"] == 1:
+                                        pending_logs.append((f"[{sym}] ALERTA LONG — setup listo en modo solo alertas", "warning"))
+                                        self._push_alert(f"ALERTA LONG {sym} @ ${precio:,.4f} | SL ${sl_l:,.4f} | TP ${tp_l:,.4f}", "warning", sym)
+                                        self._send_telegram(
+                                            f"<b>AXIOM ALERTA LONG</b> — <b>{sym}</b>\n"
+                                            f"Modo: solo alertas\n"
+                                            f"Entrada vigilada: ${precio:,.4f}\n"
+                                            f"SL sugerido: ${sl_l:,.4f}\n"
+                                            f"TP sugerido: ${tp_l:,.4f}\n"
+                                            f"RSI: {rsi_live:.0f} | Score: {score_l:.1f}\n"
+                                            f"Contexto: {tendencia} | {fase}"
+                                        )
+                                elif senal_s and tendencia == "BAJISTA":
+                                    est["signal_short_confirmado"] = int(est.get("signal_short_confirmado", 0)) + 1
+                                    est["signal_confirmado"] = 0
+                                    if est["signal_short_confirmado"] == 1:
+                                        pending_logs.append((f"[{sym}] ALERTA SHORT — setup listo en modo solo alertas", "warning"))
+                                        self._push_alert(f"ALERTA SHORT {sym} @ ${precio:,.4f} | SL ${sl_s:,.4f} | TP ${tp_s:,.4f}", "warning", sym)
+                                        self._send_telegram(
+                                            f"<b>AXIOM ALERTA SHORT</b> — <b>{sym}</b>\n"
+                                            f"Modo: solo alertas\n"
+                                            f"Entrada vigilada: ${precio:,.4f}\n"
+                                            f"SL sugerido: ${sl_s:,.4f}\n"
+                                            f"TP sugerido: ${tp_s:,.4f}\n"
+                                            f"RSI: {rsi_live:.0f} | Score: {score_s:.1f}\n"
+                                            f"Contexto: {tendencia} | {fase}"
+                                        )
+                                else:
+                                    est["signal_confirmado"] = 0
+                                    est["signal_short_confirmado"] = 0
+
                             # ── Nueva entrada ──────────────────────────────
                             elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols():
                                 can_open, open_reason = self._can_open_new_position(sym, tendencia)
@@ -2504,6 +2541,41 @@ class TrendBot:
                                         _nst_m["ultimo_cierre"]     = datetime.now(timezone.utc).isoformat()
                                         _nst_m["ultimo_resultado"]  = "WIN" if _gan_m >= 0 else "LOSS"
                                         self._estados_mom[sym] = _nst_m
+
+                            elif cfg.get("modo_operador", "AUTOMATICO") == "MANUAL" and sym in self._trade_symbols() and sym in self._momentum_trade_symbols() and not int(est_m.get("cooldown_restante", 0) or 0) and not est_m.get("posicion_abierta") and not self._estados.get(sym, {}).get("posicion_abierta"):
+                                if senal_ml and tendencia != "BAJISTA":
+                                    est_m["signal_confirmado"] = int(est_m.get("signal_confirmado", 0)) + 1
+                                    est_m["signal_short_confirmado"] = 0
+                                    if est_m["signal_confirmado"] == 1:
+                                        pending_logs_m.append((f"[{sym}][MOM] ALERTA LONG — setup listo en modo solo alertas", "warning"))
+                                        self._push_alert(f"ALERTA MOM LONG {sym} @ ${precio:,.4f} | SL ${sl_ml:,.4f} | TP ${tp_ml:,.4f}", "warning", sym)
+                                        self._send_telegram(
+                                            f"<b>AXIOM ALERTA MOM LONG</b> — <b>{sym}</b>\n"
+                                            f"Modo: solo alertas\n"
+                                            f"Entrada vigilada: ${precio:,.4f}\n"
+                                            f"SL sugerido: ${sl_ml:,.4f}\n"
+                                            f"TP sugerido: ${tp_ml:,.4f}\n"
+                                            f"RSI: {rsi_live:.0f} | Score: {score_ml:.1f}\n"
+                                            f"Contexto: {tendencia} | {fase}"
+                                        )
+                                elif senal_ms and tendencia != "ALCISTA":
+                                    est_m["signal_short_confirmado"] = int(est_m.get("signal_short_confirmado", 0)) + 1
+                                    est_m["signal_confirmado"] = 0
+                                    if est_m["signal_short_confirmado"] == 1:
+                                        pending_logs_m.append((f"[{sym}][MOM] ALERTA SHORT — setup listo en modo solo alertas", "warning"))
+                                        self._push_alert(f"ALERTA MOM SHORT {sym} @ ${precio:,.4f} | SL ${sl_ms:,.4f} | TP ${tp_ms:,.4f}", "warning", sym)
+                                        self._send_telegram(
+                                            f"<b>AXIOM ALERTA MOM SHORT</b> — <b>{sym}</b>\n"
+                                            f"Modo: solo alertas\n"
+                                            f"Entrada vigilada: ${precio:,.4f}\n"
+                                            f"SL sugerido: ${sl_ms:,.4f}\n"
+                                            f"TP sugerido: ${tp_ms:,.4f}\n"
+                                            f"RSI: {rsi_live:.0f} | Score: {score_ms:.1f}\n"
+                                            f"Contexto: {tendencia} | {fase}"
+                                        )
+                                else:
+                                    est_m["signal_confirmado"] = 0
+                                    est_m["signal_short_confirmado"] = 0
 
                             elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols() and sym in self._momentum_trade_symbols() and not int(est_m.get("cooldown_restante", 0) or 0) and not est_m.get("posicion_abierta") and not self._estados.get(sym, {}).get("posicion_abierta"):
                                 _dir_mn = None
