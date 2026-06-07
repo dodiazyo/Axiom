@@ -63,6 +63,7 @@ DEFAULT_CFG = {
     "max_7d_drop_short_pct": 4.0,
     "max_3d_drop_short_pct": 2.5,
     "max_24h_drop_short_pct": 2.0,
+    "max_entry_chase_pct": 0.6,
     "vol_pullback_max": 0.85,
     "slow_trend":       False,
     "slow_ema_sep_pct": 0.1,
@@ -328,6 +329,7 @@ class ConfigIn(BaseModel):
     max_7d_drop_short_pct: float = Field(4.0, ge=0.5)
     max_3d_drop_short_pct: float = Field(2.5, ge=0.5)
     max_24h_drop_short_pct: float = Field(2.0, ge=0.5)
+    max_entry_chase_pct: float = Field(0.6, ge=0.1, le=2.0)
     vol_pullback_max:   float = Field(0.85,  ge=0.1, le=2.0)
     slow_trend:         bool  = Field(False)
     slow_ema_sep_pct:   float = Field(0.1,   ge=0.01, le=1.0)

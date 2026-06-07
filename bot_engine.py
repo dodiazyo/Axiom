@@ -1149,6 +1149,10 @@ class TrendBot:
                 "RSI",
                 "RSI 32–52",
                 "RSI 48–68",
+                "Precio > EMA200",
+                "Precio < EMA200",
+                "EMA50 > EMA200",
+                "EMA50 < EMA200",
                 "Rebote + Rechazo",
                 "Pullback + Rebote",
                 "Espacio a soporte",
@@ -1386,8 +1390,10 @@ class TrendBot:
         adx_min = float(self.cfg.get("slow_adx_min", 15.0)) if self.cfg.get("slow_trend") else 20.0
         adx_ok = adx >= adx_min
         # RSI obligatorio: si falla RSI no hay entrada
-        senal_l = score_l >= 6 and rsi_ok_l and mom_up and score_l >= score_s + 2 and not conflicto and ema200_trending_up and adx_ok and room_to_resistance and not capitulation_long
-        senal_s = score_s >= 6 and rsi_ok_s and mom_down and score_s >= score_l + 2 and not conflicto and ema200_trending_down and adx_ok and reset_short_ok and room_to_support and not capitulation_short
+        trend_aligned_l = p > e200 and e50 > e200
+        trend_aligned_s = p < e200 and e50 < e200
+        senal_l = score_l >= 6 and trend_aligned_l and rsi_ok_l and mom_up and score_l >= score_s + 2 and not conflicto and ema200_trending_up and adx_ok and room_to_resistance and not capitulation_long
+        senal_s = score_s >= 6 and trend_aligned_s and rsi_ok_s and mom_down and score_s >= score_l + 2 and not conflicto and ema200_trending_down and adx_ok and reset_short_ok and room_to_support and not capitulation_short
 
         # SL más ancho (2×ATR) para no ser golpeado por ruido
         min_dist_l = max(atr * 2.0, p * 0.02)
@@ -1548,12 +1554,17 @@ class TrendBot:
         extended = drop_7d > max_drop_7d or drop_3d > max_drop_3d or drop_24h > max_drop_24h
         rebound_pct = (price - recent_low_3d) / recent_low_3d * 100 if recent_low_3d > 0 else 0.0
         min_rebound_pct = max(1.2, (atr / price * 100) * 1.2) if price > 0 else 1.2
-        reset_ok = rebound_pct >= min_rebound_pct and rsi_ok and rejection_ok
+        extended_rsi_ok = not extended or rsi_ok
+        if extended and len(df) > 0:
+            extended_rsi_ok = rsi_ok and float(df.iloc[-1]["rsi"]) >= 50.0
+        reset_ok = rebound_pct >= min_rebound_pct and extended_rsi_ok and rejection_ok
 
         if not extended:
             return True, f"Caída 7d {drop_7d:.1f}% / 3d {drop_3d:.1f}% / 24h {drop_24h:.1f}% — entrada no tardía"
         if reset_ok:
             return True, f"Caída extendida, pero hubo rebote {rebound_pct:.1f}% y rechazo — SHORT permitido"
+        if not extended_rsi_ok:
+            return False, f"Caída extendida y RSI {float(df.iloc[-1]['rsi']):.0f} — esperar rebote más claro antes de otro SHORT"
         return False, f"Caída 7d {drop_7d:.1f}% / 3d {drop_3d:.1f}% / 24h {drop_24h:.1f}% — esperar rebote/rechazo antes de otro SHORT"
 
     # ── Señal LONG ────────────────────────────────────────────────────────────
@@ -1859,6 +1870,8 @@ class TrendBot:
         u       = df.iloc[-1]
         p       = float(u["close"])
         atr     = float(u["atr"])
+        rsi     = float(u.get("rsi", 50.0))
+        ema50   = float(u.get("ema50", p))
         entrada = est["precio_entrada"]
         sl      = est["sl_actual"]
         tp      = est["tp"]
@@ -1898,6 +1911,10 @@ class TrendBot:
                 cerrar = True
                 exit_price = tp
                 eventos.append(f"TP alcanzado ({(tp - entrada) / entrada * 100:+.2f}%) ✅")
+            elif p < ema50 and rsi < 40:
+                cerrar = True
+                exit_price = p
+                eventos.append("LONG invalidado — perdió EMA50 con RSI débil")
             elif not est["salida_parcial_hecha"] and riesgo > 0 and profit >= riesgo * rr_parcial:
                 parcial = True
                 eventos.append(f"Salida parcial 50% ${p:,.4f} (+{profit / entrada * 100:.2f}%)")
@@ -1926,6 +1943,10 @@ class TrendBot:
                 cerrar = True
                 exit_price = tp
                 eventos.append(f"TP alcanzado ({(entrada - tp) / entrada * 100:+.2f}%) ✅")
+            elif p > ema50 and rsi > 60:
+                cerrar = True
+                exit_price = p
+                eventos.append("SHORT invalidado — recuperó EMA50 con RSI fuerte")
             elif not est["salida_parcial_hecha"] and riesgo > 0 and profit >= riesgo * rr_parcial:
                 parcial = True
                 eventos.append(f"Salida parcial 50% ${p:,.4f} (+{profit / entrada * 100:.2f}%)")
@@ -2306,9 +2327,18 @@ class TrendBot:
                                 cap  = self._symbol_capital(sym)
                                 apal = self._symbol_leverage(sym)
                                 dir_nueva = None
+                                chase_limit = float(cfg.get("max_entry_chase_pct", 0.6))
+                                short_chase = senal_s and precio < signal_close * (1 - chase_limit / 100)
+                                long_chase = senal_l and precio > signal_close * (1 + chase_limit / 100)
 
                                 if not can_open:
                                     pending_logs.append((f"[{sym}] Sin entrada: {open_reason}", "info"))
+                                    est["signal_confirmado"] = 0
+                                elif short_chase:
+                                    pending_logs.append((f"[{sym}] Sin entrada SHORT: precio persiguió {abs(precio / signal_close - 1) * 100:.1f}% desde el setup — esperar nuevo rebote", "info"))
+                                    est["signal_short_confirmado"] = 0
+                                elif long_chase:
+                                    pending_logs.append((f"[{sym}] Sin entrada LONG: precio persiguió {abs(precio / signal_close - 1) * 100:.1f}% desde el setup — esperar nuevo pullback", "info"))
                                     est["signal_confirmado"] = 0
                                 elif spread_pct > 1.5:
                                     pending_logs.append((f"[{sym}] Sin entrada: precio se alejó {spread_pct:.1f}% del setup — esperar siguiente vela", "info"))
@@ -2586,9 +2616,18 @@ class TrendBot:
                                     for msg, level in pending_logs_m:
                                         self._log(msg, level)
                                     continue
+                                chase_limit_m = float(cfg.get("max_entry_chase_pct", 0.6))
+                                short_chase_m = senal_ms and precio < signal_close * (1 - chase_limit_m / 100)
+                                long_chase_m = senal_ml and precio > signal_close * (1 + chase_limit_m / 100)
                                 # Filtro de tendencia: MOM no puede ir en contra de la tendencia principal
                                 # Confirmación de 2 ciclos para evitar entradas prematuras
-                                if senal_ml and tendencia != "BAJISTA":
+                                if short_chase_m:
+                                    pending_logs_m.append((f"[{sym}][MOM] Sin SHORT: precio persiguió {abs(precio / signal_close - 1) * 100:.1f}% desde el setup", "info"))
+                                    est_m["signal_short_confirmado"] = 0
+                                elif long_chase_m:
+                                    pending_logs_m.append((f"[{sym}][MOM] Sin LONG: precio persiguió {abs(precio / signal_close - 1) * 100:.1f}% desde el setup", "info"))
+                                    est_m["signal_confirmado"] = 0
+                                elif senal_ml and tendencia != "BAJISTA":
                                     est_m["signal_confirmado"] = int(est_m.get("signal_confirmado", 0)) + 1
                                     est_m["signal_short_confirmado"] = 0
                                     if est_m["signal_confirmado"] < 2:
