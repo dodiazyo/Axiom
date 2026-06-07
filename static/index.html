@@ -1113,7 +1113,7 @@ function collectConfigPayload() {
     parcial_rr: 1.5,
     intervalo_segundos: parseInt(document.getElementById("cfgInterval").value, 10),
     cooldown_ciclos: 3,
-    max_posiciones: 2,
+    max_posiciones: Math.min(20, Math.max(1, tradeSymbols.length || 1)),
     modo_operador: document.getElementById("cfgModo").value,
     execution_mode: document.getElementById("cfgExecMode").value,
     api_key: document.getElementById("cfgApiKey").value.trim(),
