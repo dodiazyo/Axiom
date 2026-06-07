@@ -360,6 +360,19 @@ class TrendBot:
                 pass
         return int(self.cfg.get("apalancamiento", 3))
 
+    def _cap_sl_by_leverage(self, sym: str, side: str, price: float, sl: float) -> tuple[float, str]:
+        leverage = max(1, self._symbol_leverage(sym))
+        max_loss_pct = float(self.cfg.get("max_sl_loss_pct", 12.0))
+        max_price_move = max_loss_pct / leverage / 100.0
+        if side == "LONG":
+            capped = max(sl, price * (1 - max_price_move))
+            distance_pct = (price - capped) / price * 100 if price > 0 else 0.0
+        else:
+            capped = min(sl, price * (1 + max_price_move))
+            distance_pct = (capped - price) / price * 100 if price > 0 else 0.0
+        detail = f"SL limitado a {distance_pct:.2f}% por {leverage}x (riesgo max {max_loss_pct:.0f}%)"
+        return capped, detail
+
     def _symbol_capital(self, sym: str) -> float:
         mapping = self.cfg.get("symbol_capital", {}) or {}
         if sym in mapping:
@@ -1398,11 +1411,15 @@ class TrendBot:
         # SL más ancho (2×ATR) para no ser golpeado por ruido
         min_dist_l = max(atr * 2.0, p * 0.02)
         sl_l = min(e20 - atr * 0.5, p - min_dist_l)
+        sl_l, sl_l_cap_detail = self._cap_sl_by_leverage(sym, "LONG", p, sl_l)
+        conds_l.append(("Riesgo máximo", True, sl_l_cap_detail))
         riesgo_l = max(p - sl_l, atr * 0.8)
         tp_l = p + riesgo_l * 1.5   # TP 1.5R — más alcanzable
 
         min_dist_s = max(atr * 2.0, p * 0.02)
         sl_s = max(e20 + atr * 0.5, p + min_dist_s)
+        sl_s, sl_s_cap_detail = self._cap_sl_by_leverage(sym, "SHORT", p, sl_s)
+        conds_s.append(("Riesgo máximo", True, sl_s_cap_detail))
         riesgo_s = max(sl_s - p, atr * 0.8)
         tp_s = p - riesgo_s * 1.5   # TP 1.5R — más alcanzable
 
@@ -1684,6 +1701,8 @@ class TrendBot:
         sl = min(sl, p - min_sl_dist)
         # Máximo: SL no puede estar más de 3% del precio (evita pérdidas enormes en coins volátiles)
         sl = max(sl, p * 0.97)
+        sl, sl_cap_detail = self._cap_sl_by_leverage(sym, "LONG", p, sl)
+        conds.append(("Riesgo máximo", True, sl_cap_detail))
 
         # 10. TP: primera resistencia real, máximo 6R (evita TPs irreales por swing lejano)
         highs = _swing_highs(df)
@@ -1831,6 +1850,8 @@ class TrendBot:
         sl = max(sl, p + min_sl_dist)
         # Máximo: SL no puede estar más de 3% del precio
         sl = min(sl, p * 1.03)
+        sl, sl_cap_detail = self._cap_sl_by_leverage(sym, "SHORT", p, sl)
+        conds.append(("Riesgo máximo", True, sl_cap_detail))
 
         # 10. TP: primer soporte real, máximo 6R (evita TPs irreales por swing lejano)
         lows = _swing_lows(df)

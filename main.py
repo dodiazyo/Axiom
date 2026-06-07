@@ -64,6 +64,7 @@ DEFAULT_CFG = {
     "max_3d_drop_short_pct": 2.5,
     "max_24h_drop_short_pct": 2.0,
     "max_entry_chase_pct": 0.6,
+    "max_sl_loss_pct": 12.0,
     "vol_pullback_max": 0.85,
     "slow_trend":       False,
     "slow_ema_sep_pct": 0.1,
@@ -97,6 +98,10 @@ STATE_FILE = Path(__file__).with_name("runtime_state.json")
 
 
 def _normalize_symbols(config: dict) -> dict:
+    config = {
+        **DEFAULT_CFG,
+        **config,
+    }
     watch = [s.strip().upper() for s in config.get("watch_symbols", []) if s and s.strip()]
     trade = [s.strip().upper() for s in config.get("trade_symbols", []) if s and s.strip()]
 
@@ -330,6 +335,7 @@ class ConfigIn(BaseModel):
     max_3d_drop_short_pct: float = Field(2.5, ge=0.5)
     max_24h_drop_short_pct: float = Field(2.0, ge=0.5)
     max_entry_chase_pct: float = Field(0.6, ge=0.1, le=2.0)
+    max_sl_loss_pct: float = Field(12.0, ge=2.0, le=30.0)
     vol_pullback_max:   float = Field(0.85,  ge=0.1, le=2.0)
     slow_trend:         bool  = Field(False)
     slow_ema_sep_pct:   float = Field(0.1,   ge=0.01, le=1.0)
@@ -457,6 +463,10 @@ def get_config():
             cfg = saved["cfg"]
     if cfg is None:
         cfg = DEFAULT_CFG
+    cfg = {
+        **DEFAULT_CFG,
+        **cfg,
+    }
     payload = dict(cfg)
     api_key = str(cfg.get("api_key", "") or "")
     api_secret = str(cfg.get("api_secret", "") or "")
