@@ -1925,16 +1925,19 @@ class TrendBot:
         exit_price = p   # precio de salida real (SL o TP, no precio live arbitrario)
         c       = self.cfg
 
-        rr_be      = float(c.get("breakeven_rr", 1.0))
+        rr_be      = max(float(c.get("breakeven_rr", 1.0)), 1.2)
+        if est.get("entrada_temprana"):
+            rr_be = max(rr_be, 1.35)
         rr_parcial = float(c.get("parcial_rr", 1.5))
         trail_mult = float(c.get("atr_trail_mult", 2.0))
 
         if dir_ == "LONG":
-            riesgo = entrada - sl
+            sl_ini = float(est.get("sl_inicial", sl))
+            riesgo = entrada - sl_ini
             profit = p - entrada
 
             if not be and riesgo > 0 and profit >= riesgo * rr_be:
-                sl = max(sl, entrada + atr * 0.2)
+                sl = max(sl, entrada + atr * 0.05)
                 be = True
                 eventos.append(f"Break-even activado → SL ${sl:,.4f}")
 
@@ -1962,11 +1965,12 @@ class TrendBot:
                 eventos.append(f"Salida parcial 50% ${p:,.4f} (+{profit / entrada * 100:.2f}%)")
 
         else:  # SHORT
-            riesgo = sl - entrada
+            sl_ini = float(est.get("sl_inicial", sl))
+            riesgo = sl_ini - entrada
             profit = entrada - p
 
             if not be and riesgo > 0 and profit >= riesgo * rr_be:
-                sl = min(sl, entrada - atr * 0.2)
+                sl = min(sl, entrada - atr * 0.05)
                 be = True
                 eventos.append(f"Break-even activado → SL ${sl:,.4f}")
 
@@ -2460,6 +2464,7 @@ class TrendBot:
                                         "sl_order_id":         _sl_order_id,
                                         "breakeven_activado":  False,
                                         "salida_parcial_hecha":False,
+                                        "entrada_temprana":    bool(dir_nueva == "LONG" and early_long_context and tendencia != "ALCISTA"),
                                         "capital":             cap,
                                         "apalancamiento":      apal,
                                         "pnl_pct":             0.0,
