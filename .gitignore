@@ -6,4 +6,5 @@ venv/
 env/
 
 runtime_state.json
+secrets.json
 .DS_Store

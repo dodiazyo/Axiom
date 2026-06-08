@@ -95,6 +95,8 @@ bot: Optional[TrendBot] = None
 ws_clients: list[WebSocket] = []
 MARKETS_CACHE: dict = {"ts": 0.0, "data": []}
 STATE_FILE = Path(__file__).with_name("runtime_state.json")
+SECRETS_FILE = Path(__file__).with_name("secrets.json")
+SECRET_KEYS = ("api_key", "api_secret", "okx_passphrase", "telegram_token", "telegram_chat_id")
 
 
 def _normalize_symbols(config: dict) -> dict:
@@ -169,12 +171,14 @@ def _recover_empty_symbol_config(state: dict) -> dict:
 
 def _preserve_runtime_secrets(config: dict) -> dict:
     """Keep credentials in memory when the UI posts blank masked fields."""
-    if not bot:
-        return config
-    current_cfg = getattr(bot, "cfg", {}) or {}
-    for key in ("api_key", "api_secret", "okx_passphrase", "telegram_token", "telegram_chat_id"):
-        if not config.get(key) and current_cfg.get(key):
-            config[key] = current_cfg[key]
+    current_cfg = getattr(bot, "cfg", {}) or {} if bot else {}
+    saved_secrets = _load_secrets()
+    for key in SECRET_KEYS:
+        if not config.get(key):
+            if current_cfg.get(key):
+                config[key] = current_cfg[key]
+            elif saved_secrets.get(key):
+                config[key] = saved_secrets[key]
     return config
 
 
@@ -244,12 +248,47 @@ def _save_runtime_state():
         pass
 
 
+def _load_secrets() -> dict:
+    if not SECRETS_FILE.exists():
+        return {}
+    try:
+        data = json.loads(SECRETS_FILE.read_text())
+        if not isinstance(data, dict):
+            return {}
+        return {key: str(data.get(key, "") or "") for key in SECRET_KEYS}
+    except Exception:
+        return {}
+
+
+def _save_secrets(config: dict):
+    existing = _load_secrets()
+    changed = False
+    for key in SECRET_KEYS:
+        value = str(config.get(key, "") or "")
+        if value and existing.get(key) != value:
+            existing[key] = value
+            changed = True
+    if not changed:
+        return
+    SECRETS_FILE.write_text(json.dumps(existing, ensure_ascii=True, indent=2))
+    try:
+        os.chmod(SECRETS_FILE, stat.S_IRUSR | stat.S_IWUSR)
+    except Exception:
+        pass
+
+
+def _with_saved_secrets(config: dict) -> dict:
+    merged = dict(config)
+    for key, value in _load_secrets().items():
+        if value and not merged.get(key):
+            merged[key] = value
+    return merged
+
+
 def _without_secrets(config: dict) -> dict:
     safe = dict(config)
-    safe["api_key"] = ""
-    safe["api_secret"] = ""
-    safe["okx_passphrase"] = ""
-    safe["telegram_token"] = ""
+    for key in SECRET_KEYS:
+        safe[key] = ""
     return safe
 
 
@@ -289,6 +328,7 @@ async def startup():
     global bot
     saved = _load_runtime_state()
     if saved and saved.get("cfg"):
+        saved["cfg"] = _with_saved_secrets(saved["cfg"])
         bot = TrendBot(saved["cfg"], restore_state=saved)
         if saved.get("running"):
             bot.start()
@@ -421,6 +461,7 @@ def get_pattern_memory():
 def start_bot(cfg: ConfigIn):
     global bot
     config = _preserve_runtime_secrets(_normalize_symbols(_preserve_runtime_symbols(cfg.model_dump())))
+    _save_secrets(config)
     restore_state = None
     if bot:
         current = bot.export_runtime_state()
@@ -467,6 +508,7 @@ def get_config():
         **DEFAULT_CFG,
         **cfg,
     }
+    cfg = _with_saved_secrets(cfg)
     payload = dict(cfg)
     api_key = str(cfg.get("api_key", "") or "")
     api_secret = str(cfg.get("api_secret", "") or "")
@@ -488,6 +530,7 @@ def get_config():
 def update_config(cfg: ConfigIn):
     global bot
     config = _preserve_runtime_secrets(_normalize_symbols(_preserve_runtime_symbols(cfg.model_dump())))
+    _save_secrets(config)
     if bot:
         bot.update_config(config)
     else:
