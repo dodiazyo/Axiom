@@ -79,7 +79,7 @@ DEFAULT_CFG = {
     "cooldown_ciclos":  3,
     "cooldown_loss_ciclos": 8,
     "cooldown_short_after_drop_ciclos": 12,
-    "max_posiciones":   10,
+    "max_posiciones":   0,
     "modo_operador":    "AUTOMATICO",
     "execution_mode":   "SIMULADO",
     "margin_type":      "ISOLATED",
@@ -120,9 +120,6 @@ def _normalize_symbols(config: dict) -> dict:
     config["watch_symbols"] = watch
     config["trade_symbols"] = trade
     config["symbols"] = all_symbols
-    if trade:
-        configured_max = int(config.get("max_posiciones", 10) or 10)
-        config["max_posiciones"] = min(20, max(configured_max, len(trade)))
     symbol_leverage = {}
     for sym, lev in (config.get("symbol_leverage", {}) or {}).items():
         try:
@@ -353,7 +350,7 @@ class ConfigIn(BaseModel):
     cooldown_ciclos:    int   = Field(3,     ge=0, le=20)
     cooldown_loss_ciclos: int = Field(8,     ge=0, le=50)
     cooldown_short_after_drop_ciclos: int = Field(12, ge=0, le=80)
-    max_posiciones:     int   = Field(10,    ge=1, le=20)
+    max_posiciones:     int   = Field(0,     ge=0)
     modo_operador:      str   = Field("AUTOMATICO")
     execution_mode:     str   = Field("SIMULADO")
     margin_type:        str   = Field("ISOLATED")
