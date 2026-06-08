@@ -1604,12 +1604,29 @@ class TrendBot:
         # 1. Stage 2 — filtro duro (EMAs separadas, EMA200 subiendo 20 velas)
         e150    = float(u["ema150"])
         ema200_20 = float(df.iloc[-20]["ema200"]) if len(df) >= 20 else float(df.iloc[0]["ema200"])
+        ema50_6 = float(df.iloc[-6]["ema50"]) if len(df) >= 6 else e50
+        ema20_4 = float(df.iloc[-4]["ema20"]) if len(df) >= 4 else e20
         sep = self._ema_sep_threshold()
         emas_sep_up = float(u["ema50"]) > e150 * sep and e150 > e200 * sep
         stage2 = (p > e200 and emas_sep_up and float(u["ema200"]) > ema200_20)
+        ema200_slope_pct = (e200 / ema200_20 - 1) * 100 if ema200_20 > 0 else 0.0
+        early_stage2 = (
+            bool(c.get("slow_trend"))
+            and not stage2
+            and p > e50
+            and e20 > e50
+            and e20 > ema20_4
+            and e50 > ema50_6
+            and ema200_slope_pct > -0.80
+            and p >= e200 * 0.92
+        )
         if stage2:
             score += 2.0
             conds.append(("Stage 2", True, f"Tendencia alcista establecida — ${p:,.2f} > EMA200 ${e200:,.2f}"))
+        elif early_stage2:
+            score += 1.2
+            dist_e200 = (p / e200 - 1) * 100 if e200 > 0 else 0.0
+            conds.append(("Stage 2 temprano", True, f"Construyendo tendencia — EMA20/50 suben y precio a {dist_e200:+.1f}% de EMA200"))
         else:
             conds.append(("Stage 2", False, f"Sin Stage 2 — EMAs no alineadas/separadas o EMA200 no sube 20v"))
 
@@ -1654,10 +1671,14 @@ class TrendBot:
         recent_low_7d = float(df.iloc[-lookback:]["low"].min()) if lookback > 0 else p
         rise_7d = (p - recent_low_7d) / recent_low_7d * 100 if recent_low_7d > 0 else 0.0
         max_rise_7d = float(c.get("max_7d_rise_long_pct", 6.0))
-        mature_ok = rise_7d <= max_rise_7d
+        controlled_slow_rise = early_stage2 and rise_7d <= max(max_rise_7d, 12.0) and rsi <= 62.0
+        mature_ok = rise_7d <= max_rise_7d or controlled_slow_rise
         if mature_ok:
             score += 1.0
-            conds.append(("No extendida", True, f"Subida 7d {rise_7d:.1f}% — entrada no tardía"))
+            if controlled_slow_rise and rise_7d > max_rise_7d:
+                conds.append(("Subida controlada", True, f"Subida lenta {rise_7d:.1f}% con RSI {rsi:.0f} — no perseguida"))
+            else:
+                conds.append(("No extendida", True, f"Subida 7d {rise_7d:.1f}% — entrada no tardía"))
         else:
             conds.append(("No extendida", False, f"Subida 7d {rise_7d:.1f}% > {max_rise_7d:.1f}% — esperar corrección"))
 
@@ -1723,7 +1744,7 @@ class TrendBot:
             conds.append(("R:R", False, f"R:R {rr:.1f} < {rr_min} — SL ${sl:,.2f} / TP ${tp:,.2f}"))
 
         senal = (
-            stage2
+            (stage2 or early_stage2)
             and hh_hl
             and rsi_ok
             and pullback_real
@@ -2116,6 +2137,8 @@ class TrendBot:
                         tendencia, fase = self._analizar_tendencia(df_signal)
                         senal_l, conds_l, score_l, sl_l, tp_l = self._verificar_long(df_signal, sym)
                         senal_s, conds_s, score_s, sl_s, tp_s = self._verificar_short(df_signal, sym)
+                        early_long_context = any(n == "Stage 2 temprano" and ok for n, ok, _ in conds_l)
+                        long_context_ok = tendencia == "ALCISTA" or early_long_context
 
                         if tendencia == "ALCISTA":
                             checklist = [{"name": n, "ok": ok, "detail": d} for n, ok, d in conds_l]
@@ -2308,11 +2331,12 @@ class TrendBot:
 
                             # ── Modo solo alertas: notificar setups sin ejecutar órdenes ─
                             elif cfg.get("modo_operador", "AUTOMATICO") == "MANUAL" and sym in self._trade_symbols():
-                                if senal_l and tendencia == "ALCISTA":
+                                if senal_l and long_context_ok:
                                     est["signal_confirmado"] = int(est.get("signal_confirmado", 0)) + 1
                                     est["signal_short_confirmado"] = 0
                                     if est["signal_confirmado"] == 1:
-                                        pending_logs.append((f"[{sym}] ALERTA LONG — setup listo en modo solo alertas", "warning"))
+                                        tipo_alerta = "LONG temprano" if early_long_context and tendencia != "ALCISTA" else "LONG"
+                                        pending_logs.append((f"[{sym}] ALERTA {tipo_alerta} — setup listo en modo solo alertas", "warning"))
                                         self._push_alert(f"ALERTA LONG {sym} @ ${precio:,.4f} | SL ${sl_l:,.4f} | TP ${tp_l:,.4f}", "warning", sym)
                                         self._send_telegram(
                                             f"<b>AXIOM ALERTA LONG</b> — <b>{sym}</b>\n"
@@ -2344,7 +2368,8 @@ class TrendBot:
 
                             # ── Nueva entrada ──────────────────────────────
                             elif cfg.get("modo_operador", "AUTOMATICO") == "AUTOMATICO" and sym in self._trade_symbols():
-                                can_open, open_reason = self._can_open_new_position(sym, tendencia)
+                                entry_context = "ALCISTA" if senal_l and long_context_ok else tendencia
+                                can_open, open_reason = self._can_open_new_position(sym, entry_context)
                                 cap  = self._symbol_capital(sym)
                                 apal = self._symbol_leverage(sym)
                                 dir_nueva = None
@@ -2364,12 +2389,13 @@ class TrendBot:
                                 elif spread_pct > 1.5:
                                     pending_logs.append((f"[{sym}] Sin entrada: precio se alejó {spread_pct:.1f}% del setup — esperar siguiente vela", "info"))
                                     est["signal_confirmado"] = 0
-                                elif senal_l and tendencia == "ALCISTA":
+                                elif senal_l and long_context_ok:
                                     # Confirmación de 2 ciclos: el setup debe verse 2 veces seguidas
                                     est["signal_confirmado"] = int(est.get("signal_confirmado", 0)) + 1
                                     est["signal_short_confirmado"] = 0
                                     if est["signal_confirmado"] < 2:
-                                        pending_logs.append((f"[{sym}] Setup detectado — esperando confirmación ciclo 2/2", "info"))
+                                        tipo_setup = "LONG temprano" if early_long_context and tendencia != "ALCISTA" else "LONG"
+                                        pending_logs.append((f"[{sym}] Setup {tipo_setup} detectado — esperando confirmación ciclo 2/2", "info"))
                                         self._push_alert(f"⏳ {sym} LONG — setup detectado, esperando ciclo 2/2", "warning", sym)
                                         self._send_telegram(f"⏳ <b>{sym}</b> LONG — Setup detectado\nEsperando confirmación ciclo 2/2\n💵 Precio: ${precio:,.4f}")
                                     else:
