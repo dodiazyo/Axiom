@@ -1663,6 +1663,8 @@ class TrendBot:
             rsi = float(u["rsi"])
             atr = float(u["atr"])
             vol = float(u.get("vol_ratio", 0.0) or 0.0)
+            e20_prev = float(btc.iloc[-4]["ema20"]) if len(btc) >= 4 else e20
+            p3 = float(btc.iloc[-4]["close"]) if len(btc) >= 4 else p
             support = self._nearest_support(btc, p)
             resistance = self._nearest_resistance(btc, p)
             support_dist = (p - support) / p * 100 if support and p > 0 else 999.0
@@ -1671,6 +1673,19 @@ class TrendBot:
 
             strong_drop = rsi < 32.0 and vol >= 1.4 and p < e20 and p < e50
             near_support = support is not None and 0 <= support_dist <= max(1.5, (atr / p * 100) * 2.0)
+            impulse_pct = (p / p3 - 1) * 100 if p3 > 0 else 0.0
+            ema20_rising = e20 > e20_prev * 1.001
+            green_close = float(u["close"]) > float(u["open"])
+            room_to_resistance = resistance is None or resistance_dist >= max(1.2, (atr / p * 100) * 1.2)
+            bullish_impulse = (
+                p > e20
+                and (p > e50 or p >= e50 * 0.995)
+                and 42.0 <= rsi <= 68.0
+                and impulse_pct >= 0.35
+                and ema20_rising
+                and green_close
+                and room_to_resistance
+            )
             recovering = p > e20 and rsi >= 42.0
             breakdown = support is not None and p < support - max(atr * 0.35, p * 0.003)
 
@@ -1689,11 +1704,19 @@ class TrendBot:
                 long_ok = accum_ok and (p > float(u["open"]) or p > float(btc.iloc[-2]["close"]))
                 short_ok = False
                 detail = f"BTC en soporte/acumulacion: {accum_detail}"
+            elif bullish_impulse:
+                state = "BTC_BULLISH_IMPULSE"
+                long_ok = True
+                short_ok = False
+                detail = (
+                    f"BTC impulsa LONG: +{impulse_pct:.1f}% en 3 velas, "
+                    f"RSI {rsi:.0f}, EMA20 subiendo"
+                )
             elif recovering:
                 state = "BTC_RECOVERING"
                 long_ok = True
                 short_ok = False
-                detail = f"BTC recupera EMA20 con RSI {rsi:.0f}; longs permitidos"
+                detail = f"BTC recupera EMA20 con RSI {rsi:.0f}; longs en preparacion"
             elif p < e50 and p < e200:
                 state = "BTC_BEARISH"
                 long_ok = False
