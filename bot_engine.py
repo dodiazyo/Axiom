@@ -1645,7 +1645,7 @@ class TrendBot:
         return False, ", ".join(missing[:2]) if missing else "sin confirmacion"
 
     def _btc_market_context(self, df: Optional[pd.DataFrame] = None) -> dict:
-        """BTC manda el pulso del mercado: evita longs de altcoins contra una caida fuerte."""
+        """BTC manda el pulso del mercado sin cerrar la puerta a shorts sanos."""
         try:
             if df is None:
                 df = self._df_cache.get("BTC/USDT")
@@ -1697,13 +1697,24 @@ class TrendBot:
             elif strong_drop and not accum_ok:
                 state = "BTC_SELLING"
                 long_ok = False
-                short_ok = False
-                detail = f"BTC cae fuerte: RSI {rsi:.0f}, vol {vol:.2f}x, soporte {support_dist:.1f}%"
-            elif accum_ok or (near_support and rsi <= 45.0):
+                short_ok = True
+                detail = (
+                    f"BTC cae fuerte: RSI {rsi:.0f}, vol {vol:.2f}x, soporte {support_dist:.1f}% "
+                    "— shorts solo con rebote/rechazo confirmado"
+                )
+            elif accum_ok:
                 state = "BTC_ACCUMULATION"
                 long_ok = accum_ok and (p > float(u["open"]) or p > float(btc.iloc[-2]["close"]))
                 short_ok = False
                 detail = f"BTC en soporte/acumulacion: {accum_detail}"
+            elif near_support and rsi <= 45.0:
+                state = "BTC_SUPPORT_WATCH"
+                long_ok = False
+                short_ok = True
+                detail = (
+                    f"BTC cerca de soporte con RSI {rsi:.0f}; evitar perseguir, "
+                    "pero permitir shorts confirmados por rechazo"
+                )
             elif bullish_impulse:
                 state = "BTC_BULLISH_IMPULSE"
                 long_ok = True
