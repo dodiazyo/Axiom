@@ -8,3 +8,9 @@ env/
 runtime_state.json
 secrets.json
 .DS_Store
+
+# Backtester
+backtest_data/
+backtest_trades.csv
+backtest_equity.csv
+backtest_report.txt

@@ -63,22 +63,28 @@ def _adx(df: pd.DataFrame, n: int = 14) -> pd.Series:
     return dx.ewm(span=n, adjust=False).mean()
 
 def _swing_highs(df: pd.DataFrame, n: int = 3) -> list[float]:
-    highs = []
-    for i in range(n, len(df) - n):
-        val = df["high"].iloc[i]
-        if all(val > df["high"].iloc[i - j] for j in range(1, n + 1)) and \
-           all(val > df["high"].iloc[i + j] for j in range(1, n + 1)):
-            highs.append(float(val))
-    return highs[-6:]
+    h = df["high"].to_numpy(dtype=float)
+    if len(h) < 2 * n + 1:
+        return []
+    mask = np.ones(len(h), dtype=bool)
+    mask[:n] = False
+    mask[-n:] = False
+    center = h[n:-n]
+    for j in range(1, n + 1):
+        mask[n:-n] &= (center > h[n - j:-n - j]) & (center > h[n + j:len(h) - n + j])
+    return [float(v) for v in h[mask][-6:]]
 
 def _swing_lows(df: pd.DataFrame, n: int = 3) -> list[float]:
-    lows = []
-    for i in range(n, len(df) - n):
-        val = df["low"].iloc[i]
-        if all(val < df["low"].iloc[i - j] for j in range(1, n + 1)) and \
-           all(val < df["low"].iloc[i + j] for j in range(1, n + 1)):
-            lows.append(float(val))
-    return lows[-6:]
+    l = df["low"].to_numpy(dtype=float)
+    if len(l) < 2 * n + 1:
+        return []
+    mask = np.ones(len(l), dtype=bool)
+    mask[:n] = False
+    mask[-n:] = False
+    center = l[n:-n]
+    for j in range(1, n + 1):
+        mask[n:-n] &= (center < l[n - j:-n - j]) & (center < l[n + j:len(l) - n + j])
+    return [float(v) for v in l[mask][-6:]]
 
 def _prepare(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
