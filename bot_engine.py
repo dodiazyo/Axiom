@@ -1415,6 +1415,10 @@ class TrendBot:
     # ── Estrategia Momentum ───────────────────────────────────────────────────
 
     def _momentum_trade_symbols(self) -> set[str]:
+        # MOM apagada por defecto: sin ventaja demostrada en backtests 2024-2026
+        # (negativa en 19/19 configuraciones probadas, 1h y 4h).
+        if not bool(self.cfg.get("momentum_enabled", False)):
+            return set()
         configured = self.cfg.get("momentum_symbols")
         if configured:
             return set(configured)

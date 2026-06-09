@@ -66,6 +66,7 @@ DEFAULT_CFG = {
     "max_entry_chase_pct": 0.6,
     "max_sl_loss_pct": 12.0,
     "vol_pullback_max": 0.85,
+    "momentum_enabled": False,
     "slow_trend":       False,
     "slow_ema_sep_pct": 0.1,
     "slow_adx_min":     15.0,
@@ -377,6 +378,7 @@ class ConfigIn(BaseModel):
     max_entry_chase_pct: float = Field(0.6, ge=0.1, le=2.0)
     max_sl_loss_pct: float = Field(12.0, ge=2.0, le=30.0)
     vol_pullback_max:   float = Field(0.85,  ge=0.1, le=2.0)
+    momentum_enabled:   bool  = Field(False)
     slow_trend:         bool  = Field(False)
     slow_ema_sep_pct:   float = Field(0.1,   ge=0.01, le=1.0)
     slow_adx_min:       float = Field(15.0,  ge=5.0,  le=30.0)

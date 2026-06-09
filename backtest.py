@@ -143,10 +143,13 @@ class AxiomBacktester:
                  cooldown_win: int = 3,           # velas de espera tras ganar
                  cooldown_loss: int = 8,          # velas de espera tras perder
                  sizing: str = "fixed",           # "fixed" (como el bot) o "risk"
-                 risk_pct: float = 1.0):          # % del balance arriesgado/trade
+                 risk_pct: float = 1.0,           # % del balance arriesgado/trade
+                 solo: str | None = None,         # "MNV" o "MOM": aislar una estrategia
+                 mom_rr: float | None = None):    # override del TP de MOM en múltiplos de R
         cfg = {
             "symbols": symbols, "watch_symbols": symbols, "trade_symbols": symbols,
             "momentum_symbols": [s for s in symbols if s in ("BTC/USDT", "ETH/USDT")],
+            "momentum_enabled": True,   # el backtester la deja disponible para experimentar
             "capital_usd": 25.0, "apalancamiento": 3, "balance_inicial": 1000.0,
             "symbol_leverage": {}, "symbol_capital": {},
             "rr_minimo": 2.0, "score_minimo": 6.5, "vol_pullback_max": 0.85,
@@ -165,6 +168,7 @@ class AxiomBacktester:
         self.confirm_candles = max(1, confirm_candles)
         self.cooldown_win, self.cooldown_loss = cooldown_win, cooldown_loss
         self.sizing, self.risk_pct = sizing, risk_pct
+        self.solo, self.mom_rr = solo, mom_rr
 
         # Alinear todos los símbolos por timestamp (intersección)
         common = None
@@ -348,6 +352,10 @@ class AxiomBacktester:
                 if pend is not None:
                     open_px = float(candle["open"])
                     sl, tp, dir_, strat = pend["sl"], pend["tp"], pend["dir"], pend["strat"]
+                    if strat == "MOM" and self.mom_rr:
+                        _r = (open_px - sl) if dir_ == "LONG" else (sl - open_px)
+                        if _r > 0:
+                            tp = open_px + _r * self.mom_rr if dir_ == "LONG" else open_px - _r * self.mom_rr
                     # re-chequear R:R al precio de ejecución (como hace el bot en vivo)
                     riesgo = (open_px - sl) if dir_ == "LONG" else (sl - open_px)
                     reward = (tp - open_px) if dir_ == "LONG" else (open_px - tp)
@@ -389,7 +397,8 @@ class AxiomBacktester:
                 ctx_ok = tendencia == "ALCISTA" or early or accum
                 cf = self.conf[sym]
 
-                if not est.get("posicion_abierta") and not int(est.get("cooldown_restante", 0) or 0):
+                if (self.solo != "MOM" and not est.get("posicion_abierta")
+                        and not int(est.get("cooldown_restante", 0) or 0)):
                     cf["mnv_l"] = cf["mnv_l"] + 1 if (senal_l and ctx_ok) else 0
                     cf["mnv_s"] = cf["mnv_s"] + 1 if (senal_s and tendencia == "BAJISTA") else 0
                     if cf["mnv_l"] >= self.confirm_candles:
@@ -407,7 +416,7 @@ class AxiomBacktester:
                             cf["mnv_s"] = 0
 
                 # MOM (solo símbolos momentum; una posición por símbolo)
-                if (sym in bot._momentum_trade_symbols()
+                if (self.solo != "MNV" and sym in bot._momentum_trade_symbols()
                         and not est_m.get("posicion_abierta") and not est.get("posicion_abierta")
                         and not int(est_m.get("cooldown_restante", 0) or 0)
                         and sym not in self.pending):
@@ -464,6 +473,13 @@ class AxiomBacktester:
         w(f"Periodo:        {self.index[WARMUP].date()} → {self.index[-1].date()} "
           f"({(self.n - WARMUP) / 24:.0f} días, velas 1h)")
         w(f"Símbolos:       {', '.join(self.symbols)}")
+        variantes = []
+        if self.solo:    variantes.append(f"solo={self.solo}")
+        if self.mom_rr:  variantes.append(f"mom_rr={self.mom_rr}")
+        if self.cfg.get("slow_trend"): variantes.append(
+            f"slow_trend (adx≥{self.cfg.get('slow_adx_min', 15)}, imp {self.cfg.get('slow_impulso_pct', 0.05)}%)")
+        if variantes:
+            w("Variante:       " + " · ".join(variantes))
         w(f"Sizing:         {self.sizing}"
           + (f" ({self.risk_pct}%/trade)" if self.sizing == "risk" else
              f" (${self.cfg['capital_usd']} × {self.cfg['apalancamiento']}x)"))
@@ -534,6 +550,14 @@ def main():
     ap.add_argument("--cooldown-loss", type=int, default=8)
     ap.add_argument("--fee", type=float, default=0.0005)
     ap.add_argument("--score-minimo", type=float, default=None)
+    ap.add_argument("--solo", choices=["MNV", "MOM"], default=None,
+                    help="aislar una sola estrategia")
+    ap.add_argument("--slow-trend", action="store_true",
+                    help="activar el modo de tendencias lentas del bot (slow_trend=True)")
+    ap.add_argument("--slow-adx-min", type=float, default=15.0)
+    ap.add_argument("--slow-impulso-pct", type=float, default=0.05)
+    ap.add_argument("--mom-rr", type=float, default=None,
+                    help="override del TP de MOM en múltiplos de R (ej. 2.5)")
     args = ap.parse_args()
 
     print("Axiom Backtester")
@@ -551,12 +575,17 @@ def main():
     overrides = {}
     if args.score_minimo is not None:
         overrides["score_minimo"] = args.score_minimo
+    if args.slow_trend:
+        overrides["slow_trend"] = True
+        overrides["slow_adx_min"] = args.slow_adx_min
+        overrides["slow_impulso_pct"] = args.slow_impulso_pct
 
     bt = AxiomBacktester(
         args.symbols, dfs, cfg_overrides=overrides, fee_rate=args.fee,
         confirm_candles=args.confirm_candles,
         cooldown_win=args.cooldown_win, cooldown_loss=args.cooldown_loss,
         sizing=args.sizing, risk_pct=args.risk_pct,
+        solo=args.solo, mom_rr=args.mom_rr,
     )
     print(f"\nCorriendo {bt.n - WARMUP:,} velas…")
     bt.run()

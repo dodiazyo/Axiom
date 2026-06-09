@@ -751,6 +751,13 @@ input[type="checkbox"]{width:auto;accent-color:var(--green);}
           Estrategia
         </div>
         <label class="toggle-row">
+          <span class="toggle-wrap"><input type="checkbox" id="cfgMomentumEnabled" class="sr-only"/><span class="toggle-track"></span></span>
+          <span class="toggle-label-block">
+            <span>Estrategia Momentum (MOM)</span>
+            <span class="toggle-sub">Apagada por defecto — sin ventaja en backtests 2024–2026 (19/19 negativas)</span>
+          </span>
+        </label>
+        <label class="toggle-row">
           <span class="toggle-wrap"><input type="checkbox" id="cfgSlowTrend" class="sr-only" onchange="toggleSlowTrendPanel(this.checked)"/><span class="toggle-track"></span></span>
           <span class="toggle-label-block">
             <span>Tendencia Lenta</span>
@@ -1102,6 +1109,7 @@ function collectConfigPayload() {
     rr_minimo: parseFloat(document.getElementById("cfgRR").value),
     score_minimo: 6.5,
     vol_pullback_max: parseFloat(document.getElementById("cfgVol").value),
+    momentum_enabled: document.getElementById("cfgMomentumEnabled").checked,
     slow_trend: document.getElementById("cfgSlowTrend").checked,
     slow_ema_sep_pct: parseFloat(document.getElementById("cfgSlowEmaSep").value),
     slow_adx_min: parseFloat(document.getElementById("cfgSlowAdx").value),
@@ -1198,6 +1206,7 @@ async function loadConfig() {
   document.getElementById("cfgRR").value = cfg.rr_minimo ?? 2.0;
   document.getElementById("cfgVol").value = cfg.vol_pullback_max ?? 0.85;
   document.getElementById("cfgInterval").value = cfg.intervalo_segundos ?? 60;
+  document.getElementById("cfgMomentumEnabled").checked = !!cfg.momentum_enabled;
   const slowOn = !!cfg.slow_trend;
   document.getElementById("cfgSlowTrend").checked = slowOn;
   document.getElementById("cfgSlowEmaSep").value = cfg.slow_ema_sep_pct ?? 0.10;
