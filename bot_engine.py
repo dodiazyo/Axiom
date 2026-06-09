@@ -1644,6 +1644,110 @@ class TrendBot:
             missing.append(f"venta fuerte {recent_red_vol:.2f}x")
         return False, ", ".join(missing[:2]) if missing else "sin confirmacion"
 
+    def _btc_market_context(self, df: Optional[pd.DataFrame] = None) -> dict:
+        """BTC manda el pulso del mercado: evita longs de altcoins contra una caida fuerte."""
+        try:
+            if df is None:
+                df = self._df_cache.get("BTC/USDT")
+            if df is None or len(df) < 80:
+                return {"state": "UNKNOWN", "long_ok": True, "short_ok": True, "detail": "BTC sin datos suficientes"}
+            btc = df.iloc[:-1].copy() if len(df) > 20 else df.copy()
+            if len(btc) < 50:
+                return {"state": "UNKNOWN", "long_ok": True, "short_ok": True, "detail": "BTC sin velas cerradas suficientes"}
+
+            u = btc.iloc[-1]
+            p = float(u["close"])
+            e20 = float(u["ema20"])
+            e50 = float(u["ema50"])
+            e200 = float(u["ema200"])
+            rsi = float(u["rsi"])
+            atr = float(u["atr"])
+            vol = float(u.get("vol_ratio", 0.0) or 0.0)
+            support = self._nearest_support(btc, p)
+            resistance = self._nearest_resistance(btc, p)
+            support_dist = (p - support) / p * 100 if support and p > 0 else 999.0
+            resistance_dist = (resistance - p) / p * 100 if resistance and p > 0 else 999.0
+            accum_ok, accum_detail = self._accumulation_context(btc)
+
+            strong_drop = rsi < 32.0 and vol >= 1.4 and p < e20 and p < e50
+            near_support = support is not None and 0 <= support_dist <= max(1.5, (atr / p * 100) * 2.0)
+            recovering = p > e20 and rsi >= 42.0
+            breakdown = support is not None and p < support - max(atr * 0.35, p * 0.003)
+
+            if breakdown:
+                state = "BTC_BREAKDOWN"
+                long_ok = False
+                short_ok = True
+                detail = f"BTC rompio soporte ${support:,.2f}; bloquear longs de altcoins"
+            elif strong_drop and not accum_ok:
+                state = "BTC_SELLING"
+                long_ok = False
+                short_ok = False
+                detail = f"BTC cae fuerte: RSI {rsi:.0f}, vol {vol:.2f}x, soporte {support_dist:.1f}%"
+            elif accum_ok or (near_support and rsi <= 45.0):
+                state = "BTC_ACCUMULATION"
+                long_ok = accum_ok and (p > float(u["open"]) or p > float(btc.iloc[-2]["close"]))
+                short_ok = False
+                detail = f"BTC en soporte/acumulacion: {accum_detail}"
+            elif recovering:
+                state = "BTC_RECOVERING"
+                long_ok = True
+                short_ok = False
+                detail = f"BTC recupera EMA20 con RSI {rsi:.0f}; longs permitidos"
+            elif p < e50 and p < e200:
+                state = "BTC_BEARISH"
+                long_ok = False
+                short_ok = True
+                detail = f"BTC bajista bajo EMA50/200; resistencia {resistance_dist:.1f}%"
+            else:
+                state = "BTC_NEUTRAL"
+                long_ok = True
+                short_ok = True
+                detail = f"BTC neutral: RSI {rsi:.0f}, soporte {support_dist:.1f}%"
+
+            return {
+                "state": state,
+                "long_ok": bool(long_ok),
+                "short_ok": bool(short_ok),
+                "price": p,
+                "support": support,
+                "resistance": resistance,
+                "rsi": rsi,
+                "detail": detail,
+            }
+        except Exception as exc:
+            return {"state": "ERROR", "long_ok": True, "short_ok": True, "detail": f"BTC contexto no disponible: {exc}"}
+
+    def _apply_btc_market_filter(
+        self,
+        sym: str,
+        senal_l: bool,
+        senal_s: bool,
+        conds_l: list,
+        conds_s: list,
+        btc_ctx: dict,
+    ) -> tuple[bool, bool, list, list, Optional[str]]:
+        """Aplica el pulso de BTC a altcoins; BTC se evalua con su propia senal."""
+        if sym == "BTC/USDT" or not btc_ctx:
+            return senal_l, senal_s, conds_l, conds_s, None
+
+        detail = str(btc_ctx.get("detail", "BTC sin contexto"))
+        long_ok = bool(btc_ctx.get("long_ok", True))
+        short_ok = bool(btc_ctx.get("short_ok", True))
+        conds_l = list(conds_l)
+        conds_s = list(conds_s)
+        conds_l.append(("Mercado BTC", long_ok, detail if long_ok else f"{detail} — LONG bloqueado"))
+        conds_s.append(("Mercado BTC", short_ok, detail if short_ok else f"{detail} — SHORT bloqueado"))
+
+        blocked = None
+        if senal_l and not long_ok:
+            senal_l = False
+            blocked = f"LONG bloqueado por BTC: {detail}"
+        if senal_s and not short_ok:
+            senal_s = False
+            blocked = f"SHORT bloqueado por BTC: {detail}" if blocked is None else blocked
+        return senal_l, senal_s, conds_l, conds_s, blocked
+
     # ── Señal LONG ────────────────────────────────────────────────────────────
 
     def _verificar_long(self, df: pd.DataFrame, sym: str) -> tuple[bool, list, float, float, float]:
@@ -2182,6 +2286,15 @@ class TrendBot:
                         self._connection_error = str(e)
                         self._log(f"Error sincronizando cuenta: {e}", "error")
 
+                btc_ctx = self._btc_market_context()
+                if "BTC/USDT" in cfg.get("symbols", []):
+                    try:
+                        btc_df = self._fetch_df("BTC/USDT", "1h", 300)
+                        with self._lock:
+                            self._df_cache["BTC/USDT"] = btc_df
+                        btc_ctx = self._btc_market_context(btc_df)
+                    except Exception as btc_error:
+                        self._log(f"[BTC/USDT] Contexto maestro no disponible: {btc_error}", "warning")
                 for sym in cfg.get("symbols", []):
                     if not self._running:
                         break
@@ -2223,8 +2336,14 @@ class TrendBot:
                         tendencia, fase = self._analizar_tendencia(df_signal)
                         senal_l, conds_l, score_l, sl_l, tp_l = self._verificar_long(df_signal, sym)
                         senal_s, conds_s, score_s, sl_s, tp_s = self._verificar_short(df_signal, sym)
+                        if sym == "BTC/USDT":
+                            btc_ctx = self._btc_market_context(df_1h)
+                        senal_l, senal_s, conds_l, conds_s, btc_block_reason = self._apply_btc_market_filter(
+                            sym, senal_l, senal_s, conds_l, conds_s, btc_ctx
+                        )
                         early_long_context = any(n == "Stage 2 temprano" and ok for n, ok, _ in conds_l)
-                        long_context_ok = tendencia == "ALCISTA" or early_long_context
+                        accumulation_long_context = any(n == "Acumulacion" and ok for n, ok, _ in conds_l)
+                        long_context_ok = tendencia == "ALCISTA" or early_long_context or accumulation_long_context
 
                         if tendencia == "ALCISTA":
                             checklist = [{"name": n, "ok": ok, "detail": d} for n, ok, d in conds_l]
@@ -2246,6 +2365,8 @@ class TrendBot:
                         spread_pct = abs(precio - signal_close) / signal_close * 100
 
                         pending_logs: list[tuple[str, str]] = []
+                        if btc_block_reason:
+                            pending_logs.append((f"[{sym}] {btc_block_reason}", "info"))
 
                         with self._lock:
                             est["tendencia"]    = tendencia
@@ -2421,7 +2542,7 @@ class TrendBot:
                                     est["signal_confirmado"] = int(est.get("signal_confirmado", 0)) + 1
                                     est["signal_short_confirmado"] = 0
                                     if est["signal_confirmado"] == 1:
-                                        tipo_alerta = "LONG temprano" if early_long_context and tendencia != "ALCISTA" else "LONG"
+                                        tipo_alerta = "LONG acumulacion" if accumulation_long_context else ("LONG temprano" if early_long_context and tendencia != "ALCISTA" else "LONG")
                                         pending_logs.append((f"[{sym}] ALERTA {tipo_alerta} — setup listo en modo solo alertas", "warning"))
                                         self._push_alert(f"ALERTA LONG {sym} @ ${precio:,.4f} | SL ${sl_l:,.4f} | TP ${tp_l:,.4f}", "warning", sym)
                                         self._send_telegram(
@@ -2480,7 +2601,7 @@ class TrendBot:
                                     est["signal_confirmado"] = int(est.get("signal_confirmado", 0)) + 1
                                     est["signal_short_confirmado"] = 0
                                     if est["signal_confirmado"] < 2:
-                                        tipo_setup = "LONG temprano" if early_long_context and tendencia != "ALCISTA" else "LONG"
+                                        tipo_setup = "LONG acumulacion" if accumulation_long_context else ("LONG temprano" if early_long_context and tendencia != "ALCISTA" else "LONG")
                                         pending_logs.append((f"[{sym}] Setup {tipo_setup} detectado — esperando confirmación ciclo 2/2", "info"))
                                         self._push_alert(f"⏳ {sym} LONG — setup detectado, esperando ciclo 2/2", "warning", sym)
                                         self._send_telegram(f"⏳ <b>{sym}</b> LONG — Setup detectado\nEsperando confirmación ciclo 2/2\n💵 Precio: ${precio:,.4f}")
@@ -2546,7 +2667,7 @@ class TrendBot:
                                         "sl_order_id":         _sl_order_id,
                                         "breakeven_activado":  False,
                                         "salida_parcial_hecha":False,
-                                        "entrada_temprana":    bool(dir_nueva == "LONG" and early_long_context and tendencia != "ALCISTA"),
+                                        "entrada_temprana":    bool(dir_nueva == "LONG" and (early_long_context or accumulation_long_context) and tendencia != "ALCISTA"),
                                         "capital":             cap,
                                         "apalancamiento":      apal,
                                         "pnl_pct":             0.0,
@@ -2576,7 +2697,12 @@ class TrendBot:
                         # ── Estrategia Momentum ───────────────────────────────
                         senal_ml, senal_ms, sl_ml, tp_ml, sl_ms, tp_ms, conds_ml, conds_ms, score_ml, score_ms = \
                             self._verificar_momentum(df_signal, sym)
+                        senal_ml, senal_ms, conds_ml, conds_ms, btc_block_reason_mom = self._apply_btc_market_filter(
+                            sym, senal_ml, senal_ms, conds_ml, conds_ms, btc_ctx
+                        )
                         pending_logs_m: list[tuple[str, str]] = []
+                        if btc_block_reason_mom:
+                            pending_logs_m.append((f"[{sym}][MOM] {btc_block_reason_mom}", "info"))
 
                         with self._lock:
                             est_m = self._estados_mom.setdefault(sym, self._estado_vacio())
