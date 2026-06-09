@@ -1473,6 +1473,10 @@ class TrendBot:
                 fase = "Muy extendido — esperar rebote"
             return "BAJISTA", fase
 
+        accum_ok, accum_detail = self._accumulation_context(df)
+        if accum_ok:
+            return "NEUTRAL", f"Acumulacion posible — {accum_detail}"
+
         return ("NEUTRAL", "Construyendo Stage 2") if p > e200 else ("NEUTRAL", "Construyendo Stage 4")
 
     # ── Estructura HH/HL ──────────────────────────────────────────────────────
@@ -1584,6 +1588,62 @@ class TrendBot:
             return False, f"Caída extendida y RSI {float(df.iloc[-1]['rsi']):.0f} — esperar rebote más claro antes de otro SHORT"
         return False, f"Caída 7d {drop_7d:.1f}% / 3d {drop_3d:.1f}% / 24h {drop_24h:.1f}% — esperar rebote/rechazo antes de otro SHORT"
 
+    def _accumulation_context(self, df: pd.DataFrame) -> tuple[bool, str]:
+        """Detecta suelo defendido con venta perdiendo fuerza; no confirma entrada por si solo."""
+        if len(df) < 30:
+            return False, "sin datos suficientes"
+
+        u = df.iloc[-1]
+        p = float(u["close"])
+        atr = float(u["atr"])
+        rsi = float(u["rsi"])
+        support = self._nearest_support(df, p)
+        if not support or p <= 0 or atr <= 0:
+            return False, "sin soporte cercano"
+
+        support_dist_pct = (p - support) / p * 100
+        max_support_dist_pct = max(1.5, (atr / p * 100) * 2.0)
+        near_support = 0 <= support_dist_pct <= max_support_dist_pct
+
+        window = df.iloc[-8:]
+        tolerance = max(atr * 0.45, p * 0.003)
+        defended_lows = [float(v) for v in window["low"] if float(v) >= support - tolerance]
+        touches = sum(1 for v in window["low"] if abs(float(v) - support) <= tolerance)
+        last_lows = [float(v) for v in window["low"].tail(3)]
+        no_new_breakdown = min(last_lows) >= support - tolerance
+        defended = near_support and len(defended_lows) >= 6 and touches >= 2 and no_new_breakdown
+
+        rsi_prev = float(df.iloc[-4]["rsi"]) if len(df) >= 4 else rsi
+        rsi_recovering = 28.0 <= rsi <= 55.0 and rsi >= rsi_prev - 1.0
+
+        red_vol = [float(row["vol_ratio"]) for _, row in window.iterrows() if float(row["close"]) < float(row["open"])]
+        recent_red_vol = red_vol[-1] if red_vol else float(u.get("vol_ratio", 0.0) or 0.0)
+        prior_red_avg = sum(red_vol[:-1]) / len(red_vol[:-1]) if len(red_vol) > 1 else recent_red_vol
+        seller_fading = recent_red_vol <= max(prior_red_avg * 1.15, 1.35)
+
+        rebound = float(u["close"]) > float(u["open"]) or float(u["close"]) > float(df.iloc[-2]["close"])
+        possible = defended and rsi_recovering and seller_fading
+
+        if possible:
+            detail = (
+                f"soporte ${support:,.2f} defendido {touches} veces, "
+                f"RSI {rsi:.0f}, venta {recent_red_vol:.2f}x"
+            )
+            if rebound:
+                detail += ", rebote inicial"
+            return True, detail
+
+        missing = []
+        if not near_support:
+            missing.append(f"lejos del soporte ({support_dist_pct:.1f}%)")
+        if not defended:
+            missing.append("suelo aun no defendido")
+        if not rsi_recovering:
+            missing.append(f"RSI {rsi:.0f} sin recuperacion")
+        if not seller_fading:
+            missing.append(f"venta fuerte {recent_red_vol:.2f}x")
+        return False, ", ".join(missing[:2]) if missing else "sin confirmacion"
+
     # ── Señal LONG ────────────────────────────────────────────────────────────
 
     def _verificar_long(self, df: pd.DataFrame, sym: str) -> tuple[bool, list, float, float, float]:
@@ -1666,6 +1726,18 @@ class TrendBot:
             conds.append(("Pullback + Rebote", False,
                           f"Sin toque de EMA50 ({dist_e50:.1f}%) o sin vela rebote — esperar retroceso"))
 
+        accumulation_ok, accumulation_detail = self._accumulation_context(df)
+        accumulation_confirmed = (
+            accumulation_ok
+            and (p > float(u["open"]) or p > float(prev["close"]))
+            and rsi >= 32.0
+        )
+        if accumulation_confirmed:
+            score += 1.2
+            conds.append(("Acumulacion", True, accumulation_detail))
+        else:
+            conds.append(("Acumulacion", False, accumulation_detail))
+
         # 5. Evitar entradas tardías después de una subida prolongada.
         lookback = min(168, max(24, len(df) - 1))
         recent_low_7d = float(df.iloc[-lookback:]["low"].min()) if lookback > 0 else p
@@ -1743,7 +1815,7 @@ class TrendBot:
         else:
             conds.append(("R:R", False, f"R:R {rr:.1f} < {rr_min} — SL ${sl:,.2f} / TP ${tp:,.2f}"))
 
-        senal = (
+        regular_long_signal = (
             (stage2 or early_stage2)
             and hh_hl
             and rsi_ok
@@ -1755,6 +1827,16 @@ class TrendBot:
             and rr_ok
             and score >= float(c.get("score_minimo", 6.5))
         )
+        accumulation_long_signal = (
+            bool(c.get("slow_trend"))
+            and accumulation_confirmed
+            and (hh_hl or p > e50)
+            and room_to_resistance
+            and not capitulation_long
+            and rr_ok
+            and score >= float(c.get("score_minimo", 6.5))
+        )
+        senal = regular_long_signal or accumulation_long_signal
         return senal, conds, score, sl, tp
 
     # ── Señal SHORT ───────────────────────────────────────────────────────────
