@@ -145,7 +145,9 @@ class AxiomBacktester:
                  sizing: str = "fixed",           # "fixed" (como el bot) o "risk"
                  risk_pct: float = 1.0,           # % del balance arriesgado/trade
                  solo: str | None = None,         # "MNV" o "MOM": aislar una estrategia
-                 mom_rr: float | None = None):    # override del TP de MOM en múltiplos de R
+                 mom_rr: float | None = None,     # override del TP de MOM en múltiplos de R
+                 sin_invalidacion: bool = False,  # ignorar salidas por invalidación EMA50/RSI
+                 candle_hours: float = 1.0):      # horas por vela (4.0 para tf 4H)
         cfg = {
             "symbols": symbols, "watch_symbols": symbols, "trade_symbols": symbols,
             "momentum_symbols": [s for s in symbols if s in ("BTC/USDT", "ETH/USDT")],
@@ -163,12 +165,14 @@ class AxiomBacktester:
         self.cfg = cfg
         self.bot = TrendBot(cfg)            # nunca se llama start(): solo usamos su lógica
         self.symbols = symbols
-        self.fee_rate, self.funding_1h = fee_rate, funding_8h / 8.0
+        self.fee_rate, self.funding_1h = fee_rate, funding_8h / 8.0 * candle_hours
+        self.candle_hours = candle_hours
         self.slip = slippage_bps / 10_000.0
         self.confirm_candles = max(1, confirm_candles)
         self.cooldown_win, self.cooldown_loss = cooldown_win, cooldown_loss
         self.sizing, self.risk_pct = sizing, risk_pct
         self.solo, self.mom_rr = solo, mom_rr
+        self.sin_invalidacion = sin_invalidacion
 
         # Alinear todos los símbolos por timestamp (intersección)
         common = None
@@ -311,6 +315,8 @@ class AxiomBacktester:
             ev0 = eventos[0] if eventos else ""
             motivo = ("TP" if "TP" in ev0 else "Trailing" if "Trailing" in ev0
                       else "SL" if "SL" in ev0 else "Invalidación")
+            if motivo == "Invalidación" and self.sin_invalidacion:
+                return
             self._close(sym, estrategia, est, ts, exit_price, motivo)
         elif parcial and not est["salida_parcial_hecha"]:
             self._close(sym, estrategia, est, ts, float(candle["close"]), "Parcial", qty_frac=0.5)
@@ -471,11 +477,12 @@ class AxiomBacktester:
         w("AXIOM BACKTEST — RESUMEN")
         w("=" * 64)
         w(f"Periodo:        {self.index[WARMUP].date()} → {self.index[-1].date()} "
-          f"({(self.n - WARMUP) / 24:.0f} días, velas 1h)")
+          f"({(self.n - WARMUP) * self.candle_hours / 24:.0f} días, velas {int(self.candle_hours)}h)")
         w(f"Símbolos:       {', '.join(self.symbols)}")
         variantes = []
         if self.solo:    variantes.append(f"solo={self.solo}")
         if self.mom_rr:  variantes.append(f"mom_rr={self.mom_rr}")
+        if self.sin_invalidacion: variantes.append("sin_invalidacion")
         if self.cfg.get("slow_trend"): variantes.append(
             f"slow_trend (adx≥{self.cfg.get('slow_adx_min', 15)}, imp {self.cfg.get('slow_impulso_pct', 0.05)}%)")
         if variantes:
@@ -542,6 +549,7 @@ def main():
     ap = argparse.ArgumentParser(description="Backtester de Axiom (usa la lógica real del bot)")
     ap.add_argument("--symbols", nargs="+", default=["BTC/USDT", "ETH/USDT"])
     ap.add_argument("--days", type=int, default=365)
+    ap.add_argument("--tf", default="1H", choices=["1H", "4H"])
     ap.add_argument("--synthetic", action="store_true", help="validar con datos sintéticos (sin internet)")
     ap.add_argument("--sizing", choices=["fixed", "risk"], default="fixed")
     ap.add_argument("--risk-pct", type=float, default=1.0)
@@ -556,6 +564,7 @@ def main():
                     help="activar el modo de tendencias lentas del bot (slow_trend=True)")
     ap.add_argument("--slow-adx-min", type=float, default=15.0)
     ap.add_argument("--slow-impulso-pct", type=float, default=0.05)
+    ap.add_argument("--sin-invalidacion", action="store_true")
     ap.add_argument("--mom-rr", type=float, default=None,
                     help="override del TP de MOM en múltiplos de R (ej. 2.5)")
     args = ap.parse_args()
@@ -567,10 +576,10 @@ def main():
         dfs = {s: synthetic_candles(4000, seed=11 + k) for k, s in enumerate(args.symbols)}
     else:
         print(f"Descargando {args.days} días de OKX:")
-        dfs = {s: download_okx_candles(s, args.days) for s in args.symbols}
+        dfs = {s: download_okx_candles(s, args.days, bar=args.tf) for s in args.symbols}
         # BTC siempre necesario para el filtro maestro
         if "BTC/USDT" not in dfs:
-            dfs["BTC/USDT"] = download_okx_candles("BTC/USDT", args.days)
+            dfs["BTC/USDT"] = download_okx_candles("BTC/USDT", args.days, bar=args.tf)
 
     overrides = {}
     if args.score_minimo is not None:
@@ -586,6 +595,8 @@ def main():
         cooldown_win=args.cooldown_win, cooldown_loss=args.cooldown_loss,
         sizing=args.sizing, risk_pct=args.risk_pct,
         solo=args.solo, mom_rr=args.mom_rr,
+        sin_invalidacion=args.sin_invalidacion,
+        candle_hours=4.0 if args.tf == "4H" else 1.0,
     )
     print(f"\nCorriendo {bt.n - WARMUP:,} velas…")
     bt.run()
