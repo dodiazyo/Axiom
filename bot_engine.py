@@ -622,20 +622,69 @@ class TrendBot:
             self._clear_missing_exchange_positions(live_positions)
 
     def _clear_missing_exchange_positions(self, live_positions: dict[str, dict]):
-        """Limpia posiciones locales que OKX ya no reporta como abiertas."""
+        """
+        Limpia posiciones locales que OKX ya no reporta como abiertas
+        (SL exchange disparado, cierre manual o liquidación) y registra
+        el cierre estimado en el historial para ambas estrategias.
+        """
         with self._lock:
-            for sym, est in list(self._estados.items()):
-                if not est.get("posicion_abierta") or sym in live_positions:
-                    continue
-                old_dir = est.get("direccion_pos") or "?"
-                new_st = self._estado_vacio()
-                new_st["tendencia"] = est.get("tendencia", "NEUTRAL")
-                new_st["fase"] = est.get("fase", "")
-                new_st["cooldown_restante"] = int(self.cfg.get("cooldown_ciclos", 3))
-                new_st["ultimo_cierre"] = datetime.now(timezone.utc).isoformat()
-                new_st["ultimo_resultado"] = "SYNC"
-                self._estados[sym] = new_st
-                self._log(f"[{sym}] Posición {old_dir} limpiada: OKX ya no la reporta abierta", "warning")
+            for estados, etiqueta in ((self._estados, "MNV"), (self._estados_mom, "MOM")):
+                for sym, est in list(estados.items()):
+                    if not est.get("posicion_abierta") or sym in live_positions:
+                        continue
+                    old_dir = est.get("direccion_pos") or "?"
+                    ent  = float(est.get("precio_entrada") or 0.0)
+                    # Mejor estimación de salida: el SL vigente (lo más probable
+                    # es que la cerró el SL exchange). Si no hay, breakeven.
+                    salida_est = float(est.get("sl_actual") or 0.0) or ent
+                    qty  = float(est.get("exchange_qty") or 0.0)
+                    gan_est = 0.0
+                    if ent > 0 and qty > 0:
+                        gan_est = (salida_est - ent) * qty if old_dir == "LONG" else (ent - salida_est) * qty
+                        self._operations += 1
+                        if gan_est > 0:
+                            self._wins += 1
+                        elif gan_est < 0:
+                            self._losses += 1
+                        _cap = float(est.get("capital") or 0.0)
+                        self._historial_counter += 1
+                        self._historial.append({
+                            "id":       self._historial_counter,
+                            "sym":      sym,
+                            "dir":      old_dir,
+                            "entrada":  round(ent, 6),
+                            "sl_ini":   round(float(est.get("sl_inicial", 0) or 0), 6),
+                            "tp":       round(float(est.get("tp", 0) or 0), 6),
+                            "salida":   round(salida_est, 6),
+                            "motivo":   "SL exchange",
+                            "pnl":      round(gan_est, 2),
+                            "pct":      round(gan_est / _cap * 100, 2) if _cap > 0 else 0.0,
+                            "rr":       0.0,
+                            "capital":  _cap,
+                            "apal":     int(est.get("apalancamiento", 3) or 3),
+                            "ts_open":  est.get("ts_apertura", ""),
+                            "ts_close": datetime.now(timezone.utc).isoformat(),
+                            "min":      0,
+                            "estrategia": etiqueta,
+                        })
+                    new_st = self._estado_vacio()
+                    new_st["tendencia"] = est.get("tendencia", "NEUTRAL")
+                    new_st["fase"] = est.get("fase", "")
+                    loss_cd = int(self.cfg.get("cooldown_loss_ciclos", 8))
+                    base_cd = int(self.cfg.get("cooldown_ciclos", 3))
+                    new_st["cooldown_restante"] = loss_cd if gan_est < 0 else base_cd
+                    new_st["ultimo_cierre"] = datetime.now(timezone.utc).isoformat()
+                    new_st["ultimo_resultado"] = "LOSS" if gan_est < 0 else ("WIN" if gan_est > 0 else "SYNC")
+                    estados[sym] = new_st
+                    self._log(
+                        f"[{sym}][{etiqueta}] Posición {old_dir} cerrada en OKX (SL exchange/manual) — "
+                        f"estado local limpiado | PnL est. ${gan_est:+.2f}",
+                        "warning"
+                    )
+                    self._push_alert(
+                        f"Posición {sym} {old_dir} [{etiqueta}] cerrada en OKX — PnL est. ${gan_est:+.2f}",
+                        "warning", sym
+                    )
 
     def _reconcile_positions(self):
         """
@@ -683,6 +732,8 @@ class TrendBot:
             }
 
             with self._lock:
+                if self._estados_mom.get(sym, {}).get("posicion_abierta"):
+                    continue  # la gestiona la estrategia MOM (estado restaurado)
                 est = self._estados.setdefault(sym, self._estado_vacio())
                 if est.get("posicion_abierta"):
                     continue  # ya la conocemos
@@ -732,6 +783,22 @@ class TrendBot:
                     f"SL ${sl_p:,.4f} TP ${tp_p:,.4f}",
                     "warning"
                 )
+
+            # Garantizar SL en exchange para la posición importada:
+            # primero adoptar uno existente; si no hay, colocar uno nuevo.
+            algo_id, algo_trigger = self._find_existing_sl_algo(sym)
+            if algo_id:
+                with self._lock:
+                    self._estados[sym]["sl_order_id"] = algo_id
+                    if algo_trigger > 0:
+                        self._estados[sym]["sl_actual"]  = algo_trigger
+                        self._estados[sym]["sl_inicial"] = algo_trigger
+                self._log(f"[{sym}] SL existente en OKX adoptado @ ${algo_trigger:,.4f} (algo #{algo_id})", "info")
+            else:
+                new_sl_id = self._place_sl_order(sym, direction, sl_p)
+                if new_sl_id:
+                    with self._lock:
+                        self._estados[sym]["sl_order_id"] = new_sl_id
 
         if reconciled:
             self._log(f"Reconciliación completa: {reconciled} posición(es) importada(s) de OKX", "success")
@@ -804,24 +871,120 @@ class TrendBot:
             return round(price, 4)
         return round(round(price / tick) * tick, 8)
 
-    def _place_sl_order(self, sym: str, direction: str, sl_price: float) -> Optional[int]:
-        """SL exchange pendiente de migración a OKX."""
+    def _place_sl_order(self, sym: str, direction: str, sl_price: float) -> Optional[str]:
+        """
+        Coloca un stop-loss NATIVO en OKX (orden algo condicional).
+        Usa closeFraction=1 para cerrar el 100% de la posición restante al
+        dispararse, de modo que sobrevive a reinicios del bot y a salidas
+        parciales sin necesidad de recalcular tamaño.
+        Retorna el algoId de OKX, o None si falló (queda gestión local).
+        """
         if not self._is_live_mode():
             return None
-        self._log(f"[{sym}] SL exchange pendiente de migración OKX; gestión local activa", "warning")
-        return None
+        sl_px = self._round_price(sym, sl_price)
+        payload = {
+            **self._order_payload_base(sym, direction),
+            "side": self._order_side(direction, closing=True),
+            "ordType": "conditional",
+            "slTriggerPx": self._format_okx_number(sl_px),
+            "slOrdPx": "-1",            # -1 = ejecutar a mercado al disparar
+            "slTriggerPxType": "last",
+            "closeFraction": "1",       # cierra toda la posición restante
+        }
+        if self._position_mode != "long_short_mode":
+            payload["reduceOnly"] = "true"
+        try:
+            resp = self._request_signed("POST", "/api/v5/trade/order-algo", payload)
+            data = (resp.get("data") or [{}])[0]
+            algo_id = data.get("algoId")
+            if algo_id:
+                self._log(f"[{sym}] SL colocado en OKX @ ${sl_px:,.4f} (algo #{algo_id})", "success")
+                return str(algo_id)
+            raise RuntimeError(data.get("sMsg") or "OKX no devolvió algoId")
+        except Exception as e:
+            # Fallback: si closeFraction no es aceptado, reintentar con sz explícito
+            try:
+                self._sync_exchange_positions()
+                pos = self._exchange_positions.get(sym) or {}
+                contracts = float(pos.get("okx_contracts") or 0.0)
+                if contracts <= 0:
+                    raise RuntimeError(f"sin tamaño de posición conocido ({e})")
+                payload.pop("closeFraction", None)
+                payload["sz"] = self._format_okx_number(contracts)
+                resp = self._request_signed("POST", "/api/v5/trade/order-algo", payload)
+                data = (resp.get("data") or [{}])[0]
+                algo_id = data.get("algoId")
+                if algo_id:
+                    self._log(f"[{sym}] SL colocado en OKX @ ${sl_px:,.4f} (algo #{algo_id}, sz {contracts:g})", "success")
+                    return str(algo_id)
+                raise RuntimeError(data.get("sMsg") or "OKX no devolvió algoId")
+            except Exception as e2:
+                self._log(f"[{sym}] No pude colocar SL en OKX: {e2} — gestión local activa", "error")
+                self._push_alert(f"⚠️ SL exchange falló en {sym}: solo protección local", "error", sym)
+                return None
 
-    def _cancel_sl_order(self, sym: str, order_id: Optional[int]) -> bool:
-        """Cancela la orden SL existente cuando la ejecución OKX esté activa."""
+    def _cancel_sl_order(self, sym: str, order_id: Optional[str]) -> bool:
+        """Cancela una orden SL algo existente en OKX."""
         if not self._is_live_mode() or not order_id:
             return True
-        self._log(f"[{sym}] Cancelación SL OKX pendiente de migración #{order_id}", "warning")
-        return True
+        try:
+            resp = self._request_signed(
+                "POST", "/api/v5/trade/cancel-algos",
+                [{"algoId": str(order_id), "instId": self._api_symbol(sym)}],
+            )
+            data = (resp.get("data") or [{}])[0]
+            code = str(data.get("sCode") or resp.get("code") or "0")
+            if code == "0":
+                self._log(f"[{sym}] SL OKX #{order_id} cancelado", "info")
+            else:
+                # Si ya no existe (disparada o cancelada antes) lo tratamos como éxito
+                self._log(f"[{sym}] Cancelación SL #{order_id}: {data.get('sMsg') or code}", "warning")
+            return True
+        except Exception as e:
+            self._log(f"[{sym}] Error cancelando SL OKX #{order_id}: {e}", "warning")
+            return False
 
-    def _update_sl_order(self, sym: str, direction: str, old_order_id: Optional[int], new_sl_price: float) -> Optional[int]:
-        """Cancela el SL viejo y coloca uno nuevo. Retorna el nuevo order_id."""
+    def _update_sl_order(self, sym: str, direction: str, old_order_id: Optional[str], new_sl_price: float) -> Optional[str]:
+        """Cancela el SL viejo y coloca uno nuevo en OKX. Retorna el nuevo algoId."""
         self._cancel_sl_order(sym, old_order_id)
-        return self._place_sl_order(sym, direction, new_sl_price)
+        new_id = self._place_sl_order(sym, direction, new_sl_price)
+        if new_id is None and old_order_id and self._is_live_mode():
+            self._push_alert(f"⚠️ {sym}: SL OKX cancelado pero el nuevo falló — posición sin SL exchange", "error", sym)
+        return new_id
+
+    def _find_existing_sl_algo(self, sym: str) -> tuple[Optional[str], float]:
+        """Busca una orden SL algo pendiente en OKX para el símbolo (útil tras reinicios)."""
+        try:
+            resp = self._request_signed(
+                "GET", "/api/v5/trade/orders-algo-pending",
+                {"ordType": "conditional", "instId": self._api_symbol(sym)},
+            )
+            for it in resp.get("data", []):
+                trigger = float(it.get("slTriggerPx") or 0.0)
+                if trigger > 0 and it.get("algoId"):
+                    return str(it["algoId"]), trigger
+        except Exception as e:
+            self._log(f"[{sym}] No pude consultar SL algos pendientes: {e}", "warning")
+        return None, 0.0
+
+    def _fetch_fill_price(self, sym: str, ord_id: str) -> float:
+        """Consulta el precio de fill real de una orden ejecutada en OKX."""
+        if not ord_id or ord_id == "—":
+            return 0.0
+        for _ in range(3):
+            try:
+                resp = self._request_signed(
+                    "GET", "/api/v5/trade/order",
+                    {"instId": self._api_symbol(sym), "ordId": str(ord_id)},
+                )
+                data = (resp.get("data") or [{}])[0]
+                px = float(data.get("avgPx") or 0.0)
+                if px > 0 and str(data.get("state") or "") in ("filled", "partially_filled"):
+                    return px
+            except Exception:
+                pass
+            time.sleep(0.3)
+        return 0.0
 
     def _place_live_order(self, sym: str, direction: str, capital: float, leverage: int, price: float) -> tuple[float, dict]:
         info = self._exchange_info.get(sym)
@@ -857,10 +1020,12 @@ class TrendBot:
         data = (order.get("data") or [{}])[0]
         ord_id = data.get("ordId") or data.get("clOrdId") or "—"
         base_qty_filled = self._contracts_to_base_qty(sym, contracts)
+        fill_px = self._fetch_fill_price(sym, ord_id)
         normalized = {
             **data,
             "orderId": ord_id,
             "ordId": ord_id,
+            "avgPx": fill_px,
             "executedQty": base_qty_filled,
             "origQty": base_qty_filled,
             "okxContracts": contracts,
@@ -889,10 +1054,12 @@ class TrendBot:
         order = self._request_signed("POST", "/api/v5/trade/order", payload)
         data = (order.get("data") or [{}])[0]
         ord_id = data.get("ordId") or data.get("clOrdId") or "—"
+        fill_px = self._fetch_fill_price(sym, ord_id)
         return {
             **data,
             "orderId": ord_id,
             "ordId": ord_id,
+            "avgPx": fill_px,
             "executedQty": self._contracts_to_base_qty(sym, contracts),
             "origQty": self._contracts_to_base_qty(sym, contracts),
             "okxContracts": contracts,
@@ -969,6 +1136,8 @@ class TrendBot:
                         if sym not in _okx_pnl_counted:
                             open_pnl_total += position["pnl_usd"]
                             _okx_pnl_counted.add(sym)
+                        else:
+                            position["pnl_source"] = "OKX (compartido)"
                     else:
                         qty = float(est.get("exchange_qty") or 0.0)
                         if qty <= 0:
@@ -1011,6 +1180,8 @@ class TrendBot:
                         if sym not in _okx_pnl_counted:
                             open_pnl_total += mom_pos["pnl_usd"]
                             _okx_pnl_counted.add(sym)
+                        else:
+                            mom_pos["pnl_source"] = "OKX (compartido)"
                     else:
                         qty_m = float(est_m.get("exchange_qty") or 0.0)
                         if qty_m <= 0:
@@ -2453,16 +2624,20 @@ class TrendBot:
                                         qty_total = (cap * apal) / ent if ent > 0 else 0.0
                                     qty_close = qty_total / 2
 
+                                    _precio_parcial = precio
                                     if qty_close > 0 and self._is_live_mode():
                                         try:
-                                            self._close_live_order(sym, dir_, qty_close)
+                                            _pres = self._close_live_order(sym, dir_, qty_close)
+                                            _pfill = float(_pres.get("avgPx") or 0.0)
+                                            if _pfill > 0:
+                                                _precio_parcial = _pfill
                                         except Exception as pe:
                                             pending_logs.append((f"[{sym}] Error parcial real: {pe}", "error"))
                                             qty_close = 0.0
 
                                     if qty_close > 0:
                                         ent = float(est["precio_entrada"])
-                                        gan_p = ((precio - ent) * qty_close) if dir_ == "LONG" else ((ent - precio) * qty_close)
+                                        gan_p = ((_precio_parcial - ent) * qty_close) if dir_ == "LONG" else ((ent - _precio_parcial) * qty_close)
                                         self._balance  += gan_p
                                         self._ganancia += gan_p
                                         est["exchange_qty"] = max(qty_total - qty_close, 0.0)
@@ -2479,7 +2654,10 @@ class TrendBot:
 
                                     if self._is_live_mode():
                                         try:
-                                            self._close_live_order(sym, dir_, cant)
+                                            _close_res = self._close_live_order(sym, dir_, cant)
+                                            _fill_close = float(_close_res.get("avgPx") or 0.0)
+                                            if _fill_close > 0:
+                                                exit_price = _fill_close
                                             self._cancel_sl_order(sym, est.get("sl_order_id"))
                                             est["sl_order_id"] = None
                                         except Exception as le:
@@ -2492,9 +2670,9 @@ class TrendBot:
                                         self._balance  += gan
                                         self._ganancia += gan
                                         self._operations += 1
-                                        if gan >= 0:
+                                        if gan > 0:
                                             self._wins += 1
-                                        else:
+                                        elif gan < 0:
                                             self._losses += 1
 
                                         # ── Registrar en historial ────────────
@@ -2674,12 +2852,16 @@ class TrendBot:
                                 if dir_nueva:
                                     exchange_qty = 0.0
                                     _sl_order_id = None
+                                    _entry_px = precio
                                     if self._is_live_mode():
                                         try:
                                             cap = self._effective_order_capital(cap)
                                             exchange_qty, order = self._place_live_order(sym, dir_nueva, cap, apal, precio)
+                                            _fill_entry = float(order.get("avgPx") or 0.0)
+                                            if _fill_entry > 0:
+                                                _entry_px = _fill_entry
                                             pending_logs.append((
-                                                f"[{sym}] Orden {dir_nueva} enviada #{order.get('orderId', '—')}",
+                                                f"[{sym}] Orden {dir_nueva} enviada #{order.get('orderId', '—')} | fill ${_entry_px:,.4f}",
                                                 "success",
                                             ))
                                             _sl_order_id = self._place_sl_order(sym, dir_nueva, sl_usar)
@@ -2692,12 +2874,12 @@ class TrendBot:
                                     est.update({
                                         "posicion_abierta":    True,
                                         "direccion_pos":       dir_nueva,
-                                        "precio_entrada":      precio,
+                                        "precio_entrada":      _entry_px,
                                         "sl_inicial":          sl_usar,
                                         "sl_actual":           sl_usar,
                                         "tp":                  tp_usar,
-                                        "precio_ext":          precio,
-                                        "exchange_qty":        exchange_qty or ((cap * apal) / precio if precio > 0 else 0.0),
+                                        "precio_ext":          _entry_px,
+                                        "exchange_qty":        exchange_qty or ((cap * apal) / _entry_px if _entry_px > 0 else 0.0),
                                         "sl_order_id":         _sl_order_id,
                                         "breakeven_activado":  False,
                                         "salida_parcial_hecha":False,
@@ -2777,15 +2959,19 @@ class TrendBot:
                                         _em = float(est_m.get("precio_entrada") or precio)
                                         _qty_tm = (_cm * _am) / _em if _em > 0 else 0.0
                                     _qty_pm = _qty_tm / 2
+                                    _precio_pm = precio
                                     if _qty_pm > 0 and self._is_live_mode():
                                         try:
-                                            self._close_live_order(sym, dir_m, _qty_pm)
+                                            _pres_m = self._close_live_order(sym, dir_m, _qty_pm)
+                                            _pfill_m = float(_pres_m.get("avgPx") or 0.0)
+                                            if _pfill_m > 0:
+                                                _precio_pm = _pfill_m
                                         except Exception as _pe:
                                             pending_logs_m.append((f"[{sym}][MOM] Error parcial: {_pe}", "error"))
                                             _qty_pm = 0.0
                                     if _qty_pm > 0:
                                         _ent_pm = float(est_m["precio_entrada"])
-                                        _gan_pm = ((precio - _ent_pm) * _qty_pm) if dir_m == "LONG" else ((_ent_pm - precio) * _qty_pm)
+                                        _gan_pm = ((_precio_pm - _ent_pm) * _qty_pm) if dir_m == "LONG" else ((_ent_pm - _precio_pm) * _qty_pm)
                                         self._balance  += _gan_pm
                                         self._ganancia += _gan_pm
                                         est_m["exchange_qty"] = max(_qty_tm - _qty_pm, 0.0)
@@ -2800,7 +2986,10 @@ class TrendBot:
                                     _cant_m = float(est_m.get("exchange_qty") or ((_cap_m * _apal_m) / _ent_m if _ent_m > 0 else 0.0))
                                     if self._is_live_mode():
                                         try:
-                                            self._close_live_order(sym, dir_m, _cant_m)
+                                            _close_res_m = self._close_live_order(sym, dir_m, _cant_m)
+                                            _fill_close_m = float(_close_res_m.get("avgPx") or 0.0)
+                                            if _fill_close_m > 0:
+                                                exit_price_m = _fill_close_m
                                             self._cancel_sl_order(sym, est_m.get("sl_order_id"))
                                             est_m["sl_order_id"] = None
                                         except Exception as _le:
@@ -2811,8 +3000,8 @@ class TrendBot:
                                         self._balance  += _gan_m
                                         self._ganancia += _gan_m
                                         self._operations += 1
-                                        if _gan_m >= 0: self._wins   += 1
-                                        else:           self._losses += 1
+                                        if _gan_m > 0:   self._wins   += 1
+                                        elif _gan_m < 0: self._losses += 1
                                         _ev0_m  = eventos_m[0] if eventos_m else ""
                                         _mot_m  = ("TP" if "TP" in _ev0_m else "Trailing" if "Trailing" in _ev0_m else "SL" if "SL" in _ev0_m else "Manual")
                                         _sl_im  = float(est_m.get("sl_inicial", est_m.get("sl_actual", 0)))

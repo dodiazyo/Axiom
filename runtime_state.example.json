@@ -24,7 +24,6 @@
     "execution_mode": "SIMULADO",
     "margin_type": "ISOLATED",
     "api_key": "",
-    "api_secret": "",
-    "binance_testnet": true
+    "api_secret": ""
   }
 }
